@@ -14,7 +14,7 @@
 <h2>2. Acceder a la Carpeta del Proyecto</h2>
 <p>Una vez que hayas clonado el proyecto, navega a la carpeta del proyecto utilizando el siguiente comando:</p>
 
-<pre><code>cd nombre-del-proyecto</code></pre>
+<pre><code>cd cd nombre-del-proyecto</code></pre>
 
 <p>Reemplaza <i>nombre-del-proyecto</i> con el nombre de la carpeta del proyecto que acabas de clonar.</p>
 
