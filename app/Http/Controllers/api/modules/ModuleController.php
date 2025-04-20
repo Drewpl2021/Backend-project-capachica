@@ -17,24 +17,30 @@ class ModuleController extends Controller
      */
     public function index(Request $request)
     {
-        $size = $request->input('size', 20);
-        $name = $request->input('name');
+        // Configuración del tamaño y el nombre para la paginación
+        $size = $request->input('size', 20);  // Número de elementos por página
+        $name = $request->input('name');       // Filtro por nombre
 
+        // Construir la consulta para obtener los módulos
         $query = Module::with('parentModule');
 
+        // Si se proporciona un nombre, aplicar el filtro
         if ($name) {
             $query->where('title', 'like', "%$name%");
         }
 
+        // Realizar la paginación de la consulta
         $data = $query->paginate($size);
 
+        // Formatear la respuesta
         return response()->json([
-            'items' => $data->items(),
-            'total' => $data->total(),
-            'current_page' => $data->currentPage(),
-            'per_page' => $data->perPage(),
+            'content' => $data->items(),  // Los elementos de la página actual
+            'totalElements' => $data->total(),  // Total de elementos en la base de datos
+            'currentPage' => $data->currentPage() - 1,  // Laravel comienza a contar desde 1, pero queremos contar desde 0
+            'totalPages' => $data->lastPage(),  // Total de páginas disponibles
         ]);
     }
+
 
     /**
      * GET /module/menu
@@ -42,18 +48,37 @@ class ModuleController extends Controller
      */
     public function menu()
     {
+        // Obtén los módulos principales (padres) con sus submódulos (hijos) relacionados
         $modules = ParentModule::with('modules')->get();
 
+        // Mapea los módulos a la estructura deseada, agregando el campo 'children'
         $menu = $modules->map(function ($parent) {
             return [
+                'id' => $parent->id,
                 'title' => $parent->title,
+                'subtitle' => $parent->subtitle,  // Si existe el campo 'subtitle'
+                'type' => $parent->type,          // Tipo de módulo
                 'icon' => $parent->icon,
-                'modules' => $parent->modules->map(function ($mod) {
+                'link' => $parent->link,          // Si existe el campo 'link'
+                'status' => $parent->status,      // Si existe el campo 'status'
+                'moduleOrder' => $parent->moduleOrder,
+                'createdAt' => $parent->created_at,
+                'updatedAt' => $parent->updated_at,
+                'deletedAt' => $parent->deleted_at,
+                'children' => $parent->modules->map(function ($mod) {
                     return [
                         'id' => $mod->id,
                         'title' => $mod->title,
-                        'link' => $mod->link,
+                        'subtitle' => $mod->subtitle,  // Si existe el campo 'subtitle'
+                        'type' => $mod->type,
                         'icon' => $mod->icon,
+                        'link' => $mod->link,
+                        'status' => $mod->status,
+                        'moduleOrder' => $mod->moduleOrder,
+                        'createdAt' => $mod->created_at,
+                        'updatedAt' => $mod->updated_at,
+                        'deletedAt' => $mod->deleted_at,
+                        'selected' => $mod->selected, // Si es necesario incluir 'selected'
                     ];
                 })
             ];
@@ -61,6 +86,7 @@ class ModuleController extends Controller
 
         return response()->json($menu);
     }
+
 
     /**
      * POST /module
