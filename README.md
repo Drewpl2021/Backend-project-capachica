@@ -1,67 +1,108 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+<h1>Guía para Correr un Proyecto Laravel (Con Migraciones y Seeders)</h1>
 
-## About Laravel
+<p>A continuación, se describen los pasos necesarios para poner a funcionar un proyecto Laravel clonado con migraciones y seeders. Sigue estos pasos y tendrás el proyecto corriendo en tu entorno local.</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<h2>1. Clonar el Proyecto</h2>
+<p>Primero, debes clonar el proyecto desde el repositorio de Git. Abre tu terminal y ejecuta el siguiente comando:</p>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+<pre><code>git clone &lt;URL del repositorio&gt;</code></pre>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+<p>Reemplaza &lt;URL del repositorio&gt; con la URL del repositorio que deseas clonar.</p>
 
-## Learning Laravel
+<h2>2. Acceder a la Carpeta del Proyecto</h2>
+<p>Una vez que hayas clonado el proyecto, navega a la carpeta del proyecto utilizando el siguiente comando:</p>
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+<pre><code>cd nombre-del-proyecto</code></pre>
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+<p>Reemplaza <i>nombre-del-proyecto</i> con el nombre de la carpeta del proyecto que acabas de clonar.</p>
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+<h2>3. Instalar las Dependencias de PHP</h2>
+<p>Laravel requiere que instales las dependencias de PHP usando <a href="https://getcomposer.org/" target="_blank">Composer</a>. Si aún no tienes Composer instalado, puedes descargarlo desde allí. Luego, ejecuta el siguiente comando para instalar las dependencias:</p>
 
-## Laravel Sponsors
+<pre><code>composer install</code></pre>
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+<p>Este comando descargará todas las librerías necesarias para que el proyecto funcione correctamente.</p>
 
-### Premium Partners
+<h2>4. Copiar el Archivo .env</h2>
+<p>Laravel utiliza un archivo .env para manejar las configuraciones de entorno (como base de datos, claves de aplicación, etc.). Si no tienes el archivo .env en tu proyecto clonado, debes copiar el archivo .env.example y renombrarlo a .env:</p>
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+<pre><code>cp .env.example .env</code></pre>
 
-## Contributing
+<h2>5. Configurar las Variables en .env</h2>
+<p>Abrir el archivo .env en tu editor de texto favorito y configurar las variables necesarias para tu entorno de desarrollo, como la base de datos. Aquí te muestro un ejemplo de configuración para una base de datos MySQL:</p>
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+<pre><code>DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=nombre_de_tu_base_de_datos
+DB_USERNAME=tu_usuario
+DB_PASSWORD=tu_contraseña</code></pre>
 
-## Code of Conduct
+<p>Asegúrate de cambiar <i>nombre_de_tu_base_de_datos</i>, <i>tu_usuario</i> y <i>tu_contraseña</i> por los valores correctos de tu base de datos.</p>
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+<h2>6. Generar la Clave de la Aplicación</h2>
+<p>Laravel necesita una clave única para la aplicación. Puedes generar esta clave con el siguiente comando:</p>
 
-## Security Vulnerabilities
+<pre><code>php artisan key:generate</code></pre>
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+<p>Este comando actualizará automáticamente el archivo .env con la clave generada.</p>
 
-## License
+<h2>7. Ejecutar las Migraciones</h2>
+<p>Las migraciones en Laravel crean las tablas necesarias en la base de datos. Si el proyecto ya tiene migraciones configuradas, ejecuta el siguiente comando para crear las tablas:</p>
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-"# TurismoCapachica" 
+<pre><code>php artisan migrate</code></pre>
+
+<p>Si alguna vez necesitas borrar y volver a ejecutar las migraciones (por ejemplo, si hay cambios en las migraciones), puedes usar:</p>
+
+<pre><code>php artisan migrate:refresh</code></pre>
+
+<h2>8. Ejecutar los Seeders</h2>
+<p>Los seeders permiten poblar las tablas de la base de datos con datos predeterminados o de prueba. Si el proyecto tiene seeders configurados, puedes ejecutar el siguiente comando para llenarlas con datos:</p>
+
+<pre><code>php artisan db:seed</code></pre>
+
+<p>Si solo deseas ejecutar un seeder específico, usa:</p>
+
+<pre><code>php artisan db:seed --class=NombreDelSeeder</code></pre>
+
+<h2>9. Iniciar el Servidor de Desarrollo</h2>
+<p>Finalmente, para ver el proyecto funcionando, debes iniciar el servidor de desarrollo de Laravel. Puedes hacer esto ejecutando el siguiente comando:</p>
+
+<pre><code>php artisan serve</code></pre>
+
+<p>Esto levantará el servidor en <code>http://127.0.0.1:8000</code>. Ahora puedes abrir tu navegador y verificar que la API esté corriendo correctamente.</p>
+
+<h2>Resumen de Pasos</h2>
+
+<ol>
+  <li><strong>Clonar el proyecto:</strong><br>
+    <pre><code>git clone &lt;URL del repositorio&gt;</code></pre>
+  </li>
+  <li><strong>Acceder al proyecto:</strong><br>
+    <pre><code>cd nombre-del-proyecto</code></pre>
+  </li>
+  <li><strong>Instalar dependencias con Composer:</strong><br>
+    <pre><code>composer install</code></pre>
+  </li>
+  <li><strong>Copiar el archivo .env:</strong><br>
+    <pre><code>cp .env.example .env</code></pre>
+  </li>
+  <li><strong>Configurar las variables de base de datos en .env.</strong></li>
+  <li><strong>Generar la clave de la aplicación:</strong><br>
+    <pre><code>php artisan key:generate</code></pre>
+  </li>
+  <li><strong>Ejecutar las migraciones:</strong><br>
+    <pre><code>php artisan migrate</code></pre>
+  </li>
+  <li><strong>Ejecutar los seeders:</strong><br>
+    <pre><code>php artisan db:seed</code></pre>
+  </li>
+  <li><strong>Iniciar el servidor de desarrollo:</strong><br>
+    <pre><code>php artisan serve</code></pre>
+  </li>
+</ol>
+
+<p>¡Con estos pasos, tu proyecto Laravel debería estar funcionando correctamente como una API REST! Si tienes algún problema o necesitas más ayuda, no dudes en preguntar.</p>
+
