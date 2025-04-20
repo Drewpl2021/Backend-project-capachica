@@ -1,13 +1,13 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<h1>Guía para Correr un Proyecto Laravel (Con Migraciones y Seeders)</h1>
+<h1>Guía para Correr el Proyecto Laravel Turismo Web(Con Migraciones y Seeders)</h1>
 
 <p>A continuación, se describen los pasos necesarios para poner a funcionar un proyecto Laravel clonado con migraciones y seeders. Sigue estos pasos y tendrás el proyecto corriendo en tu entorno local.</p>
 
 <h2>1. Clonar el Proyecto</h2>
 <p>Primero, debes clonar el proyecto desde el repositorio de Git. Abre tu terminal y ejecuta el siguiente comando:</p>
 
-<pre><code>git clone &lt;URL del repositorio&gt;</code></pre>
+<pre><code>git clone &lt;https://github.com/Drewpl2021/Backend-project-capachica.git&gt;</code></pre>
 
 <p>Reemplaza &lt;URL del repositorio&gt; con la URL del repositorio que deseas clonar.</p>
 
