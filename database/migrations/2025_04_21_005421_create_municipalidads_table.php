@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('municipalidads', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->uuid('id')->primary();  // Asegúrate de que este campo sea UUID
             $table->string('distrito', 100);
             $table->string('provincia', 100);
             $table->string('region', 100);

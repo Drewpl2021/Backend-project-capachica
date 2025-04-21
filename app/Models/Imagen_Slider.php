@@ -10,6 +10,8 @@ class Imagen_Slider extends Model
 {
     use HasFactory;
     protected $fillable = ['url_image', 'estado', 'codigo'];
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected static function boot()
     {
         parent::boot();

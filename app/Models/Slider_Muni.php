@@ -9,6 +9,8 @@ use Illuminate\Support\Str;
 class Slider_Muni extends Model
 {
     use HasFactory;
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected static function boot()
     {
         parent::boot();

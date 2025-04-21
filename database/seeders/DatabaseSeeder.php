@@ -20,6 +20,21 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ParentModuleAndModuleSeeder::class,
         ]);
+        $this->call([
+            MunicipalidadSeeder::class,
+            MunicipalidadDescripcionSeeder::class,
+            SliderMuniSeeder::class,
+            ImagenSliderSeeder::class,
+        ]);
+
+        $this->call([
+            AsociacionSeeder::class,
+            ImgAsociacionSeeder::class,
+            EmprendedorSeeder::class,
+            DestinosTuriscosSeeder::class,
+        ]);
+
+
         // \App\Models\User::factory()->create([
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',

@@ -12,7 +12,8 @@ class Municipalidad extends Model
     // Relación uno a uno con la descripción
     // Si el nombre de la tabla no sigue la convención plural, especifica el nombre de la tabla aquí
     // protected $table = 'municipalidads'; // (si necesario)
-
+    public $incrementing = false;
+    protected $keyType = 'string';
     // Permite la asignación masiva de estos campos
     protected $fillable = ['distrito', 'provincia', 'region'];
     protected static function boot()

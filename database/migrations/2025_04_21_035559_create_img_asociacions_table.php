@@ -13,11 +13,17 @@ return new class extends Migration
     {
         Schema::create('img_asociacions', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->uuid('asociacion_id'); // Asegurarse de que sea uuid
             $table->string('url_image');
-            $table->boolean('status');
-            $table->integer('codigo');
-            $table->foreignId('asociacion_id')->constrained('asociacions'); // Clave foránea
+            $table->boolean('estado');
+            $table->integer('codigo')->nullable();
             $table->timestamps();
+
+            // Añadir la clave foránea
+            $table->foreign('asociacion_id')
+                ->references('id')
+                ->on('asociacions')
+                ->onDelete('cascade');
         });
     }
 
