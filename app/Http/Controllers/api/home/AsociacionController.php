@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API\home;
 
+use App\Http\Controllers\Controller;
 use App\Models\asociacion;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;

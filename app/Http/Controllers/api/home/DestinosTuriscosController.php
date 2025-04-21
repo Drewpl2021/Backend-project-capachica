@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API\home;
 
 use App\Models\DestinosTuriscos;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class DestinosTuriscosController extends Controller
 {

@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\API\home\AsociacionController;
+use App\Http\Controllers\API\home\EmprendedorController;
 use App\Http\Controllers\API\home\ImagenSliderController;
+use App\Http\Controllers\API\home\ImgAsociacionController;
 use App\Http\Controllers\API\home\MunicipalidadController;
 use App\Http\Controllers\API\home\MunicipalidadDescripcionController;
 use App\Http\Controllers\API\home\SliderMuniController;
@@ -10,9 +13,6 @@ use App\Http\Controllers\API\Login\AuthController;
 use App\Http\Controllers\API\Login\UserController;
 use App\Http\Controllers\API\Modules\ModuleController;
 use App\Http\Controllers\API\Modules\ParentModuleController;
-use App\Http\Controllers\AsociacionController;
-use App\Http\Controllers\EmprendedorController;
-use App\Http\Controllers\ImgAsociacionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,26 +25,21 @@ use App\Http\Controllers\ImgAsociacionController;
 |
 */
 
-// Rutas públicas
+// Rutas de Logueo y Registro
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 // Rutas autenticadas
 Route::middleware('auth:api')->group(function () {
-
-    // Perfil y logout para cualquier usuario autenticado
     Route::get('/perfil', [AuthController::class, 'perfil']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // Rutas con permisos (solo los usuarios con el permiso de editar perfil pueden hacerlo)
     Route::middleware('permission:editar_perfil')->put('/editar-datos', [UserController::class, 'editar']);
 
-    // Rutas accesibles para admins y admin_familia
     Route::middleware('role:admin|admin_familia')->group(function () {
         Route::put('/usuarios/{id}', [UserController::class, 'update']);
     });
 
-    // Rutas exclusivas para administradores (admin)
     Route::middleware('role:admin')->prefix('usuarios')->group(function () {
         Route::get('/', [UserController::class, 'index']);
         Route::post('/', [UserController::class, 'store']);
@@ -55,7 +50,6 @@ Route::middleware('auth:api')->group(function () {
 
 // Rutas protegidas solo para admin y admin_familia
 Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(function () {
-
     // Rutas ParentModuleController
     Route::prefix('parent-module')->group(function () {
         Route::get('/', [ParentModuleController::class, 'listPaginate']);
@@ -66,7 +60,6 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
         Route::put('/{id}', [ParentModuleController::class, 'update']);
         Route::delete('/{id}', [ParentModuleController::class, 'destroy']);
     });
-
     // Rutas ModuleController
     Route::prefix('module')->group(function () {
         Route::get('/', [ModuleController::class, 'index']);
