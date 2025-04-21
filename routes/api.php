@@ -28,6 +28,8 @@ use App\Http\Controllers\API\Modules\ParentModuleController;
 // Rutas de Logueo y Registro
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/parent-module/listar', [ParentModuleController::class, 'listar']);
+
 
 // Rutas autenticadas
 Route::middleware('auth:api')->group(function () {
@@ -84,7 +86,7 @@ Route::prefix('municipalidad')->group(function () {
     Route::get('/code/{codigo}', [MunicipalidadController::class, 'searchByCode']);
 
 
-    Route::get('/{municipalidadId}/descripcion', [MunicipalidadDescripcionController::class, 'index']); // Descripciones de una municipalidad
+    Route::get('/descripcion/{municipalidadId}', [MunicipalidadDescripcionController::class, 'index']); // Descripciones de una municipalidad
     Route::post('/{municipalidadId}/descripcion', [MunicipalidadDescripcionController::class, 'store']); // Crear descripción
     Route::get('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'show']); // Obtener una descripción
     Route::put('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'update']); // Actualizar descripción
