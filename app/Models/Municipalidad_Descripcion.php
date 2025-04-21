@@ -10,6 +10,8 @@ class Municipalidad_Descripcion extends Model
 {
     use HasFactory;
     protected $fillable = ['municipalidad_id', 'logo', 'direccion', 'descripcion', 'ruc', 'correo', 'nombre_alcalde', 'anio_gestion'];
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected static function boot()
     {
         parent::boot();

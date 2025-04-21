@@ -15,7 +15,11 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('razon_social');
             $table->string('familia');
-            $table->foreignId('asociacion_id')->constrained('asociacions');
+            $table->uuid('asociacion_id'); // Cambiado a uuid
+            $table->foreign('asociacion_id') // Clave foránea
+                ->references('id')
+                ->on('asociacions')
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('asociacions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('municipalidad_id'); // Clave foránea que hace referencia a la tabla 'municipalidads'
-            $table->string('nombres');
+            $table->string('nombre');
             $table->string('descripcion');
             $table->string('lugar');
-            $table->boolean('status');
+            $table->boolean('estado');
             $table->foreign('municipalidad_id')
                 ->references('id')
                 ->on('municipalidads')

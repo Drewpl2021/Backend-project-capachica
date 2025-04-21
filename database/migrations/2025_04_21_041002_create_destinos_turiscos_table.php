@@ -12,11 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('destinos_turiscos', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->uuid('id')->primary();  // Asegúrate de que sea un uuid
             $table->string('nombre');
             $table->string('descripcion');
             $table->string('lugar');
-            $table->foreignId('emprendedor_id')->constrained('emprendedores')->onDelete('cascade');
+            $table->uuid('emprendedor_id'); // Cambiado a uuid
+            $table->foreign('emprendedor_id')
+                ->references('id')
+                ->on('emprendedors')
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }
