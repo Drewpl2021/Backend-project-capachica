@@ -36,8 +36,33 @@ class ParentModule extends Model
         });
     }
 
+    // Relación con el modelo 'Module'
     public function modules()
     {
         return $this->hasMany(Module::class, 'parent_module_id');
+    }
+
+    // Convertir 'created_at' a 'createdAt'
+    public function getCreatedAtAttribute($value)
+    {
+        return $this->asDateTime($value)->format('Y-m-d\TH:i:s.v\Z');
+    }
+
+    // Convertir 'updated_at' a 'updatedAt'
+    public function getUpdatedAtAttribute($value)
+    {
+        return $this->asDateTime($value)->format('Y-m-d\TH:i:s.v\Z');
+    }
+
+    // Convertir 'deleted_at' a 'deletedAt'
+    public function getDeletedAtAttribute($value)
+    {
+        return $value ? $this->asDateTime($value)->format('Y-m-d\TH:i:s.v\Z') : null;
+    }
+
+    // Convertir 'status' de 1/0 a booleano
+    public function getStatusAttribute($value)
+    {
+        return (bool) $value;
     }
 }

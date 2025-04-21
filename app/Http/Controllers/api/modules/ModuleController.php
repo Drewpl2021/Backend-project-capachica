@@ -18,10 +18,10 @@ class ModuleController extends Controller
     public function index(Request $request)
     {
         // Configuración del tamaño y el nombre para la paginación
-        $size = $request->input('size', 20);  // Número de elementos por página
+        $size = $request->input('size', 10);  // Número de elementos por página
         $name = $request->input('name');       // Filtro por nombre
 
-        // Construir la consulta para obtener los módulos
+        // Construir la consulta para obtener los módulos con la relación 'parentModule'
         $query = Module::with('parentModule');
 
         // Si se proporciona un nombre, aplicar el filtro
@@ -32,14 +32,40 @@ class ModuleController extends Controller
         // Realizar la paginación de la consulta
         $data = $query->paginate($size);
 
+        // Transformar los resultados de la paginación para formatear la respuesta como 'parentModule' y otros detalles
+        $response = $data->map(function ($module) {
+            return [
+                'id' => $module->id,
+                'title' => $module->title,
+                'subtitle' => $module->subtitle,
+                'type' => $module->type,
+                'code' => $module->code,
+                'icon' => $module->icon,
+                'status' => $module->status,
+                'moduleOrder' => $module->moduleOrder,
+                'link' => $module->link,
+                'createdAt' => $module->created_at,
+                'updatedAt' => $module->updated_at,
+                'deletedAt' => $module->deleted_at,
+                // Transformar la relación parentModule en formato camelCase
+                'parentModule' => [
+                    'id' => $module->parentModule->id,
+                    'title' => $module->parentModule->title,
+                    'code' => $module->parentModule->code,
+                    'subtitle' => $module->parentModule->subtitle,
+                ]
+            ];
+        });
+
         // Formatear la respuesta
         return response()->json([
-            'content' => $data->items(),  // Los elementos de la página actual
+            'content' => $response,  // Los elementos de la página actual
             'totalElements' => $data->total(),  // Total de elementos en la base de datos
             'currentPage' => $data->currentPage() - 1,  // Laravel comienza a contar desde 1, pero queremos contar desde 0
             'totalPages' => $data->lastPage(),  // Total de páginas disponibles
         ]);
     }
+
 
 
     /**
@@ -93,6 +119,12 @@ class ModuleController extends Controller
      */
     public function store(Request $request)
     {
+        // Transformar el nombre del campo 'parentModuleId' a 'parent_module_id' para que coincida con la base de datos
+        $request->merge([
+            'parent_module_id' => $request->input('parentModuleId')
+        ]);
+
+        // Validar los datos con los nombres correctos para la base de datos
         $validated = $request->validate([
             'title' => 'required|string|max:100',
             'subtitle' => 'required|string|max:100',
@@ -102,21 +134,51 @@ class ModuleController extends Controller
             'status' => 'required|boolean',
             'moduleOrder' => 'required|integer',
             'link' => 'required|string|max:500',
-            'parent_module_id' => 'required|uuid|exists:parent_modules,id',
+            'parent_module_id' => 'required|uuid|exists:parent_modules,id', // Asegúrate de que este campo sea válido
         ]);
 
+        // Crear el módulo con los datos validados
         $module = Module::create($validated);
+
+        // Retornar la respuesta con el módulo creado
         return response()->json($module, 201);
     }
+
 
     /**
      * GET /module/{id}
      */
     public function show($id)
     {
+        // Buscar el módulo con su relación con el módulo padre
         $module = Module::with('parentModule')->findOrFail($id);
-        return response()->json($module);
+
+        // Transformar la respuesta para devolver en el formato esperado
+        $formattedModule = [
+            'id' => $module->id,
+            'title' => $module->title,
+            'subtitle' => $module->subtitle,
+            'type' => $module->type,
+            'code' => $module->code,
+            'icon' => $module->icon,
+            'status' => $module->status,
+            'moduleOrder' => $module->moduleOrder,
+            'link' => $module->link,
+            'createdAt' => $module->created_at,  // Convertir a camelCase
+            'updatedAt' => $module->updated_at,  // Convertir a camelCase
+            'deletedAt' => $module->deleted_at,  // Convertir a camelCase
+            'parentModule' => [  // Relación con 'parentModule' en camelCase
+                'id' => $module->parentModule->id,
+                'title' => $module->parentModule->title,
+                'code' => $module->parentModule->code,
+                'subtitle' => $module->parentModule->subtitle,
+            ]
+        ];
+
+        // Devolver la respuesta formateada
+        return response()->json($formattedModule);
     }
+
 
     /**
      * GET /module/modules-selected/roleId/{roleId}/parentModuleId/{parentModuleId}
@@ -146,6 +208,12 @@ class ModuleController extends Controller
     {
         $module = Module::findOrFail($id);
 
+        // Transformar el nombre del campo 'parentModuleId' a 'parent_module_id' para que coincida con la base de datos
+        $request->merge([
+            'parent_module_id' => $request->input('parentModuleId')
+        ]);
+
+        // Validar los datos con los nombres correctos para la base de datos
         $validated = $request->validate([
             'title' => 'required|string|max:100',
             'subtitle' => 'required|string|max:100',
@@ -155,11 +223,13 @@ class ModuleController extends Controller
             'status' => 'required|boolean',
             'moduleOrder' => 'required|integer',
             'link' => 'required|string|max:500',
-            'parent_module_id' => 'required|uuid|exists:parent_modules,id',
+            'parent_module_id' => 'required|uuid|exists:parent_modules,id',  // Asegúrate de que este campo sea válido
         ]);
 
+        // Actualizar el módulo con los datos validados
         $module->update($validated);
 
+        // Retornar la respuesta con el módulo actualizado
         return response()->json($module);
     }
 
