@@ -93,7 +93,7 @@ Route::prefix('municipalidad')->group(function () {
     Route::get('/code/{codigo}', [MunicipalidadController::class, 'searchByCode']);
 
 
-    Route::get('/{municipalidadId}/descripcion', [MunicipalidadDescripcionController::class, 'index']); // Descripciones de una municipalidad
+    Route::get('/descripcion/{municipalidadId}', [MunicipalidadDescripcionController::class, 'index']); // Descripciones de una municipalidad
     Route::post('/{municipalidadId}/descripcion', [MunicipalidadDescripcionController::class, 'store']); // Crear descripción
     Route::get('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'show']); // Obtener una descripción
     Route::put('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'update']); // Actualizar descripción
