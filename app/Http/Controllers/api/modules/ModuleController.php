@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 class ModuleController extends Controller
 {
     /**
-     * GET /module?page=&size=&name=
+     * GET /module?page=&size=&name=pastor
      */
     public function index(Request $request)
     {
