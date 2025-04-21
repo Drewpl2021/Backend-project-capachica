@@ -29,6 +29,8 @@ class MunicipalidadController extends Controller
             'distrito' => 'required|string|max:255',
             'provincia' => 'required|string|max:255',
             'region' => 'required|string|max:255',
+            'codigo' => 'required|string|max:255',
+
         ]);
 
         // Crear la municipalidad y asignar automáticamente el UUID
@@ -87,5 +89,18 @@ class MunicipalidadController extends Controller
 
         $municipalidad->delete();
         return $this->successResponse([], 'Municipalidad eliminada exitosamente');
+    }
+
+    public function searchByCode($codigo)
+    {
+        // Buscar la municipalidad por el campo 'codigo'
+        $municipalidad = Municipalidad::where('codigo', $codigo)->first(); // Encuentra el primer registro con el código
+
+        if (!$municipalidad) {
+            return $this->errorResponse('Municipalidad no encontrada', 404);
+        }
+
+        // Devolver todos los campos de la municipalidad encontrada
+        return $this->successResponse($municipalidad, 'Municipalidad encontrada');
     }
 }

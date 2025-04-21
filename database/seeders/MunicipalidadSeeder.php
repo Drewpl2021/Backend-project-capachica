@@ -20,14 +20,16 @@ class MunicipalidadSeeder  extends Seeder
             'id' => Str::uuid(),
             'distrito' => 'Capachica',
             'provincia' => 'Puno',
-            'region' => 'Puno'
+            'region' => 'Puno',
+            'codigo' => '01'
         ]);
 
         Municipalidad::create([
             'id' => Str::uuid(),
             'distrito' => 'Juliaca',
             'provincia' => 'San Román',
-            'region' => 'Puno'
+            'region' => 'Puno',
+            'codigo' => '02'
         ]);
         // Agrega más módulos aquí...
     }
