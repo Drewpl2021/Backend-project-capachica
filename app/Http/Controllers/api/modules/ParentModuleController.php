@@ -69,6 +69,38 @@ class ParentModuleController extends Controller
 
         return response()->json($response);
     }
+    public function listar(Request $request)
+    {
+        $name = $request->input('name');
+        $query = ParentModule::query();
+
+        if ($name) {
+            $query->where('title', 'like', "%$name%");
+        }
+
+        // Obtener los resultados con la estructura esperada
+        $parentModules = $query->get();
+
+        // Mapear los resultados para devolverlos con el formato camelCase
+        $response = $parentModules->map(function ($module) {
+            return [
+                'id' => $module->id,
+                'title' => $module->title,
+                'code' => $module->code,
+                'subtitle' => $module->subtitle,
+                'type' => $module->type,
+                'icon' => $module->icon,
+                'status' => $module->status,  // Aquí ya está convertido a booleano
+                'moduleOrder' => $module->moduleOrder,
+                'link' => $module->link,
+                'createdAt' => $module->createdAt,  // Usando el accesor
+                'updatedAt' => $module->updatedAt,  // Usando el accesor
+                'deletedAt' => $module->deletedAt,  // Usando el accesor
+            ];
+        });
+
+        return response()->json($response);
+    }
 
     /**
      * GET /parent-module/list-detail-module-list

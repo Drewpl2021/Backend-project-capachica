@@ -21,6 +21,8 @@ use App\Http\Controllers\API\Modules\ParentModuleController;
 // Rutas públicas
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/parent-module/listar', [ParentModuleController::class, 'listar']);
+
 
 // Rutas autenticadas
 Route::middleware('auth:api')->group(function () {
