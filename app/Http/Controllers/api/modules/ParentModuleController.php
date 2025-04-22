@@ -26,7 +26,7 @@ class ParentModuleController extends Controller
 
         $data = $query->paginate($size);
 
-        return response()->json([
+        return $this->successResponse([
             'items' => $data->items(),
             'total' => $data->total(),
             'current_page' => $data->currentPage(),
@@ -46,10 +46,8 @@ class ParentModuleController extends Controller
             $query->where('title', 'like', "%$name%");
         }
 
-        // Obtener los resultados con la estructura esperada
         $parentModules = $query->get();
 
-        // Mapear los resultados para devolverlos con el formato camelCase
         $response = $parentModules->map(function ($module) {
             return [
                 'id' => $module->id,
@@ -66,8 +64,7 @@ class ParentModuleController extends Controller
                 'deletedAt' => $module->deletedAt,  // Usando el accesor
             ];
         });
-
-        return response()->json($response);
+        return $this->successResponse($response);
     }
     public function listar(Request $request)
     {
@@ -78,10 +75,8 @@ class ParentModuleController extends Controller
             $query->where('title', 'like', "%$name%");
         }
 
-        // Obtener los resultados con la estructura esperada
         $parentModules = $query->get();
 
-        // Mapear los resultados para devolverlos con el formato camelCase
         $response = $parentModules->map(function ($module) {
             return [
                 'id' => $module->id,
@@ -99,7 +94,7 @@ class ParentModuleController extends Controller
             ];
         });
 
-        return response()->json($response);
+        return $this->successResponse($response);
     }
 
     /**
@@ -128,7 +123,7 @@ class ParentModuleController extends Controller
         ]);
 
         $module = ParentModule::create($validated);
-        return response()->json($module, 201);
+        return $this->successResponse($module, 'Módulo principal creado con éxito', 201);
     }
 
     /**
@@ -137,7 +132,7 @@ class ParentModuleController extends Controller
     public function show($id)
     {
         $module = ParentModule::findOrFail($id);
-        return response()->json($module);
+        return $this->successResponse($module);
     }
 
     /**
@@ -160,7 +155,7 @@ class ParentModuleController extends Controller
 
         $module->update($validated);
 
-        return response()->json($module);
+        return $this->successResponse($module);
     }
 
     /**
@@ -174,7 +169,7 @@ class ParentModuleController extends Controller
         // Retornar la paginación por defecto como en Java
         $data = ParentModule::paginate(20);
 
-        return response()->json([
+        return $this->successResponse([
             'message' => 'Eliminado correctamente',
             'items' => $data->items(),
             'total' => $data->total(),

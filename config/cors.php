@@ -6,7 +6,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'], // pon explícitamente tu front http://localhost:4200
+    'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => [],
 
@@ -18,4 +18,3 @@ return [
 
     'supports_credentials' => false,
 ];
-

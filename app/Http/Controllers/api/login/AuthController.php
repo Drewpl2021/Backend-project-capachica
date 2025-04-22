@@ -114,8 +114,9 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         // Buscar al usuario por nombre o email
-        $user = User::where('email', $request->email)
-            ->orWhere('username', $request->username) // Permitimos iniciar sesión con 'name' o 'email'
+        $user = User::with('permissions')  // Asegúrate de cargar los permisos
+            ->where('email', $request->email)
+            ->orWhere('username', $request->username)
             ->first();
 
         // Si el usuario no existe o la contraseña no coincide, retornamos error
@@ -124,7 +125,7 @@ class AuthController extends Controller
         }
 
         // Crear token con el trait TokenHelper
-        $token = $this->createToken($user);
+        $tokenData = $this->createToken($user);  // El token y la expiración
 
         // Si no tiene rol, asignarle por defecto
         if (!$user->hasAnyRole(['admin', 'admin_familia', 'usuario'])) {
@@ -133,10 +134,11 @@ class AuthController extends Controller
 
         // Respuesta exitosa con token, datos de usuario, roles y permisos
         return $this->successResponse([
-            'token' => $token,
+            'token' => $tokenData['access_token'],
+            'expires_at' => $tokenData['expires_at'],  // La fecha de expiración
             'username' => $user->only(['id', 'username', 'email', 'imagen_url']),
             'roles' => $user->getRoleNames(),
-            'permissions' => $user->getAllPermissions()->pluck('username'),
+            'permissions' => $user->getAllPermissions()->pluck('name'),
         ], 'Usuario iniciado sesión correctamente', 200);
     }
 

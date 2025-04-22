@@ -13,8 +13,21 @@ class MunicipalidadController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $size = $request->input('size', 10);
+        $name = $request->input('name');
+
+        $query = Municipalidad::query();
+
+        if ($name) {
+            $query->where('title', 'like', "%$name%");
+        }
+
+        $data = $query->paginate($size);
+
+        // Realizar la paginación de la consulta
+        $data = $query->paginate($size);
         $municipalidades = Municipalidad::all();
         return $this->successResponse($municipalidades, 'Municipalidades obtenidas exitosamente');
     }
