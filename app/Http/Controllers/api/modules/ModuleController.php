@@ -165,7 +165,7 @@ class ModuleController extends Controller
             ]
         ];
 
-        return $this->successResponse($formattedModule);
+        return response()->json($formattedModule);
     }
 
 
@@ -184,7 +184,7 @@ class ModuleController extends Controller
             ];
         });
 
-        return $this->successResponse($response);
+        return response()->json($response);
     }
 
     /**
@@ -212,7 +212,7 @@ class ModuleController extends Controller
 
         $module->update($validated);
 
-        return $this->successResponse($module);
+        return response()->json($module);
     }
 
     /**
@@ -224,12 +224,6 @@ class ModuleController extends Controller
         $module->delete();
 
         $data = Module::paginate(20);
-        return $this->successResponse([
-            'message' => 'Módulo eliminado',
-            'items' => $data->items(),
-            'total' => $data->total(),
-            'current_page' => $data->currentPage(),
-            'per_page' => $data->perPage(),
-        ]);
+        return response()->json($data);
     }
 }
