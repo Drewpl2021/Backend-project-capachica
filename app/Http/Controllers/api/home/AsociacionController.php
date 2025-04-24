@@ -31,7 +31,7 @@ class AsociacionController extends Controller
         $asociaciones = $query->paginate($size);
 
         // Formatear los datos antes de enviarlos
-        $response = collect($asociaciones->items())->map(function ($asociacion) {
+        $response = $asociaciones->map(function ($asociacion) {
             return [
                 'id' => $asociacion->id,
                 'nombre' => $asociacion->nombre,
