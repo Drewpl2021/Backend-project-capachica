@@ -59,7 +59,7 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
     Route::prefix('parent-module')->group(function () {
         Route::get('/page', [ParentModuleController::class, 'listPaginate']);  // Listar con paginación
         Route::get('/list', [ParentModuleController::class, 'list']);  // Listar sin paginación
-        Route::get('/parent-module/listar', [ParentModuleController::class, 'listar']);  // Otra lista
+        Route::get('/listar', [ParentModuleController::class, 'listar']);  // Otra lista
         Route::get('/list-detail-module-list', [ParentModuleController::class, 'listDetailModuleList']);  // Detalles de módulos
         Route::post('/', [ParentModuleController::class, 'store']);  // Crear nuevo módulo padre
         Route::get('/{id}', [ParentModuleController::class, 'show']);  // Mostrar módulo padre específico

@@ -26,11 +26,12 @@ class ParentModuleController extends Controller
 
         $data = $query->paginate($size);
 
-        return $this->successResponse([
-            'items' => $data->items(),
-            'total' => $data->total(),
-            'current_page' => $data->currentPage(),
-            'per_page' => $data->perPage(),
+        return response()->json([
+            'content' => $data,
+            'totalElements' => $data->total(),
+            'currentPage' => $data->currentPage() - 1,
+            'totalPages' => $data->lastPage(),
+            'perPage' => $data->perPage(),
         ]);
     }
 
@@ -64,7 +65,7 @@ class ParentModuleController extends Controller
                 'deletedAt' => $module->deletedAt,  // Usando el accesor
             ];
         });
-        return $this->successResponse($response);
+        return response()->json($response);
     }
 
     public function listar(Request $request)
@@ -95,7 +96,7 @@ class ParentModuleController extends Controller
             ];
         });
 
-        return $this->successResponse($response);
+        return response()->json($response);
     }
 
     /**
@@ -124,7 +125,7 @@ class ParentModuleController extends Controller
         ]);
 
         $module = ParentModule::create($validated);
-        return $this->successResponse($module, 'Módulo principal creado con éxito', 201);
+        return response()->json($module);
     }
 
     /**
@@ -133,7 +134,7 @@ class ParentModuleController extends Controller
     public function show($id)
     {
         $module = ParentModule::findOrFail($id);
-        return $this->successResponse($module);
+        return response()->json($module);
     }
 
     /**
@@ -156,7 +157,7 @@ class ParentModuleController extends Controller
 
         $module->update($validated);
 
-        return $this->successResponse($module);
+        return response()->json($module);
     }
 
     /**
@@ -170,12 +171,6 @@ class ParentModuleController extends Controller
         // Retornar la paginación por defecto como en Java
         $data = ParentModule::paginate(20);
 
-        return $this->successResponse([
-            'message' => 'Eliminado correctamente',
-            'items' => $data->items(),
-            'total' => $data->total(),
-            'current_page' => $data->currentPage(),
-            'per_page' => $data->perPage(),
-        ]);
+        return response()->json($data);
     }
 }
