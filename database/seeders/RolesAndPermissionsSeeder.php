@@ -43,7 +43,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'ver_usuarios',
             'editar_usuarios',
             'editar_perfil',
-            'Editar_Municipalidad',
+            'editar_municipalidad',
             'visualizar_municipalidad',
         ]);
 
