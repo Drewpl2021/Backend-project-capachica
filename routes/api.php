@@ -33,7 +33,7 @@ Route::post('/login', [AuthController::class, 'login']);
 // SOLO VER MUNICIPALIDAD RUTA LIBRE
 Route::get('/municipalidad_listar', [MunicipalidadController::class, 'index']);
 Route::get('/municipalidad_descripcions', [MunicipalidadDescripcionController::class, 'index']);
-Route::get('/{id}', [MunicipalidadController::class, 'show']);
+
 
 // Rutas de Login
 Route::middleware('auth:api')->group(function () {
@@ -83,9 +83,10 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
     // Prefijo 'municipalidad'
     Route::prefix('municipalidad')->group(function () {
         // Rutas para la municipalidad
-        Route::middleware('permission:editar_usuarios')->post('/crear', [MunicipalidadController::class, 'store']);
-        Route::middleware('permission:editar_usuarios')->put('/{id}', [MunicipalidadController::class, 'update']);
-        Route::middleware('permission:editar_usuarios')->delete('/{id}', [MunicipalidadController::class, 'destroy']);
+        Route::middleware('permission:editar_municipalidad')->post('/crear', [MunicipalidadController::class, 'store']);
+        Route::middleware('permission:editar_municipalidad')->put('/{id}', [MunicipalidadController::class, 'update']);
+        Route::middleware('permission:editar_municipalidad')->delete('/{id}', [MunicipalidadController::class, 'destroy']);
+        Route::get('/{id}', [MunicipalidadController::class, 'show']);
         Route::get('/code/{codigo}', [MunicipalidadController::class, 'searchByCode']);
 
         // Rutas para descripciones de la municipalidad
