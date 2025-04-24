@@ -50,6 +50,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $usuario = Role::firstOrCreate(['name' => 'usuario', 'guard_name' => 'api']);
         $usuario->syncPermissions([
             'editar_perfil',
+            'editar_municipalidad',
             'visualizar_municipalidad',
         ]);
     }
