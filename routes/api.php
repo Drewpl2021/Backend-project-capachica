@@ -69,13 +69,12 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
 
     // Rutas ModuleController
     Route::prefix('module')->group(function () {
-        Route::get('/page', [ModuleController::class, 'index']);  // Listar módulos
+        Route::get('/page', [ModuleController::class, 'index']); // Ruta para paginación
         Route::get('/menu', [ModuleController::class, 'menu']);  // Obtener menú
         Route::post('/', [ModuleController::class, 'store']);  // Crear nuevo módulo
         Route::get('/{id}', [ModuleController::class, 'show']);  // Ver módulo específico
         Route::put('/{id}', [ModuleController::class, 'update']);  // Actualizar módulo
         Route::delete('/{id}', [ModuleController::class, 'destroy']);  // Eliminar módulo
-        Route::get('/modules-selected/roleId/{roleId}/parentModuleId/{parentModuleId}', [ModuleController::class, 'modulesSelected']);  // Obtener módulos seleccionados
     });
 });
 

@@ -19,22 +19,21 @@ class ModuleController extends Controller
      */
     public function index(Request $request)
     {
-        $size = $request->input('size', 10);  // Número de elementos por página
-        $name = $request->input('name');  // Filtro opcional por nombre
+        $size = $request->input('size', 10);
+        $name = $request->input('name');
 
-        // Crear la consulta base para los módulos
-        $query = Module::with('parentModule');  // Asegúrate que la relación parentModule está bien definida
+        $query = Module::with('parentModule');
 
-        // Aplicar filtro por nombre si se pasa como parámetro
         if ($name) {
             $query->where('title', 'like', "%$name%");
         }
 
-        // Obtener los resultados paginados
         $data = $query->paginate($size);
 
-        // Mapear los datos a la estructura deseada
-        $response = $data->map(function ($module) {
+        $response = $data->items(); // Accedemos solo a los items de la paginación
+
+        // Mapear la respuesta
+        $response = collect($response)->map(function ($module) {
             return [
                 'id' => $module->id,
                 'title' => $module->title,
@@ -53,13 +52,21 @@ class ModuleController extends Controller
                     'title' => $module->parentModule->title,
                     'code' => $module->parentModule->code,
                     'subtitle' => $module->parentModule->subtitle,
-                ] : null,  // Asegurarse que si no tiene parentModule no lance error
+                ] : null,
             ];
         });
 
-        // Devuelves la respuesta en formato JSON con la paginación completa
-        return response()->json($response);
+        return response()->json([
+            'content' => $response,
+            'totalElements' => $data->total(),
+            'currentPage' => $data->currentPage() - 1,
+            'totalPages' => $data->lastPage(),
+            'perPage' => $data->perPage(),
+        ]);
     }
+
+
+
 
 
     /**
