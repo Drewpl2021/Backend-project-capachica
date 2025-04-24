@@ -19,16 +19,21 @@ class ModuleController extends Controller
      */
     public function index(Request $request)
     {
-        $size = $request->input('size', 10);
-        $name = $request->input('name');
+        $size = $request->input('size', 10);  // Número de elementos por página
+        $name = $request->input('name');  // Filtro opcional por nombre
 
-        $query = Module::with('parentModule');
+        // Crear la consulta base para los módulos
+        $query = Module::with('parentModule');  // Asegúrate que la relación parentModule está bien definida
 
+        // Aplicar filtro por nombre si se pasa como parámetro
         if ($name) {
             $query->where('title', 'like', "%$name%");
         }
+
+        // Obtener los resultados paginados
         $data = $query->paginate($size);
 
+        // Mapear los datos a la estructura deseada
         $response = $data->map(function ($module) {
             return [
                 'id' => $module->id,
@@ -43,18 +48,18 @@ class ModuleController extends Controller
                 'createdAt' => $module->created_at,
                 'updatedAt' => $module->updated_at,
                 'deletedAt' => $module->deleted_at,
-                'parentModule' => [
+                'parentModule' => $module->parentModule ? [
                     'id' => $module->parentModule->id,
                     'title' => $module->parentModule->title,
                     'code' => $module->parentModule->code,
                     'subtitle' => $module->parentModule->subtitle,
-                ]
+                ] : null,  // Asegurarse que si no tiene parentModule no lance error
             ];
         });
 
+        // Devuelves la respuesta en formato JSON con la paginación completa
         return response()->json($response);
     }
-
 
 
     /**

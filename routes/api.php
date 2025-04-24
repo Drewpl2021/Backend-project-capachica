@@ -57,26 +57,28 @@ Route::middleware('auth:api')->group(function () {
 Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(function () {
     // Rutas ParentModuleController
     Route::prefix('parent-module')->group(function () {
-        Route::get('/', [ParentModuleController::class, 'listPaginate']);
-        Route::get('/list', [ParentModuleController::class, 'list']);
-        Route::get('/parent-module/listar', [ParentModuleController::class, 'listar']);
-        Route::get('/list-detail-module-list', [ParentModuleController::class, 'listDetailModuleList']);
-        Route::post('/', [ParentModuleController::class, 'store']);
-        Route::get('/{id}', [ParentModuleController::class, 'show']);
-        Route::put('/{id}', [ParentModuleController::class, 'update']);
-        Route::delete('/{id}', [ParentModuleController::class, 'destroy']);
+        Route::get('/page', [ParentModuleController::class, 'listPaginate']);  // Listar con paginación
+        Route::get('/list', [ParentModuleController::class, 'list']);  // Listar sin paginación
+        Route::get('/parent-module/listar', [ParentModuleController::class, 'listar']);  // Otra lista
+        Route::get('/list-detail-module-list', [ParentModuleController::class, 'listDetailModuleList']);  // Detalles de módulos
+        Route::post('/', [ParentModuleController::class, 'store']);  // Crear nuevo módulo padre
+        Route::get('/{id}', [ParentModuleController::class, 'show']);  // Mostrar módulo padre específico
+        Route::put('/{id}', [ParentModuleController::class, 'update']);  // Actualizar módulo padre
+        Route::delete('/{id}', [ParentModuleController::class, 'destroy']);  // Eliminar módulo padre
     });
+
     // Rutas ModuleController
     Route::prefix('module')->group(function () {
-        Route::get('/', [ModuleController::class, 'index']);
-        Route::get('/menu', [ModuleController::class, 'menu']);
-        Route::post('/', [ModuleController::class, 'store']);
-        Route::get('/{id}', [ModuleController::class, 'show']);
-        Route::put('/{id}', [ModuleController::class, 'update']);
-        Route::delete('/{id}', [ModuleController::class, 'destroy']);
-        Route::get('/modules-selected/roleId/{roleId}/parentModuleId/{parentModuleId}', [ModuleController::class, 'modulesSelected']);
+        Route::get('/page', [ModuleController::class, 'index']);  // Listar módulos
+        Route::get('/menu', [ModuleController::class, 'menu']);  // Obtener menú
+        Route::post('/', [ModuleController::class, 'store']);  // Crear nuevo módulo
+        Route::get('/{id}', [ModuleController::class, 'show']);  // Ver módulo específico
+        Route::put('/{id}', [ModuleController::class, 'update']);  // Actualizar módulo
+        Route::delete('/{id}', [ModuleController::class, 'destroy']);  // Eliminar módulo
+        Route::get('/modules-selected/roleId/{roleId}/parentModuleId/{parentModuleId}', [ModuleController::class, 'modulesSelected']);  // Obtener módulos seleccionados
     });
 });
+
 
 Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(function () {
     // Prefijo 'municipalidad'

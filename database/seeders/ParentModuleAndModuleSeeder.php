@@ -15,7 +15,7 @@ class ParentModuleAndModuleSeeder extends Seeder
     public function run(): void
     {
         // Parent Modules
-        $this->seedParentModule('heroicons_outline:cog-6-tooth', '/example', 1, 'usuario roles y permisos', 'Configuración', 'collapsable', '01');
+        $this->seedParentModule('heroicons_outline:cog-6-tooth', '/example', 1, 'Configuracion Completa de Dashboard y Roles', 'Configuración', 'collapsable', '01');
         //$this->seedParentModule('heroicons_outline:cog-6-tooth', '/example', 1, '', 'Configuración', 'collapsable', '01');
         //$this->seedParentModule('heroicons_outline:currency-dollar', '/example', 3, 'Contabilidad', 'Contabilidad', 'collapsable', '03');
         //$this->seedParentModule('heroicons_outline:shopping-bag', '/example', 6, 'Ventas', 'Ventas', 'collapsable', '06');

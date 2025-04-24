@@ -48,7 +48,7 @@ class AsociacionController extends Controller
         return $this->successResponse([
             'content' => $response,
             'totalElements' => $asociaciones->total(),
-            'currentPage' => $asociaciones->currentPage() - 1, // Restamos 1 para mantener la numeración desde 0
+            'currentPage' => $asociaciones->currentPage() - 1,
             'totalPages' => $asociaciones->lastPage(),
         ]);
     }
