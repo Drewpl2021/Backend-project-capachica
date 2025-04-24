@@ -31,7 +31,7 @@ class AsociacionController extends Controller
         $asociaciones = $query->paginate($size);
 
         // Formatear los datos antes de enviarlos
-        $response = $asociaciones->map(function ($asociacion) {
+        $response = collect($asociaciones->items())->map(function ($asociacion) {
             return [
                 'id' => $asociacion->id,
                 'nombre' => $asociacion->nombre,
@@ -45,11 +45,12 @@ class AsociacionController extends Controller
             ];
         });
 
-        return $this->successResponse([
+        return response()->json([
             'content' => $response,
             'totalElements' => $asociaciones->total(),
             'currentPage' => $asociaciones->currentPage() - 1,
             'totalPages' => $asociaciones->lastPage(),
+            'perPage' => $asociaciones->perPage(),
         ]);
     }
 
@@ -67,7 +68,7 @@ class AsociacionController extends Controller
         ]);
 
         $asociacion = Asociacion::create($validated);
-        return $this->successResponse($asociacion, 'Asociación creada exitosamente', 201);
+        return response()->json($asociacion);
     }
 
     /**
@@ -81,7 +82,7 @@ class AsociacionController extends Controller
             return $this->errorResponse('Asociación no encontradas', 404);
         }
 
-        return $this->successResponse($asociacion, 'Asociación encontrada');
+        return response()->json($asociacion);
     }
 
     /**
@@ -104,7 +105,7 @@ class AsociacionController extends Controller
         ]);
 
         $asociacion->update($validated);
-        return $this->successResponse($asociacion, 'Asociación actualizada exitosamente');
+        return response()->json($asociacion);
     }
 
     /**

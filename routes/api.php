@@ -33,7 +33,13 @@ Route::post('/login', [AuthController::class, 'login']);
 // SOLO VER MUNICIPALIDAD RUTA LIBRE
 Route::get('/municipalidad_listar', [MunicipalidadController::class, 'index']);
 Route::get('/municipalidad_descripcions', [MunicipalidadDescripcionController::class, 'index']);
+Route::get('/imagen_slider', [ImagenSliderController::class, 'index']);
 
+// EMPRENDEDOR
+Route::get('/emprendedor_listar', [EmprendedorController::class, 'index']);
+
+// ASOCIACIONES
+Route::get('/asociaciones_listar', [AsociacionController::class, 'index']);
 
 // Rutas de Login
 Route::middleware('auth:api')->group(function () {
@@ -89,55 +95,49 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
         Route::get('/{id}', [MunicipalidadController::class, 'show']);
         Route::get('/code/{codigo}', [MunicipalidadController::class, 'searchByCode']);
 
-        // Rutas para descripciones de la municipalidad
-
-        Route::post('/descripcion/{municipalidadId}', [MunicipalidadDescripcionController::class, 'store']);
-        Route::get('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'show']);
-        Route::put('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'update']);
-        Route::delete('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'destroy']);
+        Route::middleware('permission:editar_municipalidad')->post('/descripcion/{municipalidadId}', [MunicipalidadDescripcionController::class, 'store']);
+        Route::middleware('permission:editar_municipalidad')->get('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'show']);
+        Route::middleware('permission:editar_municipalidad')->put('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'update']);
+        Route::middleware('permission:editar_municipalidad')->delete('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'destroy']);
     });
-});
+    // Rutas protegidas para Slider y ImagenSlider
+    Route::prefix('slider')->group(function () {
+        // Rutas para SliderMuniController
+        Route::get('/', [SliderMuniController::class, 'index']);
+        Route::post('/', [SliderMuniController::class, 'store']);
+        Route::get('/{id}', [SliderMuniController::class, 'show']);
+        Route::put('/{id}', [SliderMuniController::class, 'update']);
+        Route::delete('/{id}', [SliderMuniController::class, 'destroy']);
 
+        // Rutas para ImagenSliderController
 
-// Rutas protegidas para Slider y ImagenSlider
-Route::prefix('slider')->group(function () {
-    // Rutas para SliderMuniController
-    Route::get('/', [SliderMuniController::class, 'index']);
-    Route::post('/', [SliderMuniController::class, 'store']);
-    Route::get('/{id}', [SliderMuniController::class, 'show']);
-    Route::put('/{id}', [SliderMuniController::class, 'update']);
-    Route::delete('/{id}', [SliderMuniController::class, 'destroy']);
-
-    // Rutas para ImagenSliderController
-    Route::get('/imagen', [ImagenSliderController::class, 'index']);
-    Route::post('/imagen', [ImagenSliderController::class, 'store']);
-    Route::get('/imagen/{id}', [ImagenSliderController::class, 'show']);
-    Route::put('/imagen/{id}', [ImagenSliderController::class, 'update']);
-    Route::delete('/imagen/{id}', [ImagenSliderController::class, 'destroy']);
-});
-
-// Rutas para las asociaciones
-Route::prefix('asociacion')->group(function () {
-    Route::get('/', [AsociacionController::class, 'index']); // Obtener todas las asociaciones
-    Route::post('/', [AsociacionController::class, 'store']); // Crear nueva asociación
-    Route::get('/{id}', [AsociacionController::class, 'show']); // Mostrar una asociación específica
-    Route::put('/{id}', [AsociacionController::class, 'update']); // Actualizar asociación
-    Route::delete('/{id}', [AsociacionController::class, 'destroy']); // Eliminar asociación
-});
-
-// Rutas para los emprendedores
-Route::prefix('emprendedor')->group(function () {
-    Route::get('/', [EmprendedorController::class, 'index']); // Obtener todos los emprendedores
-    Route::post('/', [EmprendedorController::class, 'store']); // Crear nuevo emprendedor
-    Route::get('/{id}', [EmprendedorController::class, 'show']); // Mostrar un emprendedor específico
-    Route::put('/{id}', [EmprendedorController::class, 'update']); // Actualizar emprendedor
-    Route::delete('/{id}', [EmprendedorController::class, 'destroy']); // Eliminar emprendedor
-});
-// Rutas para las imágenes de las asociaciones
-Route::prefix('img-asociacion')->group(function () {
-    Route::get('/', [ImgAsociacionController::class, 'index']); // Obtener todas las imágenes
-    Route::post('/', [ImgAsociacionController::class, 'store']); // Crear nueva imagen
-    Route::get('/{id}', [ImgAsociacionController::class, 'show']); // Mostrar imagen específica
-    Route::put('/{id}', [ImgAsociacionController::class, 'update']); // Actualizar imagen
-    Route::delete('/{id}', [ImgAsociacionController::class, 'destroy']); // Eliminar imagen
+        Route::post('/imagen', [ImagenSliderController::class, 'store']);
+        Route::get('/imagen/{id}', [ImagenSliderController::class, 'show']);
+        Route::put('/imagen/{id}', [ImagenSliderController::class, 'update']);
+        Route::delete('/imagen/{id}', [ImagenSliderController::class, 'destroy']);
+    });
+    // Rutas para las asociaciones
+    Route::prefix('asociacion')->group(function () {
+        // Obtener todas las asociaciones
+        Route::post('/', [AsociacionController::class, 'store']); // Crear nueva asociación
+        Route::get('/{id}', [AsociacionController::class, 'show']); // Mostrar una asociación específica
+        Route::put('/{id}', [AsociacionController::class, 'update']); // Actualizar asociación
+        Route::delete('/{id}', [AsociacionController::class, 'destroy']); // Eliminar asociación
+    });
+    // Rutas para los emprendedores
+    Route::prefix('emprendedor')->group(function () {
+        // Obtener todos los emprendedores
+        Route::post('/', [EmprendedorController::class, 'store']); // Crear nuevo emprendedor
+        Route::get('/{id}', [EmprendedorController::class, 'show']); // Mostrar un emprendedor específico
+        Route::put('/{id}', [EmprendedorController::class, 'update']); // Actualizar emprendedor
+        Route::delete('/{id}', [EmprendedorController::class, 'destroy']); // Eliminar emprendedor
+    });
+    // Rutas para las imágenes de las asociaciones
+    Route::prefix('img-asociacion')->group(function () {
+        Route::get('/', [ImgAsociacionController::class, 'index']); // Obtener todas las imágenes
+        Route::post('/', [ImgAsociacionController::class, 'store']); // Crear nueva imagen
+        Route::get('/{id}', [ImgAsociacionController::class, 'show']); // Mostrar imagen específica
+        Route::put('/{id}', [ImgAsociacionController::class, 'update']); // Actualizar imagen
+        Route::delete('/{id}', [ImgAsociacionController::class, 'destroy']); // Eliminar imagen
+    });
 });

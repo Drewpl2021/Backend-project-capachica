@@ -13,22 +13,23 @@ class EmprendedorSeeder extends Seeder
      */
     public function run()
     {
-        // Obtener una asociación existente
-        $asociacion = Asociacion::first(); // Asegúrate de que haya al menos una asociación en la base de datos
+        // Obtener todas las asociaciones existentes
+        $asociaciones = Asociacion::all(); // Se obtiene todas las asociaciones en la base de datos
 
-        // Crear algunos emprendedores de ejemplo
-        Emprendedor::create([
-            'asociacion_id' => $asociacion->id,
-            'razon_social' => 'Emprendedor 1',
-            'familia' => 'Familia A',
-        ]);
+        // Iterar sobre cada asociación
+        foreach ($asociaciones as $asociacion) {
+            // Crear dos emprendedores para cada asociación
+            Emprendedor::create([
+                'asociacion_id' => $asociacion->id,
+                'razon_social' => 'Emprendedor 1 - ' . $asociacion->nombre,
+                'familia' => 'Familia A',
+            ]);
 
-        Emprendedor::create([
-            'asociacion_id' => $asociacion->id,
-            'razon_social' => 'Emprendedor 2',
-            'familia' => 'Familia A',
-        ]);
-
-        // Agrega más emprendedores si es necesario
+            Emprendedor::create([
+                'asociacion_id' => $asociacion->id,
+                'razon_social' => 'Emprendedor 2 - ' . $asociacion->nombre,
+                'familia' => 'Familia B',
+            ]);
+        }
     }
 }

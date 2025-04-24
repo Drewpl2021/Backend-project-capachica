@@ -18,18 +18,20 @@ class MunicipalidadController extends Controller
         $size = $request->input('size', 10);
         $name = $request->input('name');
 
-        // Crear la consulta base
         $query = Municipalidad::query();
 
         if ($name) {
-            $query->where('title', 'like', "%$name%");
+            $query->where('distrito', 'like', "%$name%");
         }
 
         // Obtener los resultados paginados
         $municipalidades = $query->paginate($size);
 
-        // Formatear los datos antes de enviarlos
-        $response = collect($municipalidades->items())->map(function ($municipalidad) {
+        // Mapear los resultados de la paginación
+        $response = $municipalidades->items();  // Obtienes los items de la paginación directamente
+
+        // Formatear la respuesta
+        $response = collect($response)->map(function ($municipalidad) {
             return [
                 'id' => $municipalidad->id,
                 'distrito' => $municipalidad->distrito,
@@ -42,14 +44,16 @@ class MunicipalidadController extends Controller
             ];
         });
 
+        // Retornar la respuesta con los datos paginados
         return response()->json([
             'content' => $response,
-            'totalElements' => $response->total(),
-            'currentPage' => $response->currentPage() - 1,
-            'totalPages' => $response->lastPage(),
-            'perPage' => $response->perPage(),
+            'totalElements' => $municipalidades->total(),
+            'currentPage' => $municipalidades->currentPage(),
+            'totalPages' => $municipalidades->lastPage(),
+            'perPage' => $municipalidades->perPage(),
         ]);
     }
+
 
 
     /**

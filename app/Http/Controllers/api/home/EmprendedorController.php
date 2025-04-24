@@ -20,7 +20,7 @@ class EmprendedorController extends Controller
         $name = $request->input('name');
 
         // Crear la consulta base
-        $query = Emprendedor::query();
+        $query = Emprendedor::with('asociacion');  // Cargar la relación con la asociación
 
         // Si se pasa un nombre, aplicar filtro
         if ($name) {
@@ -36,6 +36,7 @@ class EmprendedorController extends Controller
                 'id' => $emprendedor->id,
                 'razonSocial' => $emprendedor->razon_social,
                 'asociacionId' => $emprendedor->asociacion_id,
+                'Nombre Asociacion' => $emprendedor->asociacion->nombre, // Obtener el nombre de la asociación
                 'newColumn' => $emprendedor->new_column,
                 'createdAt' => $emprendedor->created_at,
                 'updatedAt' => $emprendedor->updated_at,
@@ -43,11 +44,12 @@ class EmprendedorController extends Controller
             ];
         });
 
-        return $this->successResponse([
+        return response()->json([
             'content' => $response,
             'totalElements' => $emprendedores->total(),
-            'currentPage' => $emprendedores->currentPage() - 1, // Restamos 1 para mantener la numeración desde 0
+            'currentPage' => $emprendedores->currentPage() - 1,
             'totalPages' => $emprendedores->lastPage(),
+            'perPage' => $emprendedores->perPage(),
         ]);
     }
     /**
@@ -76,7 +78,7 @@ class EmprendedorController extends Controller
             return $this->errorResponse('Emprendedor no encontrado', 404);
         }
 
-        return $this->successResponse($emprendedor, 'Emprendedor encontrado');
+        return response()->json($emprendedor);
     }
 
     /**

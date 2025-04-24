@@ -161,7 +161,14 @@ class AuthController extends Controller
     public function perfil(Request $request)
     {
         // Retornamos la información del usuario autenticado
-        return $this->success($request->user());
+        // Obtenemos el usuario autenticado
+        $user = $request->user();
+
+        // Retornamos el nombre y el email
+        return $this->successResponse([
+            'username' => $user->username,
+            'email' => $user->email,
+        ], 'Datos del usuario obtenidos correctamente');
     }
     /**
      * @OA\Post(
