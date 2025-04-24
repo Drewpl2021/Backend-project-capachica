@@ -43,11 +43,12 @@ class DestinosTuriscosController extends Controller
             ];
         });
 
-        return $this->successResponse([
+        return response()->json([
             'content' => $response,
             'totalElements' => $destinos->total(),
             'currentPage' => $destinos->currentPage() - 1,
             'totalPages' => $destinos->lastPage(),
+            'perPage' => $destinos->perPage(),
         ]);
     }
 
@@ -81,7 +82,7 @@ class DestinosTuriscosController extends Controller
             return $this->errorResponse('Destino turístico no encontrado', 404);
         }
 
-        return $this->successResponse($destino, 'Destino turístico encontrado');
+        return response()->json($destino);
     }
 
     /**

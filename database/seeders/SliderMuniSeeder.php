@@ -14,20 +14,22 @@ class SliderMuniSeeder extends Seeder
      */
     public function run(): void
     {
-        // Obtener el primer registro de descripción de la municipalidad
-        $municipalidadDescripcion = Municipalidad_Descripcion::first(); // Asegúrate de que esto sea un UUID válido
+        // Obtener todos los registros de descripción de la municipalidad
+        $municipalidadDescripciones = Municipalidad_Descripcion::all(); // Obtener todas las descripciones
 
-        // Verificar si se ha encontrado una descripción válida
-        if (!$municipalidadDescripcion) {
-            return; // Si no hay ninguna descripción de municipio, termina el seeding
+        // Verificar si se han encontrado descripciones
+        if ($municipalidadDescripciones->isEmpty()) {
+            return; // Si no hay descripciones, termina el seeding
         }
 
-        // Crear el slider para esa municipalidad
-        Slider_Muni::create([
-            'municipio_descrip_id' => $municipalidadDescripcion->id,  // Usar el UUID de la municipalidad
-            'titulo' => 'Slider 1',
-            'descripcion' => 'Este es el primer slider.',
-            'id' => Str::uuid(),  // Generar un UUID para el slider
-        ]);
+        foreach ($municipalidadDescripciones as $descripcion) {
+            // Crear el slider para esa municipalidad
+            Slider_Muni::create([
+                'municipio_descrip_id' => $descripcion->id,  // Usar el UUID de la municipalidad
+                'titulo' => 'Slider ' . $descripcion->id, // Usar el id de la descripción para un título único
+                'descripcion' => 'Este es el slider para ' . $descripcion->municipalidad->nombre, // Descripción personalizada
+                'id' => Str::uuid(),  // Generar un UUID para el slider
+            ]);
+        }
     }
 }

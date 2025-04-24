@@ -11,7 +11,7 @@ use App\Traits\TokenHelper;
 use App\Traits\ValidatorTrait;
 use App\Traits\RolePermissions;
 use OpenApi\Annotations as OA;
-
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @OA\Info(
@@ -26,7 +26,7 @@ use OpenApi\Annotations as OA;
  */
 class AuthController extends Controller
 {
-    use RolePermissions, ApiResponseTrait, TokenHelper, ValidatorTrait;
+    use RolePermissions, ApiResponseTrait, TokenHelper, ValidatorTrait, HasRoles;
     /**
      * @OA\Post(
      *     path="/register",
@@ -161,7 +161,14 @@ class AuthController extends Controller
     public function perfil(Request $request)
     {
         // Retornamos la información del usuario autenticado
-        return $this->success($request->user());
+        // Obtenemos el usuario autenticado
+        $user = $request->user();
+
+        // Retornamos el nombre y el email
+        return $this->successResponse([
+            'username' => $user->username,
+            'email' => $user->email,
+        ], 'Datos del usuario obtenidos correctamente');
     }
     /**
      * @OA\Post(

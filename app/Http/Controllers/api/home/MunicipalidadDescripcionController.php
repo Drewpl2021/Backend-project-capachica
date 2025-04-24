@@ -9,26 +9,38 @@ use Illuminate\Http\Request;
 
 class MunicipalidadDescripcionController extends Controller
 {
-    use ApiResponseTrait;
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource with pagination.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $descripciones = Municipalidad_Descripcion::all();
-        return $this->successResponse($descripciones, 'Descripciones obtenidas exitosamente');
-    }
+        $size = $request->input('size', 10);  // Tamaño de la página
+        $descripciones = Municipalidad_Descripcion::paginate($size);
 
+        return response()->json([
+            'content' => $descripciones->items(),
+            'totalElements' => $descripciones->total(),
+            'currentPage' => $descripciones->currentPage(),
+            'totalPages' => $descripciones->lastPage(),
+            'perPage' => $descripciones->perPage(),
+        ]);
+    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request, $municipalidadId)
     {
+        // Verificar si ya existe una descripción para esa municipalidad
         $descripcion = Municipalidad_Descripcion::where('municipalidad_id', $municipalidadId)->first();
         if ($descripcion) {
-            return $this->errorResponse('Ya existe una descripción para esta municipalidad.', 400);
+            return response()->json([
+                'status' => false,
+                'message' => 'Ya existe una descripción para esta municipalidad.'
+            ], 400);
         }
+
+        // Validación de los datos
         $validated = $request->validate([
             'logo' => 'required|string|max:255',
             'direccion' => 'required|string|max:255',
@@ -38,12 +50,19 @@ class MunicipalidadDescripcionController extends Controller
             'nombre_alcalde' => 'required|string|max:255',
             'anio_gestion' => 'required|string|max:4',
         ]);
+
+        // Asignar el ID de la municipalidad
         $validated['municipalidad_id'] = $municipalidadId;
+
+        // Crear la nueva descripción
         $newDescripcion = Municipalidad_Descripcion::create($validated);
 
-        return $this->successResponse($newDescripcion, 'Descripción de municipalidad creada exitosamente', 201);
+        return response()->json([
+            'status' => true,
+            'message' => 'Descripción de municipalidad creada exitosamente',
+            'data' => $newDescripcion,
+        ], 201);
     }
-
 
     /**
      * Display the specified resource.
@@ -53,10 +72,17 @@ class MunicipalidadDescripcionController extends Controller
         $descripcion = Municipalidad_Descripcion::find($id);
 
         if (!$descripcion) {
-            return $this->errorResponse('Descripción de municipio no encontrada', 404);
+            return response()->json([
+                'status' => false,
+                'message' => 'Descripción de municipio no encontrada',
+            ], 404);
         }
 
-        return $this->successResponse($descripcion, 'Descripción de municipio encontrada');
+        return response()->json([
+            'status' => true,
+            'message' => 'Descripción de municipio encontrada',
+            'data' => $descripcion,
+        ]);
     }
 
     /**
@@ -67,10 +93,13 @@ class MunicipalidadDescripcionController extends Controller
         $descripcion = Municipalidad_Descripcion::find($id);
 
         if (!$descripcion) {
-            return $this->errorResponse('Descripción de municipio no encontrada', 404);
+            return response()->json([
+                'status' => false,
+                'message' => 'Descripción de municipio no encontrada',
+            ], 404);
         }
 
-        // Validar los datos
+        // Validación de los datos
         $validated = $request->validate([
             'municipalidad_id' => 'required|uuid|exists:municipalidads,id', // Asegurarse que la municipalidad existe
             'logo' => 'required|string|max:255',
@@ -85,7 +114,11 @@ class MunicipalidadDescripcionController extends Controller
         // Actualizar la descripción
         $descripcion->update($validated);
 
-        return $this->successResponse($descripcion, 'Descripción de municipio actualizada exitosamente');
+        return response()->json([
+            'status' => true,
+            'message' => 'Descripción de municipio actualizada exitosamente',
+            'data' => $descripcion,
+        ]);
     }
 
     /**
@@ -96,12 +129,18 @@ class MunicipalidadDescripcionController extends Controller
         $descripcion = Municipalidad_Descripcion::find($id);
 
         if (!$descripcion) {
-            return $this->errorResponse('Descripción de municipio no encontrada', 404);
+            return response()->json([
+                'status' => false,
+                'message' => 'Descripción de municipio no encontrada',
+            ], 404);
         }
 
         // Eliminar la descripción
         $descripcion->delete();
 
-        return $this->successResponse([], 'Descripción de municipio eliminada exitosamente');
+        return response()->json([
+            'status' => true,
+            'message' => 'Descripción de municipio eliminada exitosamente',
+        ]);
     }
 }

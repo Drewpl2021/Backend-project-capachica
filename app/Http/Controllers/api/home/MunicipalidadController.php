@@ -18,18 +18,20 @@ class MunicipalidadController extends Controller
         $size = $request->input('size', 10);
         $name = $request->input('name');
 
-        // Crear la consulta base
         $query = Municipalidad::query();
 
         if ($name) {
-            $query->where('title', 'like', "%$name%");
+            $query->where('distrito', 'like', "%$name%");
         }
 
         // Obtener los resultados paginados
         $municipalidades = $query->paginate($size);
 
-        // Formatear los datos antes de enviarlos
-        $response = collect($municipalidades->items())->map(function ($municipalidad) {
+        // Mapear los resultados de la paginación
+        $response = $municipalidades->items();  // Obtienes los items de la paginación directamente
+
+        // Formatear la respuesta
+        $response = collect($response)->map(function ($municipalidad) {
             return [
                 'id' => $municipalidad->id,
                 'distrito' => $municipalidad->distrito,
@@ -42,13 +44,16 @@ class MunicipalidadController extends Controller
             ];
         });
 
-        return $this->successResponse([
+        // Retornar la respuesta con los datos paginados
+        return response()->json([
             'content' => $response,
             'totalElements' => $municipalidades->total(),
-            'currentPage' => $municipalidades->currentPage() - 1,
+            'currentPage' => $municipalidades->currentPage(),
             'totalPages' => $municipalidades->lastPage(),
+            'perPage' => $municipalidades->perPage(),
         ]);
     }
+
 
 
     /**
@@ -69,7 +74,7 @@ class MunicipalidadController extends Controller
         $municipalidad = Municipalidad::create($validated);
 
         // Devolver la respuesta de éxito
-        return $this->successResponse($municipalidad, 'Municipalidad creada exitosamente', 201);
+        return response()->json($municipalidad);
     }
 
     /**
@@ -83,7 +88,7 @@ class MunicipalidadController extends Controller
             return $this->errorResponse('Municipalidad no encontrada', 404);
         }
 
-        return $this->successResponse($municipalidad, 'Municipalidad encontrada');
+        return response()->json($municipalidad);
     }
 
     /**
@@ -104,7 +109,7 @@ class MunicipalidadController extends Controller
         ]);
 
         $municipalidad->update($validated);
-        return $this->successResponse($municipalidad, 'Municipalidad actualizada exitosamente');
+        return response()->json($municipalidad);
     }
 
     /**
@@ -120,7 +125,7 @@ class MunicipalidadController extends Controller
         }
 
         $municipalidad->delete();
-        return $this->successResponse([], 'Municipalidad eliminada exitosamente');
+        return response()->json($municipalidad);
     }
 
     public function searchByCode($codigo)
@@ -133,6 +138,6 @@ class MunicipalidadController extends Controller
         }
 
         // Devolver todos los campos de la municipalidad encontrada
-        return $this->successResponse($municipalidad, 'Municipalidad encontrada');
+        return response()->json($municipalidad);
     }
 }

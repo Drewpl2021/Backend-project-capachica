@@ -139,5 +139,5 @@ Route::prefix('img-asociacion')->group(function () {
     Route::post('/', [ImgAsociacionController::class, 'store']); // Crear nueva imagen
     Route::get('/{id}', [ImgAsociacionController::class, 'show']); // Mostrar imagen específica
     Route::put('/{id}', [ImgAsociacionController::class, 'update']); // Actualizar imagen
-    Route::delete('/{id}', [ImgAsociacionController::class, 'destroy']); // Eliminar imagen
+    Route::delete('/{id}', [ImgAsociacionController::class, 'destroy']); // Eliminar imagen
 });

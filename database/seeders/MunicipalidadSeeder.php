@@ -23,14 +23,5 @@ class MunicipalidadSeeder  extends Seeder
             'region' => 'Puno',
             'codigo' => '01'
         ]);
-
-        Municipalidad::create([
-            'id' => Str::uuid(),
-            'distrito' => 'Juliaca',
-            'provincia' => 'San Román',
-            'region' => 'Puno',
-            'codigo' => '02'
-        ]);
-        // Agrega más módulos aquí...
     }
 }
