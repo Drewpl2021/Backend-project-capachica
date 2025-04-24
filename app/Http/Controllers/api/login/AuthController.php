@@ -11,7 +11,7 @@ use App\Traits\TokenHelper;
 use App\Traits\ValidatorTrait;
 use App\Traits\RolePermissions;
 use OpenApi\Annotations as OA;
-
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @OA\Info(
@@ -26,7 +26,7 @@ use OpenApi\Annotations as OA;
  */
 class AuthController extends Controller
 {
-    use RolePermissions, ApiResponseTrait, TokenHelper, ValidatorTrait;
+    use RolePermissions, ApiResponseTrait, TokenHelper, ValidatorTrait, HasRoles;
     /**
      * @OA\Post(
      *     path="/register",

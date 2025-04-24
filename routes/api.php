@@ -10,6 +10,7 @@ use App\Http\Controllers\API\home\SliderMuniController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\Login\AuthController;
+use App\Http\Controllers\API\Login\RoleController;
 use App\Http\Controllers\API\Login\UserController;
 use App\Http\Controllers\API\Modules\ModuleController;
 use App\Http\Controllers\API\Modules\ParentModuleController;
@@ -57,6 +58,20 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/', [UserController::class, 'store']);
         Route::get('/{id}', [UserController::class, 'show']);
         Route::delete('/{id}', [UserController::class, 'destroy']);
+    });
+
+    Route::prefix('roles')->middleware('auth:api')->group(function () {
+        // Obtener todos los roles y su cantidad
+        Route::get('/', [RoleController::class, 'index']);
+
+        // Crear un nuevo rol
+        Route::middleware('permission:editar_roles')->post('/', [RoleController::class, 'store']);
+
+        // Actualizar un rol
+        Route::middleware('permission:editar_roles')->put('/{id}', [RoleController::class, 'update']);
+
+        // Eliminar un rol
+        Route::middleware('permission:editar_roles')->delete('/{id}', [RoleController::class, 'destroy']);
     });
 });
 
@@ -110,7 +125,6 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
         Route::delete('/{id}', [SliderMuniController::class, 'destroy']);
 
         // Rutas para ImagenSliderController
-
         Route::post('/imagen', [ImagenSliderController::class, 'store']);
         Route::get('/imagen/{id}', [ImagenSliderController::class, 'show']);
         Route::put('/imagen/{id}', [ImagenSliderController::class, 'update']);
