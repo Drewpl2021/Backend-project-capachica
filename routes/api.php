@@ -79,10 +79,8 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
 });
 
 Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(function () {
-
     // Prefijo 'municipalidad'
     Route::prefix('municipalidad')->group(function () {
-
         // Rutas para la municipalidad
         Route::middleware('permission:editar_usuarios')->post('/crear', [MunicipalidadController::class, 'store']);
         Route::middleware('permission:editar_usuarios')->put('/{id}', [MunicipalidadController::class, 'update']);
