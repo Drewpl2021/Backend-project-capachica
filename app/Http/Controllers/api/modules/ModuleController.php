@@ -52,12 +52,7 @@ class ModuleController extends Controller
             ];
         });
 
-        return $this->successResponse([
-            'content' => $response,
-            'totalElements' => $data->total(),
-            'currentPage' => $data->currentPage() - 1,
-            'totalPages' => $data->lastPage(),
-        ]);
+        return response()->json($response);
     }
 
 
@@ -126,7 +121,7 @@ class ModuleController extends Controller
 
         $module = Module::create($validated);
 
-        return $this->successResponse($module, 'Módulo creado con éxito', 201);
+        return response()->json($module);
     }
 
 
