@@ -52,12 +52,7 @@ class ModuleController extends Controller
             ];
         });
 
-        return $this->successResponse([
-            'content' => $response,
-            'totalElements' => $data->total(),
-            'currentPage' => $data->currentPage() - 1,
-            'totalPages' => $data->lastPage(),
-        ]);
+        return response()->json($response);
     }
 
 
@@ -68,6 +63,7 @@ class ModuleController extends Controller
      */
     public function menu()
     {
+        // Obtener todos los módulos padres junto con sus submódulos
         $modules = ParentModule::with('modules')->get();
 
         $menu = $modules->map(function ($parent) {
@@ -78,7 +74,6 @@ class ModuleController extends Controller
                 'type' => $parent->type,
                 'icon' => $parent->icon,
                 'link' => $parent->link,
-                'status' => $parent->status,
                 'moduleOrder' => $parent->moduleOrder,
                 'createdAt' => $parent->created_at,
                 'updatedAt' => $parent->updated_at,
@@ -91,17 +86,15 @@ class ModuleController extends Controller
                         'type' => $mod->type,
                         'icon' => $mod->icon,
                         'link' => $mod->link,
-                        'status' => $mod->status,
                         'moduleOrder' => $mod->moduleOrder,
                         'createdAt' => $mod->created_at,
                         'updatedAt' => $mod->updated_at,
                         'deletedAt' => $mod->deleted_at,
-                        'selected' => $mod->selected,
                     ];
                 })
             ];
         });
-        return $this->successResponse($menu);
+        return response()->json($menu);
     }
 
 
@@ -128,7 +121,7 @@ class ModuleController extends Controller
 
         $module = Module::create($validated);
 
-        return $this->successResponse($module, 'Módulo creado con éxito', 201);
+        return response()->json($module);
     }
 
 
