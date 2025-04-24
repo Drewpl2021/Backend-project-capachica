@@ -66,6 +66,7 @@ class ParentModuleController extends Controller
         });
         return $this->successResponse($response);
     }
+
     public function listar(Request $request)
     {
         $name = $request->input('name');
