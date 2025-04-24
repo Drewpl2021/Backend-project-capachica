@@ -18,19 +18,38 @@ class MunicipalidadController extends Controller
         $size = $request->input('size', 10);
         $name = $request->input('name');
 
+        // Crear la consulta base
         $query = Municipalidad::query();
 
         if ($name) {
             $query->where('title', 'like', "%$name%");
         }
 
-        $data = $query->paginate($size);
+        // Obtener los resultados paginados
+        $municipalidades = $query->paginate($size);
 
-        // Realizar la paginación de la consulta
-        $data = $query->paginate($size);
-        $municipalidades = Municipalidad::all();
-        return $this->successResponse($municipalidades, 'Municipalidades obtenidas exitosamente');
+        // Formatear los datos antes de enviarlos
+        $response = collect($municipalidades->items())->map(function ($municipalidad) {
+            return [
+                'id' => $municipalidad->id,
+                'distrito' => $municipalidad->distrito,
+                'provincia' => $municipalidad->provincia,
+                'region' => $municipalidad->region,
+                'codigo' => $municipalidad->codigo,
+                'createdAt' => $municipalidad->created_at,
+                'updatedAt' => $municipalidad->updated_at,
+                'deletedAt' => $municipalidad->deleted_at,
+            ];
+        });
+
+        return $this->successResponse([
+            'content' => $response,
+            'totalElements' => $municipalidades->total(),
+            'currentPage' => $municipalidades->currentPage() - 1,
+            'totalPages' => $municipalidades->lastPage(),
+        ]);
     }
+
 
     /**
      * Store a newly created resource in storage.

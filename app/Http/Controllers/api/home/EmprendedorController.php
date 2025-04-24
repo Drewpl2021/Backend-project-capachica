@@ -13,12 +13,43 @@ class EmprendedorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $emprendedores = Emprendedor::all();
-        return $this->successResponse($emprendedores, 'Emprendedores obtenidos exitosamente');
-    }
+        // Obtener el número de elementos por página, por defecto 10
+        $size = $request->input('size', 10);
+        $name = $request->input('name');
 
+        // Crear la consulta base
+        $query = Emprendedor::query();
+
+        // Si se pasa un nombre, aplicar filtro
+        if ($name) {
+            $query->where('razon_social', 'like', "%$name%");
+        }
+
+        // Obtener los emprendedores paginados
+        $emprendedores = $query->paginate($size);
+
+        // Formatear los datos antes de enviarlos
+        $response = collect($emprendedores->items())->map(function ($emprendedor) {
+            return [
+                'id' => $emprendedor->id,
+                'razonSocial' => $emprendedor->razon_social,
+                'asociacionId' => $emprendedor->asociacion_id,
+                'newColumn' => $emprendedor->new_column,
+                'createdAt' => $emprendedor->created_at,
+                'updatedAt' => $emprendedor->updated_at,
+                'deletedAt' => $emprendedor->deleted_at,
+            ];
+        });
+
+        return $this->successResponse([
+            'content' => $response,
+            'totalElements' => $emprendedores->total(),
+            'currentPage' => $emprendedores->currentPage() - 1, // Restamos 1 para mantener la numeración desde 0
+            'totalPages' => $emprendedores->lastPage(),
+        ]);
+    }
     /**
      * Store a newly created resource in storage.
      */

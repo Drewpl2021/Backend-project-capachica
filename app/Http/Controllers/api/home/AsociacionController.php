@@ -13,10 +13,44 @@ class AsociacionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $asociaciones = Asociacion::all();
-        return $this->successResponse($asociaciones, 'Asociaciones obtenidas exitosamente');
+        // Número de elementos por página (por defecto 10)
+        $size = $request->input('size', 10);
+        $name = $request->input('name');
+
+        // Crear la consulta base
+        $query = Asociacion::query();
+
+        // Si se pasa un nombre, aplicar filtro
+        if ($name) {
+            $query->where('nombre', 'like', "%$name%");
+        }
+
+        // Obtener los resultados paginados
+        $asociaciones = $query->paginate($size);
+
+        // Formatear los datos antes de enviarlos
+        $response = collect($asociaciones->items())->map(function ($asociacion) {
+            return [
+                'id' => $asociacion->id,
+                'nombre' => $asociacion->nombre,
+                'descripcion' => $asociacion->descripcion,
+                'lugar' => $asociacion->lugar,
+                'estado' => $asociacion->estado,
+                'municipalidadId' => $asociacion->municipalidad_id,
+                'createdAt' => $asociacion->created_at,
+                'updatedAt' => $asociacion->updated_at,
+                'deletedAt' => $asociacion->deleted_at,
+            ];
+        });
+
+        return $this->successResponse([
+            'content' => $response,
+            'totalElements' => $asociaciones->total(),
+            'currentPage' => $asociaciones->currentPage() - 1, // Restamos 1 para mantener la numeración desde 0
+            'totalPages' => $asociaciones->lastPage(),
+        ]);
     }
 
     /**
@@ -44,7 +78,7 @@ class AsociacionController extends Controller
         $asociacion = Asociacion::find($id);
 
         if (!$asociacion) {
-            return $this->errorResponse('Asociación no encontrada', 404);
+            return $this->errorResponse('Asociación no encontradas', 404);
         }
 
         return $this->successResponse($asociacion, 'Asociación encontrada');

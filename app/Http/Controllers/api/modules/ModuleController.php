@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
+
 class ModuleController extends Controller
 {
     use ApiResponseTrait;
@@ -27,9 +28,11 @@ class ModuleController extends Controller
         if ($name) {
             $query->where('title', 'like', "%$name%");
         }
+
         $data = $query->paginate($size);
 
-        $response = $data->map(function ($module) {
+        // Usamos items() para obtener la colección y luego aplicamos map()
+        $response = collect($data->items())->map(function ($module) {
             return [
                 'id' => $module->id,
                 'title' => $module->title,

@@ -20,6 +20,12 @@ class RolesAndPermissionsSeeder extends Seeder
             'editar_usuarios',
             'eliminar_usuarios',
             'editar_perfil',
+            // CRUD Municipalidad
+            'editar_municipalidad',
+            'eliminar_municipalidad',
+            'crear_municipalidad',
+            'visualizar_municipalidad',
+            // CRUD
         ];
 
         // Crear los permisos para el guard `api`
@@ -36,12 +42,15 @@ class RolesAndPermissionsSeeder extends Seeder
         $adminFam->syncPermissions([
             'ver_usuarios',
             'editar_usuarios',
-            'editar_perfil'
+            'editar_perfil',
+            'Editar_Municipalidad',
+            'visualizar_municipalidad',
         ]);
 
         $usuario = Role::firstOrCreate(['name' => 'usuario', 'guard_name' => 'api']);
         $usuario->syncPermissions([
-            'editar_perfil'
+            'editar_perfil',
+            'visualizar_municipalidad',
         ]);
     }
 }

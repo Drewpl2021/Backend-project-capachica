@@ -28,10 +28,14 @@ use App\Http\Controllers\API\Modules\ParentModuleController;
 // Rutas de Logueo y Registro
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::get('/parent-module/listar', [ParentModuleController::class, 'listar']);
 
 
-// Rutas autenticadas
+// SOLO VER MUNICIPALIDAD RUTA LIBRE
+Route::get('/municipalidad_listar', [MunicipalidadController::class, 'index']);
+Route::get('/municipalidad_descripcions', [MunicipalidadDescripcionController::class, 'index']);
+Route::get('/{id}', [MunicipalidadController::class, 'show']);
+
+// Rutas de Login
 Route::middleware('auth:api')->group(function () {
     Route::get('/perfil', [AuthController::class, 'perfil']);
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -50,12 +54,12 @@ Route::middleware('auth:api')->group(function () {
     });
 });
 
-// Rutas protegidas solo para admin y admin_familia
 Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(function () {
     // Rutas ParentModuleController
     Route::prefix('parent-module')->group(function () {
         Route::get('/', [ParentModuleController::class, 'listPaginate']);
         Route::get('/list', [ParentModuleController::class, 'list']);
+        Route::get('/parent-module/listar', [ParentModuleController::class, 'listar']);
         Route::get('/list-detail-module-list', [ParentModuleController::class, 'listDetailModuleList']);
         Route::post('/', [ParentModuleController::class, 'store']);
         Route::get('/{id}', [ParentModuleController::class, 'show']);
@@ -70,28 +74,30 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
         Route::get('/{id}', [ModuleController::class, 'show']);
         Route::put('/{id}', [ModuleController::class, 'update']);
         Route::delete('/{id}', [ModuleController::class, 'destroy']);
-
         Route::get('/modules-selected/roleId/{roleId}/parentModuleId/{parentModuleId}', [ModuleController::class, 'modulesSelected']);
     });
 });
 
+Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(function () {
 
-// Rutas públicas para Municipalidad y MunicipioDescrip
-Route::prefix('municipalidad')->group(function () {
-    Route::get('/', [MunicipalidadController::class, 'index']);
-    Route::post('/', [MunicipalidadController::class, 'store']);
-    Route::get('/{id}', [MunicipalidadController::class, 'show']);
-    Route::put('/{id}', [MunicipalidadController::class, 'update']);
-    Route::delete('/{id}', [MunicipalidadController::class, 'destroy']);
-    Route::get('/code/{codigo}', [MunicipalidadController::class, 'searchByCode']);
+    // Prefijo 'municipalidad'
+    Route::prefix('municipalidad')->group(function () {
 
+        // Rutas para la municipalidad
+        Route::middleware('permission:editar_usuarios')->post('/crear', [MunicipalidadController::class, 'store']);
+        Route::middleware('permission:editar_usuarios')->put('/{id}', [MunicipalidadController::class, 'update']);
+        Route::middleware('permission:editar_usuarios')->delete('/{id}', [MunicipalidadController::class, 'destroy']);
+        Route::get('/code/{codigo}', [MunicipalidadController::class, 'searchByCode']);
 
-    Route::get('/descripcion/{municipalidadId}', [MunicipalidadDescripcionController::class, 'index']); // Descripciones de una municipalidad
-    Route::post('/{municipalidadId}/descripcion', [MunicipalidadDescripcionController::class, 'store']); // Crear descripción
-    Route::get('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'show']); // Obtener una descripción
-    Route::put('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'update']); // Actualizar descripción
-    Route::delete('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'destroy']); // Eliminar descripción
+        // Rutas para descripciones de la municipalidad
+
+        Route::post('/descripcion/{municipalidadId}', [MunicipalidadDescripcionController::class, 'store']);
+        Route::get('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'show']);
+        Route::put('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'update']);
+        Route::delete('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'destroy']);
+    });
 });
+
 
 // Rutas protegidas para Slider y ImagenSlider
 Route::prefix('slider')->group(function () {
