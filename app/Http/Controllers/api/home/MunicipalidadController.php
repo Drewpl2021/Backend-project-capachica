@@ -42,11 +42,12 @@ class MunicipalidadController extends Controller
             ];
         });
 
-        return $this->successResponse([
+        return response()->json([
             'content' => $response,
-            'totalElements' => $municipalidades->total(),
-            'currentPage' => $municipalidades->currentPage() - 1,
-            'totalPages' => $municipalidades->lastPage(),
+            'totalElements' => $response->total(),
+            'currentPage' => $response->currentPage() - 1,
+            'totalPages' => $response->lastPage(),
+            'perPage' => $response->perPage(),
         ]);
     }
 
@@ -69,7 +70,7 @@ class MunicipalidadController extends Controller
         $municipalidad = Municipalidad::create($validated);
 
         // Devolver la respuesta de éxito
-        return $this->successResponse($municipalidad, 'Municipalidad creada exitosamente', 201);
+        return response()->json($municipalidad);
     }
 
     /**
@@ -83,7 +84,7 @@ class MunicipalidadController extends Controller
             return $this->errorResponse('Municipalidad no encontrada', 404);
         }
 
-        return $this->successResponse($municipalidad, 'Municipalidad encontrada');
+        return response()->json($municipalidad);
     }
 
     /**
@@ -104,7 +105,7 @@ class MunicipalidadController extends Controller
         ]);
 
         $municipalidad->update($validated);
-        return $this->successResponse($municipalidad, 'Municipalidad actualizada exitosamente');
+        return response()->json($municipalidad);
     }
 
     /**
@@ -120,7 +121,7 @@ class MunicipalidadController extends Controller
         }
 
         $municipalidad->delete();
-        return $this->successResponse([], 'Municipalidad eliminada exitosamente');
+        return response()->json($municipalidad);
     }
 
     public function searchByCode($codigo)
@@ -133,6 +134,6 @@ class MunicipalidadController extends Controller
         }
 
         // Devolver todos los campos de la municipalidad encontrada
-        return $this->successResponse($municipalidad, 'Municipalidad encontrada');
+        return response()->json($municipalidad);
     }
 }
