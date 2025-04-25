@@ -58,7 +58,7 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/{id}', [UserController::class, 'destroy']);
     });
 
-    Route::prefix('roles')->middleware('auth:api')->group(function () {
+    Route::prefix('role')->middleware('auth:api')->group(function () {
         // Obtener todos los roles y su cantidad
         Route::get('/', [RoleController::class, 'index']);
 
