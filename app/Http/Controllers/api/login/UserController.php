@@ -6,6 +6,17 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 
+/**
+ * @OA\Info(
+ *     title="Roles",
+ *     version="1.0",
+ *     description="Documentación para gestionar roles y asignar permisos a los usuarios en el sistema Capachica"
+ * )
+ *
+ * @OA\Server(
+ *     url="http://localhost:8000"
+ * )
+ */
 
 class UserController extends Controller
 {

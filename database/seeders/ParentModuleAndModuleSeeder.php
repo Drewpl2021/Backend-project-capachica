@@ -33,11 +33,17 @@ class ParentModuleAndModuleSeeder extends Seeder
         // Modules
         $this->seedModule('heroicons_outline:user-group', '/homeScreen/setup/user', 1, 'Usuarios', 'basic', '01', '01');
         $this->seedModule('heroicons_outline:folder-open', '/homeScreen/setup/module', 2, 'Modulos', 'basic', '02', '01');
+<<<<<<< HEAD
         $this->seedModule('heroicons_outline:folder', '/homeScreen/setup/parentModule', 3, 'Modulos Padres', 'basic', '03', '01');
         $this->seedModule('heroicons_outline:home-modern', '/homeScreen/setup/municipalidad', 4, 'Municipalidad', 'basic', '04', '01');
         $this->seedModule('heroicons_outline:cog', '/homeScreen/setup/configure', 5, 'Configuración Página', 'basic', '05', '01');
         $this->seedModule('heroicons_outline:user-group', '/homeScreen/setup/roles', 6, 'Roles', 'basic', '06', '01');
 
+=======
+        $this->seedModule('heroicons_outline:home-modern', '/homeScreen/setup/municipalidad', 3, 'Municipalidad', 'basic', '03', '01');
+        $this->seedModule('heroicons_outline:cog', '/homeScreen/setup/sections', 4, 'Configuración Página', 'basic', '04', '01');
+        $this->seedModule('heroicons_outline:user-group', '/homeScreen/setup/roles', 5, 'Roles', 'basic', '05', '01');
+>>>>>>> 7e2d8680f1c92ab6b43f80a34e490a537367a616
         // Agrega más Módulos aquí...
     }
 
