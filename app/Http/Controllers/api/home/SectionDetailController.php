@@ -15,18 +15,57 @@ class SectionDetailController extends Controller
         return response()->json($sectionDetails); // Devuelve los detalles en formato JSON
     }
 
-    // Método para listar SectionDetails por Section ID (FK)
     public function getBySectionId($section_id)
     {
-        // Busca los detalles que corresponden a un Section específico
-        $sectionDetails = SectionDetail::where('section_id', $section_id)->get();
+        // Busca los detalles que corresponden a un Section específico e incluye los 'section_detail_ends'
+        $sectionDetails = SectionDetail::with('sectionDetailEnds')  // Eager Loading para incluir los SectionDetailEnd relacionados
+        ->where('section_id', $section_id)
+            ->get();
 
         if ($sectionDetails->isEmpty()) {
             return response()->json(['message' => 'No details found for this section'], 404);
         }
 
-        return response()->json($sectionDetails); // Devuelve los detalles en formato JSON
+        // Ordenar los SectionDetails por el campo `code` de menor a mayor
+        $sectionDetails = $sectionDetails->sortBy('code');  // Ordena los detalles de la sección por código
+
+        // Modificamos el resultado para incluir los "detail" en el formato requerido
+        $formattedSectionDetails = $sectionDetails->map(function ($sectionDetail) {
+            // Ordenamos los SectionDetailEnds por `code` de menor a mayor
+            $sortedSectionDetailEnds = $sectionDetail->sectionDetailEnds->sortBy('code');  // Ordena los detalles finales
+
+            return [
+                'id' => $sectionDetail->id,
+                'status' => $sectionDetail->status,
+                'code' => $sectionDetail->code,
+                'title' => $sectionDetail->title,
+                'description' => $sectionDetail->description,
+                'section_id' => $sectionDetail->section_id,
+                'detail' => $sortedSectionDetailEnds->map(function ($detail) {
+                    return [
+                        'id' => $detail->id,
+                        'status' => $detail->status,
+                        'code' => $detail->code,
+                        'image' => $detail->image,
+                        'title' => $detail->title,
+                        'description' => $detail->description,
+                        'subtitle' => $detail->subtitle,
+                        'created_at' => $detail->created_at,
+                        'updated_at' => $detail->updated_at,
+                        'deleted_at' => $detail->deleted_at
+                    ];
+                }),
+                'created_at' => $sectionDetail->created_at,
+                'updated_at' => $sectionDetail->updated_at,
+                'deleted_at' => $sectionDetail->deleted_at
+            ];
+        });
+
+        return response()->json($formattedSectionDetails); // Devuelve los detalles en formato JSON con el formato requerido
     }
+
+
+
 
     // Método para obtener un SectionDetail por su ID
     public function show($id)
