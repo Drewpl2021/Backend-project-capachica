@@ -35,6 +35,7 @@ class ParentModuleAndModuleSeeder extends Seeder
         $this->seedModule('heroicons_outline:folder-open', '/homeScreen/setup/module', 2, 'Modulos', 'basic', '02', '01');
         $this->seedModule('heroicons_outline:home-modern', '/homeScreen/setup/municipalidad', 3, 'Municipalidad', 'basic', '03', '01');
         $this->seedModule('heroicons_outline:cog', '/homeScreen/setup/configure', 4, 'Configuración Página', 'basic', '04', '01');
+        $this->seedModule('heroicons_outline:user-group', '/homeScreen/setup/roles', 5, 'Municipalidad', 'basic', '05', '01');
         // Agrega más Módulos aquí...
     }
 
