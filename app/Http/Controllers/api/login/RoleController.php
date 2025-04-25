@@ -54,8 +54,8 @@ class RoleController extends Controller
         $roles = Role::all();
 
         return response()->json([
-            'roles' => $roles,
-            'count' => $roles->count(),
+            'content' => $roles,
+            'account' => $roles->count(),
         ]);
     }
 
@@ -145,6 +145,47 @@ class RoleController extends Controller
         return response()->json([
             'role' => $role,
             'message' => 'Rol actualizado exitosamente',
+        ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/role/{id}",
+     *     summary="Obtener un rol por ID",
+     *     tags={"Roles"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del rol a obtener",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Rol obtenido correctamente",
+     *         @OA\JsonContent(ref="#/components/schemas/Role")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Rol no encontrado"
+     *     )
+     * )
+     */
+    public function show($id)
+    {
+        // Buscar el rol por su id
+        $role = Role::find($id);
+
+        if (!$role) {
+            // Si el rol no existe, devolver error 404
+            return response()->json([
+                'message' => 'Rol no encontrado',
+            ], 404);
+        }
+
+        // Si el rol es encontrado, devolver el rol en la respuesta
+        return response()->json([
+            'role' => $role,
         ]);
     }
 

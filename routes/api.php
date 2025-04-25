@@ -57,25 +57,25 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/{id}', [UserController::class, 'show']);
         Route::delete('/{id}', [UserController::class, 'destroy']);
     });
+});
 
-    Route::prefix('role')->middleware('auth:api')->group(function () {
-        // Obtener todos los roles y su cantidad
-        Route::get('/', [RoleController::class, 'index']);
+Route::prefix('role')->middleware('auth:api')->group(function () {
+    // Obtener todos los roles y su cantidad
+    Route::get('/', [RoleController::class, 'index']);
+    Route::get('/{id}', [RoleController::class, 'show']);
+    Route::middleware('permission:editar_roles')->post('/', [RoleController::class, 'store']);
 
-        Route::middleware('permission:editar_roles')->post('/', [RoleController::class, 'store']);
+    Route::middleware('permission:editar_roles')->put('/{id}', [RoleController::class, 'update']);
 
-        Route::middleware('permission:editar_roles')->put('/{id}', [RoleController::class, 'update']);
+    Route::middleware('permission:editar_roles')->delete('/{id}', [RoleController::class, 'destroy']);
 
-        Route::middleware('permission:editar_roles')->delete('/{id}', [RoleController::class, 'destroy']);
-
-        Route::middleware('permission:editar_roles')->post('/assign-role/{userId}', [RoleController::class, 'assignRole']);
-    });
+    Route::middleware('permission:editar_roles')->post('/assign-role/{userId}', [RoleController::class, 'assignRole']);
 });
 
 Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(function () {
     // Rutas ParentModuleController
     Route::prefix('parent-module')->group(function () {
-        Route::get('/page', [ParentModuleController::class, 'listPaginate']);  // Listar con paginación
+        Route::get('/', [ParentModuleController::class, 'listPaginate']);  // Listar con paginación
         Route::get('/list', [ParentModuleController::class, 'list']);  // Listar sin paginación
         Route::get('/listar', [ParentModuleController::class, 'listar']);  // Otra lista
         Route::get('/list-detail-module-list', [ParentModuleController::class, 'listDetailModuleList']);  // Detalles de módulos
