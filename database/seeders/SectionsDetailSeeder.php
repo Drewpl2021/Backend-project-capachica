@@ -17,7 +17,7 @@ class SectionsDetailSeeder extends Seeder
                 'id' => \Str::uuid(),
                 'status' => true,
                 'code' => '01',
-                'title' => 'Seccion 1',
+                'title' => 'Descrubre la Península de Capachica',
                 'description' => '',
                 'section_id' => Section::where('code', '01')->first()->id,
                 'created_at' => now(),

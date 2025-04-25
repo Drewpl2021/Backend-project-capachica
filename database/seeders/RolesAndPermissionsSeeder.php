@@ -20,7 +20,6 @@ class RolesAndPermissionsSeeder extends Seeder
             'editar_usuarios',
             'eliminar_usuarios',
             'editar_perfil',
-            // CRUD Municipalidad
             'editar_municipalidad',
             'eliminar_municipalidad',
             'crear_municipalidad',
