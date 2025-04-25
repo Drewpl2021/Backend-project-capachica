@@ -27,4 +27,8 @@ class SectionDetail extends Model
     {
         return $this->belongsTo(Section::class, 'section_id');
     }
+    public function sectionDetailEnds()
+    {
+        return $this->hasMany(SectionDetailEnd::class, 'section_detail_id'); // Relación uno a muchos
+    }
 }
