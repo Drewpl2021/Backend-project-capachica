@@ -7,6 +7,9 @@ use App\Http\Controllers\API\home\ImgAsociacionController;
 use App\Http\Controllers\API\home\MunicipalidadController;
 use App\Http\Controllers\API\home\MunicipalidadDescripcionController;
 use App\Http\Controllers\API\home\SliderMuniController;
+use App\Http\Controllers\API\home\SectionController;
+use App\Http\Controllers\API\home\SectionDetailController;
+use App\Http\Controllers\API\home\SectionDetailEndController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\Login\AuthController;
@@ -31,8 +34,8 @@ Route::post('/login', [AuthController::class, 'login']);
 
 
 // SOLO VER MUNICIPALIDAD RUTA LIBRE
-Route::get('/municipalidad_listar', [MunicipalidadController::class, 'index']);
-Route::get('/municipalidad_descripcions', [MunicipalidadDescripcionController::class, 'index']);
+Route::get('/municipalidad', [MunicipalidadController::class, 'index']);
+Route::get('/municipalidad/descripcion', [MunicipalidadDescripcionController::class, 'index']);
 
 
 // Rutas de Login
@@ -140,4 +143,25 @@ Route::prefix('img-asociacion')->group(function () {
     Route::get('/{id}', [ImgAsociacionController::class, 'show']); // Mostrar imagen específica
     Route::put('/{id}', [ImgAsociacionController::class, 'update']); // Actualizar imagen
     Route::delete('/{id}', [ImgAsociacionController::class, 'destroy']); // Eliminar imagen
+});
+// Rutas para las secciones
+Route::prefix('sections')->group(function () {
+    Route::get('/', [SectionController::class, 'index']);
+    Route::get('/{id}', [SectionController::class, 'show']);
+    Route::put('/{id}', [SectionController::class, 'update']);
+    Route::delete('/{id}', [SectionController::class, 'destroy']);
+});
+Route::prefix('sectionDetails')->group(function () {
+    Route::get('/', [SectionDetailController::class, 'index']);  // Listar todos los detalles
+    Route::get('/byId/{section_id}', [SectionDetailController::class, 'getBySectionId']);  // Buscar por section_id
+    Route::get('/{id}', [SectionDetailController::class, 'show']);  // Buscar por ID
+    Route::put('/{id}', [SectionDetailController::class, 'update']);  // Actualizar un detalle
+    Route::delete('/{id}', [SectionDetailController::class, 'destroy']);  // Eliminar un detalle
+});
+Route::prefix('sectionDetailEnds')->group(function () {
+    Route::get('/', [SectionDetailEndController::class, 'index']);  // Listar todos los SectionDetailEnds
+    Route::get('/{id}', [SectionDetailEndController::class, 'show']);  // Listar SectionDetailEnd por ID
+    Route::get('/byId/{section_detail_id}', [SectionDetailEndController::class, 'getBySectionDetailId']);  // Buscar por section_detail_id
+    Route::put('/{id}', [SectionDetailEndController::class, 'update']);  // Actualizar SectionDetailEnd
+    Route::delete('/{id}', [SectionDetailEndController::class, 'destroy']);  // Eliminar SectionDetailEnd
 });

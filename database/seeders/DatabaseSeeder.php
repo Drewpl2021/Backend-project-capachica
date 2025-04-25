@@ -24,6 +24,9 @@ class DatabaseSeeder extends Seeder
             MunicipalidadSeeder::class,
             MunicipalidadDescripcionSeeder::class,
             SliderMuniSeeder::class,
+            SectionsSeeder::class,
+            SectionsDetailSeeder::class,
+            SectionDetailEndSeeder::class,
             ImagenSliderSeeder::class,
         ]);
 
