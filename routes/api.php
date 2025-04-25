@@ -32,7 +32,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 
 // SOLO VER MUNICIPALIDAD RUTA LIBRE
-Route::get('/municipalidad_listar', [MunicipalidadController::class, 'index']);
+Route::get('/municipalidad', [MunicipalidadController::class, 'index']);
 Route::get('/municipalidad_descripcions', [MunicipalidadDescripcionController::class, 'index']);
 Route::get('/imagen_slider', [ImagenSliderController::class, 'index']);
 
@@ -64,14 +64,13 @@ Route::middleware('auth:api')->group(function () {
         // Obtener todos los roles y su cantidad
         Route::get('/', [RoleController::class, 'index']);
 
-        // Crear un nuevo rol
         Route::middleware('permission:editar_roles')->post('/', [RoleController::class, 'store']);
 
-        // Actualizar un rol
         Route::middleware('permission:editar_roles')->put('/{id}', [RoleController::class, 'update']);
 
-        // Eliminar un rol
         Route::middleware('permission:editar_roles')->delete('/{id}', [RoleController::class, 'destroy']);
+
+        Route::middleware('permission:editar_roles')->post('/assign-role/{userId}', [RoleController::class, 'assignRole']);
     });
 });
 

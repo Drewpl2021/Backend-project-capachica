@@ -15,30 +15,44 @@ use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @OA\Info(
- *     title="API de Autenticación",
+ *     title="Autenticación",
  *     version="1.0",
- *     description="Documentación de autenticación para el sistema Capachica"
+ *     description="Documentación para gestionar autenticaciones"
  * )
  *
  * @OA\Server(
  *     url="http://localhost:8000"
  * )
  */
+
+/**
+ * @OA\Schema(
+ *     schema="User",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", description="ID del usuario"),
+ *     @OA\Property(property="username", type="string", description="Nombre del usuario"),
+ *     @OA\Property(property="email", type="string", description="Correo electrónico del usuario"),
+ *     @OA\Property(property="imagen_url", type="string", description="URL de la imagen del usuario")
+ * )
+ */
 class AuthController extends Controller
 {
     use RolePermissions, ApiResponseTrait, TokenHelper, ValidatorTrait, HasRoles;
+
     /**
      * @OA\Post(
      *     path="/register",
-     *     summary="Registrar un nuevo usuario",
+     *     operationId="registerUserssssssssssssssssss",
      *     tags={"Auth"},
+     *     summary="Registrar un nuevo usuario",
+     *     description="Registrar un nuevo usuario en el sistema",
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"name", "password"},
-     *             @OA\Property(property="name", type="string", example="juanito"),
+     *             required={"username", "password"},
+     *             @OA\Property(property="username", type="string", example="juanito"),
      *             @OA\Property(property="email", type="string", example="juanito@example.com"),
-     *             @OA\Property(property="password", type="string", example="secret123"),
+     *             @OA\Property(property="password", type="string", example="secret123")
      *         )
      *     ),
      *     @OA\Response(
@@ -55,22 +69,20 @@ class AuthController extends Controller
     {
         // Validación de los datos con el trait ValidatorTrait
         $validation = $this->validateRequest($request, [
-            'username'     => 'required|string|max:255|unique:users', // Validamos que el nombre sea único
-            'email'    => 'nullable|string|email|max:255|unique:users', // El email es opcional
-            'password' => 'required|string', // La contraseña es obligatoria
+            'username'     => 'required|string|max:255|unique:users',
+            'email'    => 'nullable|string|email|max:255|unique:users',
+            'password' => 'required|string',
         ]);
 
-        // Si hay un error en la validación, retornamos el mensaje de error
         if ($validation->fails()) {
             return $this->validationErrorResponse($validation->errors());
         }
-
 
         // Crear el usuario y guardarlo en la base de datos
         $user = User::create([
             'username'     => $request->username,
             'email'    => $request->email,
-            'password' => bcrypt($request->password), // Encriptamos la contraseña
+            'password' => bcrypt($request->password),
         ]);
 
         // Asignar rol al usuario (por defecto es 'usuario')
@@ -80,24 +92,25 @@ class AuthController extends Controller
         // Crear token con el trait TokenHelper
         $token = $this->createToken($user);
 
-        // Respuesta exitosa con los datos del usuario
         return $this->successResponse([
             'token' => $token,
             'user' => $user->only(['id', 'username', 'email']),
             'roles' => $user->getRoleNames(),
         ], 'Usuario registrado correctamente', 201);
     }
+
     /**
      * @OA\Post(
      *     path="/login",
-     *     summary="Iniciar sesión",
+     *     operationId="login",
      *     tags={"Auth"},
+     *     summary="Iniciar sesión",
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
      *             required={"password"},
      *             @OA\Property(property="email", type="string", example="juanito@example.com"),
-     *             @OA\Property(property="name", type="string", example="juanito"),
+     *             @OA\Property(property="username", type="string", example="juanito"),
      *             @OA\Property(property="password", type="string", example="secret123")
      *         )
      *     ),
@@ -114,28 +127,26 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         // Buscar al usuario por nombre o email
-        $user = User::with('permissions')  // Asegúrate de cargar los permisos
+        $user = User::with('permissions')
             ->where('email', $request->email)
             ->orWhere('username', $request->username)
             ->first();
 
-        // Si el usuario no existe o la contraseña no coincide, retornamos error
         if (!$user || !Hash::check($request->password, $user->password)) {
             return $this->error('Credenciales incorrectas', 401);
         }
 
         // Crear token con el trait TokenHelper
-        $tokenData = $this->createToken($user);  // El token y la expiración
+        $tokenData = $this->createToken($user);
 
-        // Si no tiene rol, asignarle por defecto
+        // Asignar rol si no tiene
         if (!$user->hasAnyRole(['admin', 'admin_familia', 'usuario'])) {
             $user->assignRole('usuario');
         }
 
-        // Respuesta exitosa con token, datos de usuario, roles y permisos
         return $this->successResponse([
             'token' => $tokenData['access_token'],
-            'expires_at' => $tokenData['expires_at'],  // La fecha de expiración
+            'expires_at' => $tokenData['expires_at'],
             'username' => $user->only(['id', 'username', 'email', 'imagen_url']),
             'roles' => $user->getRoleNames(),
             'permissions' => $user->getAllPermissions()->pluck('name'),
@@ -145,6 +156,7 @@ class AuthController extends Controller
     /**
      * @OA\Get(
      *     path="/perfil",
+     *     operationId="perfil",
      *     summary="Obtener perfil del usuario autenticado",
      *     tags={"Auth"},
      *     security={{"passport":{}}},
@@ -160,19 +172,17 @@ class AuthController extends Controller
      */
     public function perfil(Request $request)
     {
-        // Retornamos la información del usuario autenticado
-        // Obtenemos el usuario autenticado
         $user = $request->user();
-
-        // Retornamos el nombre y el email
         return $this->successResponse([
             'username' => $user->username,
             'email' => $user->email,
         ], 'Datos del usuario obtenidos correctamente');
     }
+
     /**
      * @OA\Post(
      *     path="/logout",
+     *     operationId="logout",
      *     summary="Cerrar sesión",
      *     tags={"Auth"},
      *     security={{"passport":{}}},
@@ -188,7 +198,6 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        // Revocar el token usando el trait TokenHelper
         $this->revokeToken($request->user());
         return $this->successResponse(null, 'Sesión cerrada');
     }

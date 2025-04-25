@@ -36,7 +36,6 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Crear roles si no existen
         $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'api']);
-        // Asignar todos los permisos al rol admin
         $admin->syncPermissions(Permission::all());
 
         $adminFam = Role::firstOrCreate(['name' => 'admin_familia', 'guard_name' => 'api']);
@@ -49,10 +48,6 @@ class RolesAndPermissionsSeeder extends Seeder
         ]);
 
         $usuario = Role::firstOrCreate(['name' => 'usuario', 'guard_name' => 'api']);
-        $usuario->syncPermissions([
-            'editar_perfil',
-            'editar_municipalidad',
-            'visualizar_municipalidad',
-        ]);
+        $usuario->syncPermissions(Permission::all());
     }
 }
