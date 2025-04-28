@@ -301,6 +301,41 @@
                 }
             }
         },
+        "/role/{id}": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Obtener un rol por ID",
+                "operationId": "c7fc2c87f3b6f47f481ce6e0b95ea342",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del rol a obtener",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Rol obtenido correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Role"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Rol no encontrado"
+                    }
+                }
+            }
+        },
         "/roles/{userId}/assign": {
             "post": {
                 "tags": [

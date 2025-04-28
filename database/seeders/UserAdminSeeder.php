@@ -19,6 +19,7 @@ class UserAdminSeeder extends Seeder
                 'password' => Hash::make('admin123'),
             ]
         );
+
         $admin = User::firstOrCreate(
             ['email' => 'andres.montes@example.com'],
             [

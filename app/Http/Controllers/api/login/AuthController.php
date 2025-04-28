@@ -12,6 +12,8 @@ use App\Traits\ValidatorTrait;
 use App\Traits\RolePermissions;
 use OpenApi\Annotations as OA;
 use Spatie\Permission\Traits\HasRoles;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 /**
  * @OA\Info(
@@ -89,8 +91,8 @@ class AuthController extends Controller
         $rol = $request->get('rol', 'usuario');
         $this->assignRoleToUser($user, $rol);
 
-        // Crear token con el trait TokenHelper
-        $token = $this->createToken($user);
+        // Crear token con JWT
+        $token = JWTAuth::fromUser($user);
 
         return $this->successResponse([
             'token' => $token,
@@ -126,7 +128,6 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // Buscar al usuario por nombre o email
         $user = User::with('permissions')
             ->where('email', $request->email)
             ->orWhere('username', $request->username)
@@ -136,22 +137,22 @@ class AuthController extends Controller
             return $this->error('Credenciales incorrectas', 401);
         }
 
-        // Crear token con el trait TokenHelper
-        $tokenData = $this->createToken($user);
-
-        // Asignar rol si no tiene
-        if (!$user->hasAnyRole(['admin', 'admin_familia', 'usuario'])) {
-            $user->assignRole('usuario');
+        // Crear el token JWT
+        try {
+            $token = JWTAuth::fromUser($user); // Este método genera el token
+        } catch (JWTException $e) {
+            return $this->error('No se pudo crear el token', 500);
         }
 
         return $this->successResponse([
-            'token' => $tokenData['access_token'],
-            'expires_at' => $tokenData['expires_at'],
-            'username' => $user->only(['id', 'username', 'email', 'imagen_url']),
+            'token' => $token,
+            'expires_at' => now()->addMinutes(config('jwt.ttl'))->toDateTimeString(),
+            'username' => $user->only(['id', 'username', 'email']),
             'roles' => $user->getRoleNames(),
             'permissions' => $user->getAllPermissions()->pluck('name'),
         ], 'Usuario iniciado sesión correctamente', 200);
     }
+
 
     /**
      * @OA\Get(
@@ -159,7 +160,7 @@ class AuthController extends Controller
      *     operationId="perfil",
      *     summary="Obtener perfil del usuario autenticado",
      *     tags={"Auth"},
-     *     security={{"passport":{}}},
+     *     security={{"passport":{}}},  // Puedes modificar esto a "jwt" si es necesario
      *     @OA\Response(
      *         response=200,
      *         description="Datos del usuario autenticado"
@@ -185,7 +186,7 @@ class AuthController extends Controller
      *     operationId="logout",
      *     summary="Cerrar sesión",
      *     tags={"Auth"},
-     *     security={{"passport":{}}},
+     *     security={{"passport":{}}},  // Similar, podrías cambiar a JWT si prefieres usar seguridad JWT
      *     @OA\Response(
      *         response=200,
      *         description="Sesión cerrada"
@@ -198,7 +199,8 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        $this->revokeToken($request->user());
+        // Revocar el token del usuario
+        JWTAuth::invalidate(JWTAuth::getToken());
         return $this->successResponse(null, 'Sesión cerrada');
     }
 }
