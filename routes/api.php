@@ -37,6 +37,12 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/municipalidad', [MunicipalidadController::class, 'index']);
 Route::get('/municipalidad/descripcion', [MunicipalidadDescripcionController::class, 'index']);
 
+Route::get('/parent-module/test', [ParentModuleController::class, 'listPaginate']);  // Listar con paginación
+Route::post('/parent-module/test', [ParentModuleController::class, 'store']);  // Crear nuevo módulo padre
+Route::get('/parent-module/test/{id}', [ParentModuleController::class, 'show']);  // Mostrar módulo padre específico
+Route::put('/parent-module/test/{id}', [ParentModuleController::class, 'update']);  // Actualizar módulo padre
+Route::delete('/parent-module/test/{id}', [ParentModuleController::class, 'destroy']);
+
 
 // Rutas de Login
 Route::middleware('auth:api')->group(function () {
