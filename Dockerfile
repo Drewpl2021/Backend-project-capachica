@@ -3,12 +3,17 @@ FROM php:8.1-fpm
 
 # Crear un nuevo usuario (sin privilegios de root)
 RUN useradd -ms /bin/bash laraveluser
-USER laraveluser
+
+# Cambiar a root para poder instalar dependencias
+USER root
 
 # Instalar las dependencias necesarias
 RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev zip git && \
     docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-install gd pdo pdo_mysql
+
+# Cambiar de nuevo a laraveluser después de la instalación
+USER laraveluser
 
 # Configurar el directorio de trabajo dentro del contenedor
 WORKDIR /var/www
