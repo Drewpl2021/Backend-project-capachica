@@ -27,6 +27,10 @@ use App\Http\Controllers\API\Modules\ParentModuleController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+Route::get('/', function () {
+    return view('welcome');
+});
+
 
 // Rutas de Logueo y Registro
 Route::post('/register', [AuthController::class, 'register']);
