@@ -1,40 +1,28 @@
-# Usa una imagen oficial de PHP como base
-FROM php:8.1-fpm
+# Usa una imagen oficial de PHP con Apache
+FROM php:8.1-apache
 
-# Crear un nuevo usuario (sin privilegios de root)
-RUN useradd -ms /bin/bash laraveluser
+# Instala las dependencias necesarias para Laravel
+RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev libzip-dev unzip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd zip
 
-# Cambiar a root para poder instalar dependencias
-USER root
+# Habilita el mod_rewrite de Apache (necesario para Laravel)
+RUN a2enmod rewrite
 
-# Instalar las dependencias necesarias
-RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev zip git && \
-    docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install gd pdo pdo_mysql
+# Copia los archivos del proyecto al contenedor
+COPY . /var/www/html/
 
-# Cambiar de nuevo a laraveluser después de la instalación
-USER laraveluser
+# Establece el directorio de trabajo
+WORKDIR /var/www/html
 
-# Configurar el directorio de trabajo dentro del contenedor
-WORKDIR /var/www
-
-# Copiar el archivo composer.json y composer.lock para instalar las dependencias de Laravel
-COPY composer.json composer.lock /var/www/
-
-# Instalar Composer (el gestor de dependencias PHP)
+# Instala Composer (gestor de dependencias PHP)
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Instalar las dependencias de Laravel
+# Instala las dependencias de Laravel
 RUN composer install
 
-# Copiar todo el código del proyecto dentro del contenedor
-COPY . /var/www
+# Exponer el puerto 80 (por defecto de Apache)
+EXPOSE 80
 
-# Configurar permisos para los archivos de Laravel (como almacenamiento y caché)
-RUN chown -R laraveluser:laraveluser /var/www/storage /var/www/bootstrap/cache
-
-# Exponer el puerto que usará Laravel (8080 en este caso)
-EXPOSE 8080
-
-# Comando para iniciar el servidor de Laravel dentro del contenedor
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
+# Inicia Apache en primer plano
+CMD ["apache2-foreground"]
