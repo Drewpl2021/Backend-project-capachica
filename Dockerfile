@@ -1,33 +1,53 @@
-# Usa una imagen oficial de PHP con Apache
-FROM php:8.1-apache
+#########################################
+# APP CONFIG
+#########################################
+APP_NAME=Turismo Capachica
+APP_ENV=production
+APP_KEY= # 👈 pon aquí el valor generado con php artisan key:generate
+APP_DEBUG=false
+APP_URL=https://backend-capachica.onrender.com/ # 👈 pon la URL real de tu backend en Render
 
-# Instala las dependencias necesarias para Laravel
-RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev libzip-dev unzip \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd zip
+#########################################
+# LOGGING
+#########################################
+LOG_CHANNEL=stack
+LOG_LEVEL=info
 
-# Habilita mod_rewrite (necesario para Laravel)
-RUN a2enmod rewrite
+#########################################
+# DATABASE → Railway values
+#########################################
+DB_CONNECTION=mysql
+DB_HOST=mysql.railway.internal                # 👈 MYSQLHOST
+DB_PORT=3306                                  # 👈 MYSQLPORT
+DB_DATABASE=railway                           # 👈 MYSQLDATABASE
+DB_USERNAME=root                              # 👈 MYSQLUSER
+DB_PASSWORD=bXcsLVDBtIZzbsRXZDiVtEWFNkvtetMVb # 👈 MYSQLPASSWORD
 
-# 🚀 Cambia el DocumentRoot de Apache a /var/www/html/public
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+#########################################
+# CACHE & QUEUE
+#########################################
+CACHE_DRIVER=file
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
 
-# Copia los archivos del proyecto al contenedor
-COPY . /var/www/html/
+#########################################
+# MAIL → dejar así para pruebas
+#########################################
+MAIL_MAILER=smtp
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
 
-# Establece el directorio de trabajo
-WORKDIR /var/www/html
-
-# Instala Composer (gestor de dependencias PHP)
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-# Instala las dependencias de Laravel
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
-
-# Exponer el puerto 80 (por defecto de Apache)
-EXPOSE 80
-
-# Inicia Apache en primer plano
-CMD ["apache2-foreground"]
+#########################################
+# AWS → deja vacío si no usas S3
+#########################################
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+AWS_USE_PATH_STYLE_ENDPOINT=false
