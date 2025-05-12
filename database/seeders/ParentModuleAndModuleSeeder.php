@@ -37,6 +37,8 @@ class ParentModuleAndModuleSeeder extends Seeder
         $this->seedModule('heroicons_outline:home-modern', '/homeScreen/setup/municipalidad', 4, 'Municipalidad', 'basic', '04', '01');
         $this->seedModule('heroicons_outline:cog', '/homeScreen/setup/sections', 5, 'Configuración Página', 'basic', '05', '01');
         $this->seedModule('heroicons_outline:user-group', '/homeScreen/setup/role', 6, 'Roles', 'basic', '06', '01');
+        $this->seedModule('heroicons_outline:user-group', '/homeScreen/setup/asociaciones', 7, 'Asociaciones', 'basic', '07', '01');
+
         // Agrega más Módulos aquí...
     }
 

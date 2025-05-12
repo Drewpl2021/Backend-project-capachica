@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Section;
-
+use Illuminate\Support\Str;
 
 class SectionsSeeder extends Seeder
 {
@@ -16,7 +16,7 @@ class SectionsSeeder extends Seeder
     {
         $sections = [
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'code' => '01',
                 'name' => 'Inicio',
                 'status' => true,
@@ -25,7 +25,7 @@ class SectionsSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'code' => '02',
                 'name' => 'Acerca de',
                 'status' => true,
@@ -34,7 +34,7 @@ class SectionsSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'code' => '03',
                 'name' => 'Lugares',
                 'status' => true,
@@ -43,7 +43,7 @@ class SectionsSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'code' => '04',
                 'name' => 'Hoteles',
                 'status' => true,
@@ -52,7 +52,7 @@ class SectionsSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'code' => '05',
                 'name' => 'Blog',
                 'status' => true,
@@ -61,7 +61,7 @@ class SectionsSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'code' => '06',
                 'name' => 'Contacto',
                 'status' => true,

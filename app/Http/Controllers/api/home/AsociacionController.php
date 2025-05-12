@@ -4,12 +4,10 @@ namespace App\Http\Controllers\API\home;
 
 use App\Http\Controllers\Controller;
 use App\Models\asociacion;
-use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 
 class AsociacionController extends Controller
 {
-    use ApiResponseTrait;
     /**
      * Display a listing of the resource.
      */
@@ -27,8 +25,9 @@ class AsociacionController extends Controller
             $query->where('nombre', 'like', "%$name%");
         }
 
-        // Obtener los resultados paginados
-        $asociaciones = $query->paginate($size);
+        // Obtener las asociaciones con sus imágenes relacionadas y paginación
+        $asociaciones = $query->with('imgAsociacions') // Aquí estamos cargando las imágenes
+            ->paginate($size);
 
         // Formatear los datos antes de enviarlos
         $response = collect($asociaciones->items())->map(function ($asociacion) {
@@ -37,8 +36,16 @@ class AsociacionController extends Controller
                 'nombre' => $asociacion->nombre,
                 'descripcion' => $asociacion->descripcion,
                 'lugar' => $asociacion->lugar,
-                'estado' => $asociacion->estado,
+                'estado' => (bool) $asociacion->estado,  // Convertir a booleano
                 'municipalidadId' => $asociacion->municipalidad_id,
+                'imagenes' => $asociacion->imgAsociacions->map(function ($img) {
+                    return [
+                        'id' => $img->id,
+                        'url_image' => $img->url_image, // Incluyendo la URL de la imagen
+                        'estado' => (bool) $img->estado, // Convertir a booleano
+                        'codigo' => $img->codigo, // Código asociado (si existe)
+                    ];
+                }),
                 'createdAt' => $asociacion->created_at,
                 'updatedAt' => $asociacion->updated_at,
                 'deletedAt' => $asociacion->deleted_at,
@@ -50,9 +57,9 @@ class AsociacionController extends Controller
             'totalElements' => $asociaciones->total(),
             'currentPage' => $asociaciones->currentPage() - 1,
             'totalPages' => $asociaciones->lastPage(),
-            'perPage' => $asociaciones->perPage(),
         ]);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -121,5 +128,26 @@ class AsociacionController extends Controller
 
         $asociacion->delete();
         return $this->successResponse([], 'Asociación eliminada exitosamente');
+    }
+
+    public function emprendedoresByAsociacion($id)
+    {
+        $asociacion = Asociacion::with('emprendedores')->find($id);
+
+        if (!$asociacion) {
+            return $this->errorResponse('Asociación no encontrada', 404);
+        }
+
+        return response()->json([
+            'asociacion' => [
+                'id' => $asociacion->id,
+                'nombre' => $asociacion->nombre,
+                'descripcion' => $asociacion->descripcion,
+                'lugar' => $asociacion->lugar,
+                'estado' => $asociacion->estado,
+                'municipalidadId' => $asociacion->municipalidad_id,
+            ],
+            'emprendedores' => $asociacion->emprendedores,
+        ]);
     }
 }

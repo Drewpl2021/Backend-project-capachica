@@ -41,7 +41,7 @@ class ModuleController extends Controller
                 'type' => $module->type,
                 'code' => $module->code,
                 'icon' => $module->icon,
-                'status' => $module->status,
+                'status' => (bool) $module->status, // ✅ aquí el fix
                 'moduleOrder' => $module->moduleOrder,
                 'link' => $module->link,
                 'createdAt' => $module->created_at,
@@ -61,11 +61,8 @@ class ModuleController extends Controller
             'totalElements' => $data->total(),
             'currentPage' => $data->currentPage() - 1,
             'totalPages' => $data->lastPage(),
-            'perPage' => $data->perPage(),
         ]);
     }
-
-
 
 
 

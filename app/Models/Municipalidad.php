@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 
 class Municipalidad extends Model
 {
+
     use HasFactory;
     // Relación uno a uno con la descripción
     // Si el nombre de la tabla no sigue la convención plural, especifica el nombre de la tabla aquí
@@ -15,7 +16,12 @@ class Municipalidad extends Model
     public $incrementing = false;
     protected $keyType = 'string';
     // Permite la asignación masiva de estos campos
-    protected $fillable = ['distrito', 'provincia', 'region'];
+    protected $fillable = [
+        'distrito',
+        'provincia',
+        'region',
+        'codigo',
+    ];
     protected static function boot()
     {
         parent::boot();

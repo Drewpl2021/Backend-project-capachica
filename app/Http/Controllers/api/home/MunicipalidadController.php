@@ -4,12 +4,10 @@ namespace App\Http\Controllers\API\home;
 
 use App\Http\Controllers\Controller;
 use App\Models\Municipalidad;
-use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 
 class MunicipalidadController extends Controller
 {
-    use ApiResponseTrait;
     /**
      * Display a listing of the resource.
      */
@@ -21,7 +19,12 @@ class MunicipalidadController extends Controller
         $query = Municipalidad::query();
 
         if ($name) {
-            $query->where('distrito', 'like', "%$name%");
+            $query->where(function ($q) use ($name) {
+                $q->where('distrito', 'like', "%$name%")
+                    ->orWhere('provincia', 'like', "%$name%")
+                    ->orWhere('region', 'like', "%$name%")
+                    ->orWhere('codigo', 'like', "%$name%");
+            });
         }
 
         // Obtener los resultados paginados
@@ -67,7 +70,6 @@ class MunicipalidadController extends Controller
             'provincia' => 'required|string|max:255',
             'region' => 'required|string|max:255',
             'codigo' => 'required|string|max:255',
-
         ]);
 
         // Crear la municipalidad y asignar automáticamente el UUID
@@ -102,15 +104,27 @@ class MunicipalidadController extends Controller
             return $this->errorResponse('Municipalidad no encontrada', 404);
         }
 
+        // Validar los datos entrantes
         $validated = $request->validate([
             'distrito' => 'required|string|max:255',
             'provincia' => 'required|string|max:255',
             'region' => 'required|string|max:255',
+            'codigo' => 'required|string|max:255',
         ]);
 
+        // Actualizar el modelo con los nuevos valores
         $municipalidad->update($validated);
-        return response()->json($municipalidad);
+
+        // Devolver la respuesta con los datos actualizados
+        return response()->json([
+            'id' => $municipalidad->id,
+            'distrito' => $municipalidad->distrito,
+            'provincia' => $municipalidad->provincia,
+            'region' => $municipalidad->region,
+            'codigo' => $municipalidad->codigo,
+        ]);
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -139,5 +153,25 @@ class MunicipalidadController extends Controller
 
         // Devolver todos los campos de la municipalidad encontrada
         return response()->json($municipalidad);
+    }
+
+    public function asociacionesByMunicipalidad($id)
+    {
+        $municipalidad = Municipalidad::with('asociaciones')->find($id);
+
+        if (!$municipalidad) {
+            return $this->errorResponse('Municipalidad no encontrada', 404);
+        }
+
+        return response()->json([
+            'municipalidad' => [
+                'id' => $municipalidad->id,
+                'distrito' => $municipalidad->distrito,
+                'provincia' => $municipalidad->provincia,
+                'region' => $municipalidad->region,
+                'codigo' => $municipalidad->codigo,
+            ],
+            'asociaciones' => $municipalidad->asociaciones,
+        ]);
     }
 }

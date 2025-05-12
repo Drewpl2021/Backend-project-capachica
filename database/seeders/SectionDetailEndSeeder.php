@@ -6,7 +6,7 @@ use App\Models\SectionDetailEnd;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\SectionDetail;
-
+use Illuminate\Support\Str;
 
 class SectionDetailEndSeeder extends Seeder
 {
@@ -15,7 +15,7 @@ class SectionDetailEndSeeder extends Seeder
 
         $sectionDetailEnds = [
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '01',
                 'image' => 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhw7FAqnDeHNDznHcZR6zVzlV0uYLYcFl8Dfxfi69HebPFYzNc-OVOsvbEwA1UeBTxtRdchkVzl5nin2oM3vwKwOkXGMC-CERER1OwmQSNeKoBZ3JukENXfdHoEZu4BLDmp7TabntvQt2I/s640/IMG+11.jpg',
@@ -28,7 +28,7 @@ class SectionDetailEndSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '02',
                 'image' => '',
@@ -41,7 +41,7 @@ class SectionDetailEndSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '03',
                 'image' => '',
@@ -54,7 +54,7 @@ class SectionDetailEndSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '04',
                 'image' => '',
@@ -67,7 +67,7 @@ class SectionDetailEndSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '05',
                 'image' => 'https://www.peru.travel/Contenido/General/Imagen/es/836/1.1/hoteles-puno-titilaka-peru.jpg',
@@ -80,7 +80,7 @@ class SectionDetailEndSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '06',
                 'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-4eq5fVpvvOxe6weATgOFJhrS5if2-REaqQ&s',
@@ -93,7 +93,7 @@ class SectionDetailEndSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '07',
                 'image' => 'https://media-cdn.tripadvisor.com/media/attractions-splice-spp-674x446/09/18/e2/e5.jpg',
@@ -106,7 +106,7 @@ class SectionDetailEndSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '08',
                 'image' => 'https://i.pinimg.com/736x/0c/ef/94/0cef946cc9d9b378060ed2fa9b1ffad0.jpg',
@@ -119,7 +119,7 @@ class SectionDetailEndSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '09',
                 'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4ByLoCsbL0W3PjvGJsy69jBxjluWY12Bw8wMMlvOb1bhzBJwC9HayQ4tltZ3uPr0omkY&usqp=CAU',
@@ -132,7 +132,7 @@ class SectionDetailEndSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '10',
                 'image' => 'https://www.chullostravelperu.com/blog/wp-content/uploads/2023/02/PLAYA-CHIFRON-DE-CAPACHICA-PUNO.jpg',
@@ -145,7 +145,7 @@ class SectionDetailEndSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '11',
                 'image' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Vista_de_ccotos.jpg/1200px-Vista_de_ccotos.jpg',
@@ -158,7 +158,7 @@ class SectionDetailEndSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '12',
                 'image' => 'https://www.astursperu.org/wp-content/uploads/2017/07/isla-ticonata-asturs-peru.jpg',
@@ -171,7 +171,7 @@ class SectionDetailEndSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '13',
                 'image' => 'https://q-xx.bstatic.com/xdata/images/hotel/840x460/311494840.jpg?k=e773cdff610d551d31d6cdc80c805c445d892b02cdb29eba15face805ce5f45d&o=',
@@ -184,7 +184,7 @@ class SectionDetailEndSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '14',
                 'image' => 'https://images.trvl-media.com/lodging/23000000/22500000/22492800/22492790/9f98b66a.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill',
@@ -197,7 +197,7 @@ class SectionDetailEndSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '15',
                 'image' => 'https://media-cdn.tripadvisor.com/media/photo-s/13/7a/0b/a0/totorani-inn.jpg',
@@ -210,7 +210,7 @@ class SectionDetailEndSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '16',
                 'image' => 'https://q-xx.bstatic.com/xdata/images/hotel/max400/310830329.jpg?k=cc953a1bd6ffa166ebcadc5194916ecc2dd0ebfecb4aa2ca03091453f12de0e4',
@@ -223,7 +223,7 @@ class SectionDetailEndSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '17',
                 'image' => 'https://images.trvl-media.com/lodging/100000000/99250000/99242000/99241942/ac6f8a38.jpg?impolicy=fcrop&w=357&h=201&p=1&q=medium',
@@ -236,7 +236,7 @@ class SectionDetailEndSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '18',
                 'image' => 'https://municapachica.org.pe/wp-content/uploads/2024/08/453867459_483378587980487_7754598693501788576_n-1024x683.jpg',
@@ -249,7 +249,7 @@ class SectionDetailEndSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '19',
                 'image' => 'https://turismocapachica.wordpress.com/wp-content/uploads/2009/12/productos-locales_ccotos.jpg',
@@ -262,7 +262,7 @@ class SectionDetailEndSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '20',
                 'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2dUuCZe4Q4tjbHu-je-9aCJL5RNXN7qmdKA&s',
@@ -275,7 +275,7 @@ class SectionDetailEndSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '21',
                 'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAp3kUc1KTu7f1VIikOAVF6-Tt9Mdw7rv8eA&s',

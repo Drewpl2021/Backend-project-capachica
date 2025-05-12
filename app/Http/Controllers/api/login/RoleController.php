@@ -49,15 +49,31 @@ class RoleController extends Controller
      *     )
      * )
      */
-    public function index()
+    public function index(Request $request)
     {
-        $roles = Role::all();
+        $pageSize = $request->get('size', 10);
+        $page = $request->get('page', 0);
+        $name = $request->get('name'); // 🔍 Variable de búsqueda
+
+        // Construir query con filtro si hay búsqueda
+        $query = Role::query();
+
+        if (!empty($name)) {
+            $query->where('name', 'like', '%' . $name . '%');
+        }
+
+        // Paginar
+        $roles = $query->paginate($pageSize, ['*'], 'page', $page + 1); // base 1 para Laravel
 
         return response()->json([
-            'content' => $roles,
-            'account' => $roles->count(),
+            'content' => $roles->items(),
+            'totalElements' => $roles->total(),
+            'currentPage' => $roles->currentPage() - 1,
+            'totalPages' => $roles->lastPage()
         ]);
     }
+
+
 
     /**
      * @OA\Post(
