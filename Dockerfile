@@ -1,7 +1,6 @@
 #########################################
 # APP CONFIG
 #########################################
-APP_NAME=Turismo Capachica
 APP_ENV=production
 APP_KEY= # 👈 pon aquí el valor generado con php artisan key:generate
 APP_DEBUG=false
