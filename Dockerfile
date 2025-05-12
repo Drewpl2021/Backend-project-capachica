@@ -6,8 +6,13 @@ RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd zip
 
-# Habilita el mod_rewrite de Apache (necesario para Laravel)
+# Habilita mod_rewrite (necesario para Laravel)
 RUN a2enmod rewrite
+
+# 🚀 Cambia el DocumentRoot de Apache a /var/www/html/public
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 # Copia los archivos del proyecto al contenedor
 COPY . /var/www/html/
@@ -19,7 +24,7 @@ WORKDIR /var/www/html
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Instala las dependencias de Laravel
-RUN composer install
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
 # Exponer el puerto 80 (por defecto de Apache)
 EXPOSE 80
