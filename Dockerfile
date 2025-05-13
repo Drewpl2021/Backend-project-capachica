@@ -1,52 +1,27 @@
-#########################################
-# APP CONFIG
-#########################################
-APP_ENV=production
-APP_KEY= # 👈 pon aquí el valor generado con php artisan key:generate
-APP_DEBUG=false
-APP_URL=https://backend-capachica.onrender.com/ # 👈 pon la URL real de tu backend en Render
+FROM php:8.1-apache
 
-#########################################
-# LOGGING
-#########################################
-LOG_CHANNEL=stack
-LOG_LEVEL=info
+RUN apt-get update && apt-get install -y \
+    libpng-dev libjpeg-dev libfreetype6-dev libzip-dev unzip git curl \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd zip pdo pdo_mysql
 
-#########################################
-# DATABASE → Railway values
-#########################################
-DB_CONNECTION=mysql
-DB_HOST=mysql.railway.internal                # 👈 MYSQLHOST
-DB_PORT=3306                                  # 👈 MYSQLPORT
-DB_DATABASE=railway                           # 👈 MYSQLDATABASE
-DB_USERNAME=root                              # 👈 MYSQLUSER
-DB_PASSWORD=bXcsLVDBtIZzbsRXZDiVtEWFNkvtetMVb # 👈 MYSQLPASSWORD
+RUN a2enmod rewrite
 
-#########################################
-# CACHE & QUEUE
-#########################################
-CACHE_DRIVER=file
-QUEUE_CONNECTION=sync
-SESSION_DRIVER=file
-SESSION_LIFETIME=120
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-#########################################
-# MAIL → dejar así para pruebas
-#########################################
-MAIL_MAILER=smtp
-MAIL_HOST=mailpit
-MAIL_PORT=1025
-MAIL_USERNAME=null
-MAIL_PASSWORD=null
-MAIL_ENCRYPTION=null
-MAIL_FROM_ADDRESS="hello@example.com"
-MAIL_FROM_NAME="${APP_NAME}"
+COPY . /var/www/html/
 
-#########################################
-# AWS → deja vacío si no usas S3
-#########################################
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-AWS_DEFAULT_REGION=us-east-1
-AWS_BUCKET=
-AWS_USE_PATH_STYLE_ENDPOINT=false
+WORKDIR /var/www/html
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+EXPOSE 80
+
+CMD ["apache2-foreground"]
