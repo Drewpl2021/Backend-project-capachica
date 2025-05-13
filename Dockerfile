@@ -1,10 +1,19 @@
 # Usa una imagen oficial de PHP como base
 FROM php:8.1-fpm
 
+# Crear un nuevo usuario (sin privilegios de root)
+RUN useradd -ms /bin/bash laraveluser
+
+# Cambiar a root para poder instalar dependencias
+USER root
+
 # Instalar las dependencias necesarias
 RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev zip git && \
     docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-install gd pdo pdo_mysql
+
+# Cambiar de nuevo a laraveluser después de la instalación
+USER laraveluser
 
 # Configurar el directorio de trabajo dentro del contenedor
 WORKDIR /var/www
@@ -22,7 +31,7 @@ RUN composer install
 COPY . /var/www
 
 # Configurar permisos para los archivos de Laravel (como almacenamiento y caché)
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+RUN chown -R laraveluser:laraveluser /var/www/storage /var/www/bootstrap/cache
 
 # Exponer el puerto que usará Laravel (8080 en este caso)
 EXPOSE 8080
