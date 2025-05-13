@@ -71,9 +71,9 @@ class User extends Authenticatable implements JWTSubject
             'email' => $this->email,       // Agregar 'email' al token
         ];
     }
-    // Relación de User con Emprendedor
+    // Relación muchos a muchos con Emprendedor
     public function emprendedores()
     {
-        return $this->hasMany(Emprendedor::class);
+        return $this->belongsToMany(Emprendedor::class, 'emprendedor_user', 'user_id', 'emprendedor_id');
     }
 }

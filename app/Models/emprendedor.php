@@ -46,9 +46,10 @@ class Emprendedor extends Model
         return $this->hasMany(DestinosTuriscos::class);
     }
 
-    public function user()
+    // Relación muchos a muchos con User
+    public function users()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(User::class, 'emprendedor_user', 'emprendedor_id', 'user_id');
     }
 
     public function services()

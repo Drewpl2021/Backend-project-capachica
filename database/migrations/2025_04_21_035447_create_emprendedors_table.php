@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('razon_social');
             $table->string('address');
-            $table->unsignedBigInteger('user_id');  // Asegúrate de que 'user_id' sea BIGINT
+            $table->unsignedBigInteger('user_id')->nullable(); // Asegúrate de que 'user_id' sea BIGINT
             $table->string('code');
             $table->string('ruc');
             $table->text('description')->nullable();
