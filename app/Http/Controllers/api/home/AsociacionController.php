@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\home;
 use App\Http\Controllers\Controller;
 use App\Models\asociacion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class AsociacionController extends Controller
 {
@@ -28,6 +29,18 @@ class AsociacionController extends Controller
         // Obtener las asociaciones con sus imágenes relacionadas y paginación
         $asociaciones = $query->with('imgAsociacions') // Aquí estamos cargando las imágenes
             ->paginate($size);
+
+        // Depuración: Verificar si se encontraron asociaciones
+        if ($asociaciones->isEmpty()) {
+            return response()->json([
+                'message' => 'No se encontraron asociaciones.',
+                'content' => [],
+                'totalElements' => 0,
+                'currentPage' => 0,
+                'totalPages' => 0,
+                'perPage' => $size
+            ], 404);
+        }
 
         // Formatear los datos antes de enviarlos
         $response = collect($asociaciones->items())->map(function ($asociacion) {
@@ -55,11 +68,11 @@ class AsociacionController extends Controller
         return response()->json([
             'content' => $response,
             'totalElements' => $asociaciones->total(),
-            'currentPage' => $asociaciones->currentPage() - 1,
+            'currentPage' => $asociaciones->currentPage(),
             'totalPages' => $asociaciones->lastPage(),
+            'perPage' => $asociaciones->perPage(),
         ]);
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -75,7 +88,7 @@ class AsociacionController extends Controller
         ]);
 
         $asociacion = Asociacion::create($validated);
-        return response()->json($asociacion);
+        return response()->json($asociacion, 201);
     }
 
     /**
@@ -86,7 +99,10 @@ class AsociacionController extends Controller
         $asociacion = Asociacion::find($id);
 
         if (!$asociacion) {
-            return $this->errorResponse('Asociación no encontradas', 404);
+            return response()->json([
+                'message' => 'Asociación no encontrada',
+                'error' => 'No se pudo encontrar la asociación con el ID proporcionado'
+            ], 404);
         }
 
         return response()->json($asociacion);
@@ -100,7 +116,10 @@ class AsociacionController extends Controller
         $asociacion = Asociacion::find($id);
 
         if (!$asociacion) {
-            return $this->errorResponse('Asociación no encontrada', 404);
+            return response()->json([
+                'message' => 'Asociación no encontrada',
+                'error' => 'No se pudo encontrar la asociación con el ID proporcionado'
+            ], 404);
         }
 
         $validated = $request->validate([
@@ -111,7 +130,16 @@ class AsociacionController extends Controller
             'estado' => 'required|boolean',
         ]);
 
+        // Depuración: Mostrar los datos antes de la actualización
+        Log::info("Actualizando Asociación con ID: $id");
+        Log::info("Datos antes de la actualización: ", $asociacion->toArray());
+        Log::info("Datos enviados al servidor: ", $validated);
+
         $asociacion->update($validated);
+
+        // Depuración: Confirmar que los datos se actualizaron correctamente
+        log::info("Datos después de la actualización: ", $asociacion->toArray());
+
         return response()->json($asociacion);
     }
 
@@ -123,31 +151,37 @@ class AsociacionController extends Controller
         $asociacion = Asociacion::find($id);
 
         if (!$asociacion) {
-            return $this->errorResponse('Asociación no encontrada', 404);
+            return response()->json([
+                'message' => 'Asociación no encontrada',
+                'error' => 'No se pudo encontrar la asociación con el ID proporcionado'
+            ], 404);
         }
 
         $asociacion->delete();
-        return $this->successResponse([], 'Asociación eliminada exitosamente');
+        return response()->json([
+            'message' => 'Asociación eliminada exitosamente'
+        ]);
     }
 
-    public function emprendedoresByAsociacion($id)
+    /**
+     * Método auxiliar para responder con un error.
+     */
+    private function errorResponse($message, $statusCode)
     {
-        $asociacion = Asociacion::with('emprendedores')->find($id);
-
-        if (!$asociacion) {
-            return $this->errorResponse('Asociación no encontrada', 404);
-        }
-
         return response()->json([
-            'asociacion' => [
-                'id' => $asociacion->id,
-                'nombre' => $asociacion->nombre,
-                'descripcion' => $asociacion->descripcion,
-                'lugar' => $asociacion->lugar,
-                'estado' => $asociacion->estado,
-                'municipalidadId' => $asociacion->municipalidad_id,
-            ],
-            'emprendedores' => $asociacion->emprendedores,
-        ]);
+            'message' => $message,
+            'error' => 'Ocurrió un error al procesar la solicitud'
+        ], $statusCode);
+    }
+
+    /**
+     * Método auxiliar para responder con éxito.
+     */
+    private function successResponse($data, $message)
+    {
+        return response()->json([
+            'message' => $message,
+            'data' => $data
+        ], 200);
     }
 }
