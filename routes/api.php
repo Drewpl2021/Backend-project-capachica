@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\API\home\AsociacionController;
 use App\Http\Controllers\API\home\EmprendedorController;
-use App\Http\Controllers\API\home\ImagenSliderController;
 use App\Http\Controllers\API\home\ImgAsociacionController;
 use App\Http\Controllers\API\home\MunicipalidadController;
 use App\Http\Controllers\API\home\MunicipalidadDescripcionController;
@@ -10,7 +9,6 @@ use App\Http\Controllers\API\home\SliderMuniController;
 use App\Http\Controllers\API\home\SectionController;
 use App\Http\Controllers\API\home\SectionDetailController;
 use App\Http\Controllers\API\home\SectionDetailEndController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\Login\AuthController;
 use App\Http\Controllers\API\Login\RoleController;
@@ -36,9 +34,9 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // SOLO VER MUNICIPALIDAD RUTA LIBRE
 Route::get('/municipalidad', [MunicipalidadController::class, 'index']);
-Route::get('/imagen_slider', [ImagenSliderController::class, 'index']);
 Route::get('/municipalidad/descripcion', [MunicipalidadDescripcionController::class, 'index']);
 Route::get('/asociaciones', [AsociacionController::class, 'index']); // Obtener todas las asociaciones
+Route::get('/img-asociacionesTotal', [ImgAsociacionController::class, 'index']); // Obtener todas las imágenes
 
 
 
@@ -147,27 +145,20 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
         Route::get('/{id}', [SliderMuniController::class, 'show']);
         Route::put('/{id}', [SliderMuniController::class, 'update']);
         Route::delete('/{id}', [SliderMuniController::class, 'destroy']);
+    });
 
-        // Rutas para ImagenSliderController
-        Route::get('/imagen', [ImagenSliderController::class, 'index']);
-        Route::post('/imagen', [ImagenSliderController::class, 'store']);
-        Route::get('/imagen/{id}', [ImagenSliderController::class, 'show']);
-        Route::put('/imagen/{id}', [ImagenSliderController::class, 'update']);
-        Route::delete('/imagen/{id}', [ImagenSliderController::class, 'destroy']);
+    // Rutas para las imágenes de las asociaciones
+    Route::prefix('img-asociacion')->group(function () {
+        Route::post('/', [ImgAsociacionController::class, 'store']); // Crear nueva imagen
+        Route::get('/{id}', [ImgAsociacionController::class, 'show']); // Mostrar imagen específica
+        Route::put('/{id}', [ImgAsociacionController::class, 'update']); // Actualizar imagen
+        Route::delete('/{id}', [ImgAsociacionController::class, 'destroy']); // Eliminar imagen
+        Route::get('/img/{asociacionId}', [ImgAsociacionController::class, 'getImagesByAsociacionId']);
     });
 });
 
 
 
-// Rutas para las imágenes de las asociaciones
-Route::prefix('img-asociacion')->group(function () {
-    Route::get('/', [ImgAsociacionController::class, 'index']); // Obtener todas las imágenes
-    Route::post('/', [ImgAsociacionController::class, 'store']); // Crear nueva imagen
-    Route::get('/{id}', [ImgAsociacionController::class, 'show']); // Mostrar imagen específica
-    Route::put('/{id}', [ImgAsociacionController::class, 'update']); // Actualizar imagen
-    Route::delete('/{id}', [ImgAsociacionController::class, 'destroy']); // Eliminar imagen
-    Route::get('/img/{asociacionId}', [ImgAsociacionController::class, 'getImagesByAsociacionId']);
-});
 
 
 

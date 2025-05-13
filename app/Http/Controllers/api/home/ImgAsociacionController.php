@@ -39,7 +39,7 @@ class ImgAsociacionController extends Controller
             'asociacion_id' => 'required|uuid|exists:asociacions,id', // Relación con la asociación
             'url_image' => 'required|string|max:255',
             'estado' => 'required|boolean',
-            'codigo' => 'nullable|integer',
+            'codigo' => 'nullable|string',
         ]);
 
         $image = Img_Asociacion::create($validated);
@@ -94,7 +94,7 @@ class ImgAsociacionController extends Controller
             'asociacion_id' => 'required|uuid|exists:asociacions,id',
             'url_image' => 'required|string|max:255',
             'estado' => 'required|boolean',
-            'codigo' => 'nullable|integer',
+            'codigo' => 'nullable|string',
         ]);
 
         $image->update($validated);

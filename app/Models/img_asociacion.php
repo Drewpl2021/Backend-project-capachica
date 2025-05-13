@@ -13,6 +13,12 @@ class img_asociacion extends Model
     public $incrementing = false;
     protected $keyType = 'string';
     // Relación: Una imagen de asociación pertenece a una asociación
+    protected $fillable = [
+        'asociacion_id',
+        'url_image',
+        'estado',
+        'codigo'
+    ];
     public function asociacion()
     {
         return $this->belongsTo(Asociacion::class);
