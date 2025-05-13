@@ -28,13 +28,24 @@ class MunicipalidadController extends Controller
         }
 
         // Obtener los resultados paginados
-        $municipalidades = $query->paginate($size);
+        $municipalidades = $query->with('slider_munis')  // Cargar la relación con sliders
+            ->paginate($size);
 
         // Mapear los resultados de la paginación
         $response = $municipalidades->items();  // Obtienes los items de la paginación directamente
 
         // Formatear la respuesta
         $response = collect($response)->map(function ($municipalidad) {
+            // Aquí agregamos los sliders a la respuesta de cada municipalidad
+            $sliders = $municipalidad->slider_munis->map(function ($slider) {
+                return [
+                    'id' => $slider->id,
+                    'titulo' => $slider->titulo,
+                    'descripcion' => $slider->descripcion,
+                    'url_images' => $slider->url_images,
+                ];
+            });
+
             return [
                 'id' => $municipalidad->id,
                 'distrito' => $municipalidad->distrito,
@@ -44,6 +55,7 @@ class MunicipalidadController extends Controller
                 'createdAt' => $municipalidad->created_at,
                 'updatedAt' => $municipalidad->updated_at,
                 'deletedAt' => $municipalidad->deleted_at,
+                'sliders' => $sliders, // Incluir los sliders en la respuesta
             ];
         });
 
@@ -56,6 +68,7 @@ class MunicipalidadController extends Controller
             'perPage' => $municipalidades->perPage(),
         ]);
     }
+
 
 
 

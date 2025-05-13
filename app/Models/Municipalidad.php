@@ -41,4 +41,16 @@ class Municipalidad extends Model
     {
         return $this->hasMany(Asociacion::class);
     }
+
+    // Relación: Una municipalidad tiene muchas imagenes
+    public function sildermuni()
+    {
+        return $this->hasMany(Slider_Muni::class);
+    }
+
+    // Relación uno a muchos con Slider_Muni
+    public function slider_munis()
+    {
+        return $this->hasMany(Slider_Muni::class, 'municipalidad_id');
+    }
 }
