@@ -128,30 +128,34 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
+        // Buscar al usuario por email o username
         $user = User::with('permissions')
             ->where('email', $request->email)
             ->orWhere('username', $request->username)
             ->first();
 
+        // Verificar si el usuario existe y si la contraseña es correcta
         if (!$user || !Hash::check($request->password, $user->password)) {
             return $this->error('Credenciales incorrectas', 401);
         }
 
-        // Crear el token JWT
+        // Generar el token JWT
         try {
-            $token = JWTAuth::fromUser($user); // Este método genera el token
+            $token = JWTAuth::fromUser($user);  // Este método genera el token
         } catch (JWTException $e) {
             return $this->error('No se pudo crear el token', 500);
         }
 
+        // Devolver la respuesta con el token y la información del usuario
         return $this->successResponse([
             'token' => $token,
-            'expires_at' => now()->addMinutes(config('jwt.ttl'))->toDateTimeString(),
-            'username' => $user->only(['id', 'username', 'email']),
-            'roles' => $user->getRoleNames(),
-            'permissions' => $user->getAllPermissions()->pluck('name'),
+            'expires_at' => now()->addMinutes(config('jwt.ttl'))->toDateTimeString(), // Configuración de expiración del token
+            'username' => $user->only(['id', 'username', 'email']),  // Asegúrate de que el 'id' es un UUID
+            'roles' => $user->getRoleNames(),  // Obtener los roles del usuario
+            'permissions' => $user->getAllPermissions()->pluck('name'),  // Obtener los permisos del usuario
         ], 'Usuario iniciado sesión correctamente', 200);
     }
+
 
 
     /**

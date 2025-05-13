@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 
-class emprendedor extends Model
+class Emprendedor extends Model
 {
     use HasFactory;
-    protected $table = 'users';
+    protected $guarded = ['id'];
     public $incrementing = false;
+
     protected $fillable = [
         'razon_social',
         'address',
@@ -44,9 +45,10 @@ class emprendedor extends Model
     {
         return $this->hasMany(DestinosTuriscos::class);
     }
+
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class);
     }
 
     public function services()
@@ -59,5 +61,4 @@ class emprendedor extends Model
         )->withPivot(['code', 'cantidad', 'name', 'description'])
             ->withTimestamps();
     }
-
 }

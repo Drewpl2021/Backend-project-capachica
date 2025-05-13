@@ -3,54 +3,63 @@
 namespace Database\Seeders;
 
 use App\Models\Emprendedor;
-use App\Models\Asociacion; // Asegúrate de tener el modelo de Asociación
+use App\Models\Asociacion;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
 class EmprendedorSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run()
     {
-        // Buscar al usuario por su 'username'
-        $user = User::where('username', 'andres.montes')->first();
+        // Obtener todos los usuarios
+        $users = User::all();
 
-        // Verificar si se encontró el usuario
-        if (!$user) {
-            // Si no se encontró, mostrar un mensaje de error y detener la ejecución
-            echo "El usuario 'andres.montes' no se encuentra en la base de datos. No se puede continuar con la creación de emprendedores.\n";
-            return; // Detener la ejecución si el usuario no existe
+        // Verificar si hay usuarios
+        if ($users->isEmpty()) {
+            $this->command->error('No hay usuarios en la base de datos. No se puede continuar con la creación de emprendedores.');
+            return;
         }
 
-        // Si el usuario existe, obtener las asociaciones
+        // Obtener todas las asociaciones
         $asociaciones = Asociacion::all();
 
         // Verificar si hay asociaciones
         if ($asociaciones->isEmpty()) {
-            echo "No hay asociaciones en la base de datos. No se puede continuar con la creación de emprendedores.\n";
+            $this->command->error('No hay asociaciones en la base de datos. No se puede continuar con la creación de emprendedores.');
             return;
         }
 
-        // Crear un emprendedor para cada asociación
-        foreach ($asociaciones as $asociacion) {
-            // Crear el emprendedor
-            Emprendedor::create([
+        // Crear un emprendedor para cada usuario
+        foreach ($users as $user) {
+            // Seleccionar una asociación aleatoria para este emprendedor
+            $asociacion = $asociaciones->random();
+
+            // Datos del emprendedor
+            $emprendedorData = [
                 'id' => (string) Str::uuid(),
-                'user_id' => $user->id || 'ec03a1d3-12b8-4c64-9513-60bfd7e60f0a',  // Asegurándonos de que se usa el ID correcto del usuario
+                'user_id' => $user->id,
                 'asociacion_id' => $asociacion->id,
-                'razon_social' => 'Emprendedor de ' . $asociacion->nombre,
-                'name_family' => 'Familia A',
-                'address' => 'Dirección genérica 1',
-                'code' => 'EMP-' . Str::random(5),
-                'ruc' => Str::random(11),
-                'description' => null,
-                'lugar' => null,
-                'img_logo' => null,
-            ]);
-            break; // Solo crear un emprendedor para este usuario
+                'razon_social' => 'Emprendimiento de ' . $user->name,
+                'name_family' => 'Familia ' . Str::upper(Str::random(1)),
+                'address' => 'Calle ' . rand(1, 100) . ', ' . $asociacion->lugar,
+                'code' => 'EMP-' . Str::upper(Str::random(5)),
+                'ruc' => rand(10000000000, 99999999999),
+                'description' => "Emprendimiento de " . $user->name . " dedicado a " .
+                    ['artesanía', 'agricultura', 'textiles', 'alimentos'][rand(0, 3)] .
+                    " en " . $asociacion->nombre,
+                'lugar' => $asociacion->lugar,
+                'img_logo' => "emprendimientos/logos/" . Str::random(10) . ".png",
+            ];
+
+            // Crear el emprendedor
+            $emprendedor = Emprendedor::create($emprendedorData);
+
+            $this->command->info("Emprendedor creado para usuario {$user->name} (ID: {$user->id}):");
+            $this->command->info("- Razon Social: {$emprendedor->razon_social}");
+            $this->command->info("- Asociación: {$asociacion->nombre}");
         }
+
+        $this->command->info('Se crearon ' . count($users) . ' emprendedores exitosamente.');
     }
 }

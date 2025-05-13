@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();  // Cambia el tipo de 'id' a UUID
             $table->string('name');
             $table->string('last_name');
             $table->string('code');
@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('password');
             $table->string('imagen_url')->nullable();
             $table->timestamps();
-
         });
     }
 

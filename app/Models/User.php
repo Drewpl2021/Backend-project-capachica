@@ -15,6 +15,8 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    protected $guarded = ['id'];
+
     protected $table = 'users';
     /**
      * Los atributos que son asignables en masa.
@@ -54,7 +56,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function getJWTIdentifier()
     {
-        return $this->getKey(); // Retorna la clave primaria del modelo, generalmente el 'id'
+        return $this->getKey(); // Retorna el 'id' del usuario (que es un UUID)
     }
 
     /**
@@ -69,10 +71,9 @@ class User extends Authenticatable implements JWTSubject
             'email' => $this->email,       // Agregar 'email' al token
         ];
     }
-    public function emprendedor()
+    // Relación de User con Emprendedor
+    public function emprendedores()
     {
-        return $this->hasOne(emprendedor::class, 'user_id', 'id');
+        return $this->hasMany(Emprendedor::class);
     }
-
-
 }
