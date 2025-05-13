@@ -16,11 +16,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RolesAndPermissionsSeeder::class,
             UserAdminSeeder::class,
-        ]);
-        $this->call([
+
             ParentModuleAndModuleSeeder::class,
-        ]);
-        $this->call([
+
             MunicipalidadSeeder::class,
             MunicipalidadDescripcionSeeder::class,
             SliderMuniSeeder::class,
@@ -28,13 +26,12 @@ class DatabaseSeeder extends Seeder
             SectionsDetailSeeder::class,
             SectionDetailEndSeeder::class,
             SliderMuniSeeder::class,
-        ]);
 
-        $this->call([
             AsociacionSeeder::class,
             ImgAsociacionSeeder::class,
-            EmprendedorSeeder::class,
             DestinosTuriscosSeeder::class,
+            EmprendedorSeeder::class,
+
         ]);
 
 

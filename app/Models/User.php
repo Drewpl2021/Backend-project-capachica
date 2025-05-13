@@ -15,7 +15,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
-
+    protected $table = 'users';
     /**
      * Los atributos que son asignables en masa.
      *
@@ -69,4 +69,10 @@ class User extends Authenticatable implements JWTSubject
             'email' => $this->email,       // Agregar 'email' al token
         ];
     }
+    public function emprendedor()
+    {
+        return $this->hasOne(emprendedor::class, 'user_id', 'id');
+    }
+
+
 }
