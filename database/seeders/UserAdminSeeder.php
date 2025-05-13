@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
 class UserAdminSeeder extends Seeder
@@ -15,16 +16,12 @@ class UserAdminSeeder extends Seeder
         $admin = User::firstOrCreate(
             ['email' => 'admin@example.com'],
             [
-                'username' => 'Administrador',
+                'id' => (string) Str::uuid(),
+                'name' => 'Administrador',
+                'last_name' => 'Sistema',
+                'code' => 'ADM001',
+                'username' => 'admin',
                 'password' => Hash::make('admin123'),
-            ]
-        );
-
-        $admin = User::firstOrCreate(
-            ['email' => 'andres.montes@example.com'],
-            [
-                'username' => 'andres.montes',
-                'password' => Hash::make('12345'),
             ]
         );
 
@@ -34,11 +31,34 @@ class UserAdminSeeder extends Seeder
             $admin->assignRole($adminRole);
         }
 
+        // Crear usuario Andres Montes si no existe
+        $andres = User::firstOrCreate(
+            ['email' => 'andres.montes@example.com'],
+            [
+                'id' => (string) Str::uuid(),
+                'name' => 'Andres',
+                'last_name' => 'Montes',
+                'code' => 'USR001',
+                'username' => 'andres.montes',
+                'password' => Hash::make('12345'),
+            ]
+        );
+
+        // Asignar rol user
+        $andresRole = Role::where('name', 'user')->first();
+        if ($andresRole && !$andres->hasRole('user')) {
+            $andres->assignRole($andresRole);
+        }
+
         // Crear usuario ADMIN_FAMILIA si no existe
         $adminFam = User::firstOrCreate(
             ['email' => 'familia@example.com'],
             [
-                'username' => 'Admin Familia',
+                'id' => (string) Str::uuid(),
+                'name' => 'Admin',
+                'last_name' => 'Familia',
+                'code' => 'FAM001',
+                'username' => 'admin_familia',
                 'password' => Hash::make('familia123'),
             ]
         );
