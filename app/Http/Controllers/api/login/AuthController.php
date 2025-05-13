@@ -12,33 +12,49 @@ use App\Traits\ValidatorTrait;
 use App\Traits\RolePermissions;
 use OpenApi\Annotations as OA;
 use Spatie\Permission\Traits\HasRoles;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 /**
  * @OA\Info(
- *     title="API de Autenticación",
+ *     title="Autenticación",
  *     version="1.0",
- *     description="Documentación de autenticación para el sistema Capachica"
+ *     description="Documentación para gestionar autenticaciones"
  * )
  *
  * @OA\Server(
  *     url="http://localhost:8000"
  * )
  */
+
+/**
+ * @OA\Schema(
+ *     schema="User",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", description="ID del usuario"),
+ *     @OA\Property(property="username", type="string", description="Nombre del usuario"),
+ *     @OA\Property(property="email", type="string", description="Correo electrónico del usuario"),
+ *     @OA\Property(property="imagen_url", type="string", description="URL de la imagen del usuario")
+ * )
+ */
 class AuthController extends Controller
 {
     use RolePermissions, ApiResponseTrait, TokenHelper, ValidatorTrait, HasRoles;
+
     /**
      * @OA\Post(
      *     path="/register",
-     *     summary="Registrar un nuevo usuario",
+     *     operationId="registerUserssssssssssssssssss",
      *     tags={"Auth"},
+     *     summary="Registrar un nuevo usuario",
+     *     description="Registrar un nuevo usuario en el sistema",
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"name", "password"},
-     *             @OA\Property(property="name", type="string", example="juanito"),
+     *             required={"username", "password"},
+     *             @OA\Property(property="username", type="string", example="juanito"),
      *             @OA\Property(property="email", type="string", example="juanito@example.com"),
-     *             @OA\Property(property="password", type="string", example="secret123"),
+     *             @OA\Property(property="password", type="string", example="secret123")
      *         )
      *     ),
      *     @OA\Response(
@@ -55,49 +71,48 @@ class AuthController extends Controller
     {
         // Validación de los datos con el trait ValidatorTrait
         $validation = $this->validateRequest($request, [
-            'username'     => 'required|string|max:255|unique:users', // Validamos que el nombre sea único
-            'email'    => 'nullable|string|email|max:255|unique:users', // El email es opcional
-            'password' => 'required|string', // La contraseña es obligatoria
+            'username'     => 'required|string|max:255|unique:users',
+            'email'    => 'nullable|string|email|max:255|unique:users',
+            'password' => 'required|string',
         ]);
 
-        // Si hay un error en la validación, retornamos el mensaje de error
         if ($validation->fails()) {
             return $this->validationErrorResponse($validation->errors());
         }
-
 
         // Crear el usuario y guardarlo en la base de datos
         $user = User::create([
             'username'     => $request->username,
             'email'    => $request->email,
-            'password' => bcrypt($request->password), // Encriptamos la contraseña
+            'password' => bcrypt($request->password),
         ]);
 
         // Asignar rol al usuario (por defecto es 'usuario')
         $rol = $request->get('rol', 'usuario');
         $this->assignRoleToUser($user, $rol);
 
-        // Crear token con el trait TokenHelper
-        $token = $this->createToken($user);
+        // Crear token con JWT
+        $token = JWTAuth::fromUser($user);
 
-        // Respuesta exitosa con los datos del usuario
         return $this->successResponse([
             'token' => $token,
             'user' => $user->only(['id', 'username', 'email']),
             'roles' => $user->getRoleNames(),
         ], 'Usuario registrado correctamente', 201);
     }
+
     /**
      * @OA\Post(
      *     path="/login",
-     *     summary="Iniciar sesión",
+     *     operationId="login",
      *     tags={"Auth"},
+     *     summary="Iniciar sesión",
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
      *             required={"password"},
      *             @OA\Property(property="email", type="string", example="juanito@example.com"),
-     *             @OA\Property(property="name", type="string", example="juanito"),
+     *             @OA\Property(property="username", type="string", example="juanito"),
      *             @OA\Property(property="password", type="string", example="secret123")
      *         )
      *     ),
@@ -113,41 +128,39 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // Buscar al usuario por nombre o email
-        $user = User::with('permissions')  // Asegúrate de cargar los permisos
+        $user = User::with('permissions')
             ->where('email', $request->email)
             ->orWhere('username', $request->username)
             ->first();
 
-        // Si el usuario no existe o la contraseña no coincide, retornamos error
         if (!$user || !Hash::check($request->password, $user->password)) {
             return $this->error('Credenciales incorrectas', 401);
         }
 
-        // Crear token con el trait TokenHelper
-        $tokenData = $this->createToken($user);  // El token y la expiración
-
-        // Si no tiene rol, asignarle por defecto
-        if (!$user->hasAnyRole(['admin', 'admin_familia', 'usuario'])) {
-            $user->assignRole('usuario');
+        // Crear el token JWT
+        try {
+            $token = JWTAuth::fromUser($user); // Este método genera el token
+        } catch (JWTException $e) {
+            return $this->error('No se pudo crear el token', 500);
         }
 
-        // Respuesta exitosa con token, datos de usuario, roles y permisos
         return $this->successResponse([
-            'token' => $tokenData['access_token'],
-            'expires_at' => $tokenData['expires_at'],  // La fecha de expiración
-            'username' => $user->only(['id', 'username', 'email', 'imagen_url']),
+            'token' => $token,
+            'expires_at' => now()->addMinutes(config('jwt.ttl'))->toDateTimeString(),
+            'username' => $user->only(['id', 'username', 'email']),
             'roles' => $user->getRoleNames(),
             'permissions' => $user->getAllPermissions()->pluck('name'),
         ], 'Usuario iniciado sesión correctamente', 200);
     }
 
+
     /**
      * @OA\Get(
      *     path="/perfil",
+     *     operationId="perfil",
      *     summary="Obtener perfil del usuario autenticado",
      *     tags={"Auth"},
-     *     security={{"passport":{}}},
+     *     security={{"passport":{}}},  // Puedes modificar esto a "jwt" si es necesario
      *     @OA\Response(
      *         response=200,
      *         description="Datos del usuario autenticado"
@@ -160,22 +173,20 @@ class AuthController extends Controller
      */
     public function perfil(Request $request)
     {
-        // Retornamos la información del usuario autenticado
-        // Obtenemos el usuario autenticado
         $user = $request->user();
-
-        // Retornamos el nombre y el email
         return $this->successResponse([
             'username' => $user->username,
             'email' => $user->email,
         ], 'Datos del usuario obtenidos correctamente');
     }
+
     /**
      * @OA\Post(
      *     path="/logout",
+     *     operationId="logout",
      *     summary="Cerrar sesión",
      *     tags={"Auth"},
-     *     security={{"passport":{}}},
+     *     security={{"passport":{}}},  // Similar, podrías cambiar a JWT si prefieres usar seguridad JWT
      *     @OA\Response(
      *         response=200,
      *         description="Sesión cerrada"
@@ -188,8 +199,8 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        // Revocar el token usando el trait TokenHelper
-        $this->revokeToken($request->user());
+        // Revocar el token del usuario
+        JWTAuth::invalidate(JWTAuth::getToken());
         return $this->successResponse(null, 'Sesión cerrada');
     }
 }

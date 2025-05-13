@@ -11,9 +11,10 @@ class RolesAndPermissionsSeeder extends Seeder
 {
     public function run()
     {
+        // Limpiar caché de permisos
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Crear permisos si no existen
+        // Crear permisos con guard 'api'
         $permisos = [
             'ver_usuarios',
             'crear_usuarios',
@@ -25,20 +26,24 @@ class RolesAndPermissionsSeeder extends Seeder
             'crear_municipalidad',
             'visualizar_municipalidad',
             'editar_roles'
-            // CRUD
         ];
 
-        // Crear los permisos para el guard `api`
+        // Crear permisos
         foreach ($permisos as $permiso) {
             Permission::firstOrCreate(['name' => $permiso, 'guard_name' => 'api']);
         }
 
-        // Crear roles si no existen
-        $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'api']);
-        // Asignar todos los permisos al rol admin
-        $admin->syncPermissions(Permission::all());
+        // Crear roles y asignarles permisos
+        $admin = Role::firstOrCreate(
+            ['name' => 'admin', 'guard_name' => 'api'], // Asegúrate de usar 'api' aquí
+            ['description' => 'Administrador con todos los permisos del sistema']
+        );
+        $admin->syncPermissions(Permission::all()); // Sincroniza todos los permisos con este rol
 
-        $adminFam = Role::firstOrCreate(['name' => 'admin_familia', 'guard_name' => 'api']);
+        $adminFam = Role::firstOrCreate(
+            ['name' => 'admin_familia', 'guard_name' => 'api'], // Asegúrate de usar 'api' aquí
+            ['description' => 'Administrador responsable de la familia y municipios']
+        );
         $adminFam->syncPermissions([
             'ver_usuarios',
             'editar_usuarios',
@@ -47,10 +52,13 @@ class RolesAndPermissionsSeeder extends Seeder
             'visualizar_municipalidad',
         ]);
 
-        $usuario = Role::firstOrCreate(['name' => 'usuario', 'guard_name' => 'api']);
+        $usuario = Role::firstOrCreate(
+            ['name' => 'usuario', 'guard_name' => 'api'], // Asegúrate de usar 'api' aquí
+            ['description' => 'Usuario con permisos básicos del sistema']
+        );
         $usuario->syncPermissions([
+            'ver_usuarios',
             'editar_perfil',
-            'editar_municipalidad',
             'visualizar_municipalidad',
         ]);
     }

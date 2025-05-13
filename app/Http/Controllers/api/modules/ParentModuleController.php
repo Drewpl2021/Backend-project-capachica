@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\Modules;
 
 use App\Http\Controllers\Controller;
 use App\Models\ParentModule;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -13,6 +14,7 @@ class ParentModuleController extends Controller
     /**
      * GET /parent-module?page=&size=&name=
      */
+
     public function listPaginate(Request $request)
     {
         $size = $request->input('size', 10);
@@ -26,14 +28,32 @@ class ParentModuleController extends Controller
 
         $data = $query->paginate($size);
 
-        return response()->json([
-            'content' => $data,
-            'totalElements' => $data->total(),
-            'currentPage' => $data->currentPage() - 1,
+        // Construir la respuesta con el formato solicitado
+        $response = [
             'totalPages' => $data->lastPage(),
-            'perPage' => $data->perPage(),
-        ]);
+            'currentPage' => $data->currentPage() - 1, // Restamos 1 para ajustarlo al formato que pides
+            'content' => $data->map(function ($module) {
+                return [
+                    'id' => $module->id,
+                    'title' => $module->title,
+                    'code' => $module->code,
+                    'subtitle' => $module->subtitle,
+                    'type' => $module->type,
+                    'icon' => $module->icon,
+                    'status' => $module->status,
+                    'moduleOrder' => $module->moduleOrder,
+                    'link' => $module->link,
+                    'createdAt' => Carbon::parse($module->created_at)->toISOString(), // Convierte la fecha a Carbon
+                    'updatedAt' => Carbon::parse($module->updated_at)->toISOString(), // Convierte la fecha a Carbon
+                    'deletedAt' => $module->deleted_at ? Carbon::parse($module->deleted_at)->toISOString() : null, // Convierte la fecha a Carbon si existe
+                ];
+            }),
+            'totalElements' => $data->total(),
+        ];
+
+        return response()->json($response);
     }
+
 
     /**
      * GET /parent-module/list?name=

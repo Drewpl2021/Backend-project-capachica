@@ -36,7 +36,7 @@ class EmprendedorController extends Controller
                 'id' => $emprendedor->id,
                 'razonSocial' => $emprendedor->razon_social,
                 'asociacionId' => $emprendedor->asociacion_id,
-                'Nombre Asociacion' => $emprendedor->asociacion->nombre, // Obtener el nombre de la asociación
+                'nombre_asociacion' => $emprendedor->asociacion->nombre, // Obtener el nombre de la asociación
                 'newColumn' => $emprendedor->new_column,
                 'createdAt' => $emprendedor->created_at,
                 'updatedAt' => $emprendedor->updated_at,
@@ -60,7 +60,6 @@ class EmprendedorController extends Controller
         $validated = $request->validate([
             'asociacion_id' => 'required|uuid|exists:asociacions,id', // Relación con la asociación
             'razon_social' => 'required|string|max:255',
-            'new_column' => 'nullable|integer',
         ]);
 
         $emprendedor = Emprendedor::create($validated);

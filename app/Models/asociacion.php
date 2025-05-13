@@ -29,8 +29,9 @@ class asociacion extends Model
     // Relación: Una asociación tiene muchas imágenes asociadas
     public function imgAsociacions()
     {
-        return $this->hasMany(Img_Asociacion::class);
+        return $this->hasMany(Img_Asociacion::class, 'asociacion_id');
     }
+
     protected static function boot()
     {
         parent::boot();

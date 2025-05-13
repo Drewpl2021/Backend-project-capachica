@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
             SectionsSeeder::class,
             SectionsDetailSeeder::class,
             SectionDetailEndSeeder::class,
-            ImagenSliderSeeder::class,
+            SliderMuniSeeder::class,
         ]);
 
         $this->call([

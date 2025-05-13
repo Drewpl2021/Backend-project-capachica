@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 
 class Municipalidad extends Model
 {
+
     use HasFactory;
     // Relación uno a uno con la descripción
     // Si el nombre de la tabla no sigue la convención plural, especifica el nombre de la tabla aquí
@@ -15,7 +16,12 @@ class Municipalidad extends Model
     public $incrementing = false;
     protected $keyType = 'string';
     // Permite la asignación masiva de estos campos
-    protected $fillable = ['distrito', 'provincia', 'region'];
+    protected $fillable = [
+        'distrito',
+        'provincia',
+        'region',
+        'codigo',
+    ];
     protected static function boot()
     {
         parent::boot();
@@ -34,5 +40,17 @@ class Municipalidad extends Model
     public function asociaciones()
     {
         return $this->hasMany(Asociacion::class);
+    }
+
+    // Relación: Una municipalidad tiene muchas imagenes
+    public function sildermuni()
+    {
+        return $this->hasMany(Slider_Muni::class);
+    }
+
+    // Relación uno a muchos con Slider_Muni
+    public function slider_munis()
+    {
+        return $this->hasMany(Slider_Muni::class, 'municipalidad_id');
     }
 }

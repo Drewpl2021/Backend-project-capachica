@@ -24,7 +24,7 @@ return [
          * `Spatie\Permission\Contracts\Role` contract.
          */
 
-        'role' => Spatie\Permission\Models\Role::class,
+        'role' => App\Models\Role::class, // ✅ este debe apuntar a tu modelo
 
     ],
 
@@ -80,7 +80,8 @@ return [
     |
     */
 
-    'guard_name' => 'api',  // Cambia esto si no está configurado en 'api'
+    // config/permission.php
+    'guard_name' => 'api',  // Asegúrate de que el guard de Spatie sea 'api'
     /*
     |--------------------------------------------------------------------------
     | Guard Name

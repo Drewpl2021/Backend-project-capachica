@@ -1,8 +1,8 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "API de Autenticación",
-        "description": "Documentación de autenticación para el sistema Capachica",
+        "title": "Roles",
+        "description": "Documentación para gestionar roles y asignar permisos a los usuarios en el sistema Capachica",
         "version": "1.0"
     },
     "servers": [
@@ -17,18 +17,19 @@
                     "Auth"
                 ],
                 "summary": "Registrar un nuevo usuario",
-                "operationId": "ee812a060135746238ada78f842c3854",
+                "description": "Registrar un nuevo usuario en el sistema",
+                "operationId": "registerUserssssssssssssssssss",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "name",
+                                    "username",
                                     "password"
                                 ],
                                 "properties": {
-                                    "name": {
+                                    "username": {
                                         "type": "string",
                                         "example": "juanito"
                                     },
@@ -62,7 +63,7 @@
                     "Auth"
                 ],
                 "summary": "Iniciar sesión",
-                "operationId": "a0afd3242af791ca93cf6d468dc364e2",
+                "operationId": "login",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -76,7 +77,7 @@
                                         "type": "string",
                                         "example": "juanito@example.com"
                                     },
-                                    "name": {
+                                    "username": {
                                         "type": "string",
                                         "example": "juanito"
                                     },
@@ -106,7 +107,7 @@
                     "Auth"
                 ],
                 "summary": "Obtener perfil del usuario autenticado",
-                "operationId": "d10275e435c0a0e1ff865312323467d1",
+                "operationId": "perfil",
                 "responses": {
                     "200": {
                         "description": "Datos del usuario autenticado"
@@ -128,7 +129,7 @@
                     "Auth"
                 ],
                 "summary": "Cerrar sesión",
-                "operationId": "5fb9e4f53f42ad27b92ae35c5953db29",
+                "operationId": "logout",
                 "responses": {
                     "200": {
                         "description": "Sesión cerrada"
@@ -143,12 +144,310 @@
                     }
                 ]
             }
+        },
+        "/roles": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Obtener todos los roles",
+                "operationId": "7995d170151b78113dd46b436fe2597c",
+                "responses": {
+                    "200": {
+                        "description": "Lista de roles obtenida correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "roles": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Role"
+                                            }
+                                        },
+                                        "count": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error al obtener roles"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Crear un nuevo rol",
+                "operationId": "c4333d24059c18feafeafd59596bc629",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "admin"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Rol creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Role"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                }
+            }
+        },
+        "/roles/{id}": {
+            "put": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Actualizar un rol",
+                "operationId": "0fea1ca1f41b3d8aaced87621860a926",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del rol a actualizar",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "editor"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Rol actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Role"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Rol no encontrado"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Eliminar un rol",
+                "operationId": "d585034a3712a0be63efe8aa9bdb78ce",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del rol a eliminar",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Rol eliminado exitosamente"
+                    },
+                    "404": {
+                        "description": "Rol no encontrado"
+                    }
+                }
+            }
+        },
+        "/role/{id}": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Obtener un rol por ID",
+                "operationId": "c7fc2c87f3b6f47f481ce6e0b95ea342",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del rol a obtener",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Rol obtenido correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Role"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Rol no encontrado"
+                    }
+                }
+            }
+        },
+        "/roles/{userId}/assign": {
+            "post": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Asignar un rol a un usuario",
+                "operationId": "b22ed0d39debe3f3e416781eec3fdf51",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "ID del usuario al que se le asignará el rol",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "role"
+                                ],
+                                "properties": {
+                                    "role": {
+                                        "type": "string",
+                                        "example": "admin"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Rol asignado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        "role": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Usuario no encontrado"
+                    },
+                    "422": {
+                        "description": "Rol inválido"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "User": {
+                "properties": {
+                    "id": {
+                        "description": "ID del usuario",
+                        "type": "integer"
+                    },
+                    "username": {
+                        "description": "Nombre del usuario",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "Correo electrónico del usuario",
+                        "type": "string"
+                    },
+                    "imagen_url": {
+                        "description": "URL de la imagen del usuario",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Role": {
+                "properties": {
+                    "id": {
+                        "description": "ID del rol",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Nombre del rol",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            }
         }
     },
     "tags": [
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Roles",
+            "description": "Roles"
         }
     ]
 }
