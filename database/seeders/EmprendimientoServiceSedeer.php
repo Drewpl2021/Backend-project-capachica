@@ -38,6 +38,7 @@ class EmprendimientoServiceSedeer extends Seeder
             $selectedServices = $services->random(1);  // Tomar un servicio aleatorio
 
             foreach ($selectedServices as $service) {
+                // Asegurarse de que el 'service_id' es el UUID del servicio
                 if (!$service) {
                     $this->command->error('No se encontró un servicio válido para el emprendedor ' . $emprendedor->name);
                     continue; // Saltar a la siguiente iteración si no hay servicio válido
@@ -46,10 +47,10 @@ class EmprendimientoServiceSedeer extends Seeder
                 // Datos para la tabla intermedia 'Emprendimiento_servicio'
                 DB::table('emprendedor_service')->insert([
                     'id' => (string) Str::uuid(),  // Generar un UUID para la tabla intermedia
-                    'service_id' => $service->id,  // ID del servicio
+                    'service_id' => $service->id,  // Asegurarse de que estamos usando el UUID del servicio
                     'emprendedor_id' => $emprendedor->id,  // ID del emprendedor
                     'code' => 'CODE-' . Str::upper(Str::random(5)),  // Código aleatorio para la relación
-                    'cantidad' => rand(1, 10),  // Cantidad aleatoria (puedes ajustarlo según lo que necesites)
+                    'cantidad' => rand(1, 10),  // Cantidad aleatoria
                     'name' => 'Servicio de ' . $service->name,  // Nombre relacionado al servicio
                     'description' => 'Descripción del servicio para ' . $emprendedor->name,  // Descripción relacionada
                     'created_at' => now(),
