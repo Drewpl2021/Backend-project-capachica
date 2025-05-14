@@ -55,5 +55,4 @@ class Emprendedor extends Model
     {
         return $this->belongsToMany(Service::class, 'emprendedor_service', 'emprendedor_id', 'service_id');
     }
-
 }

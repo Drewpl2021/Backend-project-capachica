@@ -36,7 +36,8 @@ class DatabaseSeeder extends Seeder
             EmprendedorSeeder::class,
             DestinosTuriscosSeeder::class,
             ServiceSedeer::class,
-            EmprendimientoServiceSedeer::class,
+            EmprendimientoServiceSeeder::class, // Nombre exacto
+
         ]);
 
 
