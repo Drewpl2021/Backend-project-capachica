@@ -14,6 +14,7 @@ class EmprendedorService extends Model
     public $incrementing = false;
     protected $keyType = 'string';
     protected $guarded = ['id'];
+    protected $table = 'emprendedor_service';
 
     /**
      * Los atributos asignables.
@@ -55,5 +56,13 @@ class EmprendedorService extends Model
     public function service()
     {
         return $this->belongsTo(Service::class, 'service_id', 'id');
+    }
+    public function reserveDetails()
+    {
+        return $this->hasMany(ReserveDetail::class, 'emprendedor_service_id');
+    }
+    public function saleDetail()
+    {
+        return $this->hasOne(SaleDetail::class, 'emprendedor_service_id');
     }
 }

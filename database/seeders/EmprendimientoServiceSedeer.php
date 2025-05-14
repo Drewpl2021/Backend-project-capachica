@@ -58,7 +58,5 @@ class EmprendimientoServiceSedeer extends Seeder
                 ]);
             }
         }
-
-        $this->command->info('Relaciones entre emprendedores y servicios creadas correctamente.');
     }
 }

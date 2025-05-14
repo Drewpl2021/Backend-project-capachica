@@ -37,6 +37,11 @@ class DatabaseSeeder extends Seeder
             DestinosTuriscosSeeder::class,
             ServiceSedeer::class,
             EmprendimientoServiceSedeer::class,
+            ReservaSeeder::class,
+            ReservaDetailSeeder::class,
+            PaymentSeeder::class,
+            SaleSeeder::class,
+            SaleDetailSeeder::class,
         ]);
 
 
