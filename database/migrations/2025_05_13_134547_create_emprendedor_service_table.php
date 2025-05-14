@@ -14,15 +14,15 @@ return new class extends Migration
         Schema::create('emprendedor_service', function (Blueprint $table) {
 
             $table->uuid('id')->primary();
-            $table->uuid('service_id');
-            $table->uuid('emprendedor_id');
+            $table->unique(['service_id', 'emprendedor_id']);
+
             $table->string('code')->nullable();
             $table->integer('cantidad')->default(0);
             $table->string('name');
             $table->text('description')->nullable();
 
-            $table->foreign('service_id')->references('id')->on('services')->onDelete('cascade');
-            $table->foreign('emprendedor_id')->references('id')->on('emprendedors')->onDelete('cascade');
+            $table->foreignUuid('service_id')->constrained('services')->onDelete('cascade');
+            $table->foreignUuid('emprendedor_id')->constrained('emprendedors')->onDelete('cascade');
 
             $table->timestamps();
             $table->softDeletes();

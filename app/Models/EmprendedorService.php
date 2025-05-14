@@ -12,9 +12,10 @@ class EmprendedorService extends Model
 
     // 👇 porque tu PK es uuid y no autoincremental
     public $incrementing = false;
+    protected $table = 'emprendedor_service'; // Especifica el nombre correcto
+
     protected $keyType = 'string';
     protected $guarded = ['id'];
-    protected $table = 'emprendedor_service';
 
     /**
      * Los atributos asignables.
@@ -22,12 +23,13 @@ class EmprendedorService extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'emprendedor_id',
+        'id',
         'service_id',
+        'emprendedor_id',
         'code',
         'cantidad',
         'name',
-        'description',
+        'description'
     ];
 
     /**
