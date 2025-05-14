@@ -39,6 +39,7 @@ Route::get('/test', function () {
 // Rutas de Logueo y Registro
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::middleware('auth:api')->get('/current-user', [AuthController::class, 'getCurrentUser']);
 
 
 // SOLO VER MUNICIPALIDAD RUTA LIBRE
@@ -198,7 +199,15 @@ Route::prefix('payment')->group(function () {
     Route::delete('/{id}', [PaymentController::class, 'destroy']);  // Eliminar pago (Soft Delete)
 });
 
+use App\Http\Controllers\SaleController;
 
+Route::prefix('sale')->group(function () {
+    Route::get('/', [SaleController::class, 'index']);  // Ruta para paginación de ventas
+    Route::post('/', [SaleController::class, 'store']);  // Crear nueva venta
+    Route::get('/{id}', [SaleController::class, 'show']);  // Ver venta específica
+    Route::put('/{id}', [SaleController::class, 'update']);  // Actualizar venta
+    Route::delete('/{id}', [SaleController::class, 'destroy']);  // Eliminar venta (Soft Delete)
+});
 
 
 
