@@ -10,18 +10,12 @@ class EmprendedorService extends Model
 {
     use HasFactory;
 
-    // 👇 porque tu PK es uuid y no autoincremental
+    protected $table = 'emprendedor_service';
     public $incrementing = false;
-    protected $table = 'emprendedor_service'; // Especifica el nombre correcto
-
     protected $keyType = 'string';
     protected $guarded = ['id'];
 
-    /**
-     * Los atributos asignables.
-     *
-     * @var array<int, string>
-     */
+
     protected $fillable = [
         'id',
         'service_id',
@@ -29,12 +23,9 @@ class EmprendedorService extends Model
         'code',
         'cantidad',
         'name',
-        'description'
+        'description',
     ];
 
-    /**
-     * Evento para generar UUID automáticamente.
-     */
     protected static function boot()
     {
         parent::boot();
@@ -49,7 +40,7 @@ class EmprendedorService extends Model
      */
     public function emprendedor()
     {
-        return $this->belongsTo(emprendedor::class, 'emprendedor_id', 'id');
+        return $this->belongsTo(Emprendedor::class, 'emprendedor_id');
     }
 
     /**
@@ -57,12 +48,20 @@ class EmprendedorService extends Model
      */
     public function service()
     {
-        return $this->belongsTo(Service::class, 'service_id', 'id');
+        return $this->belongsTo(Service::class, 'service_id');
     }
+
+    /**
+     * Relación a una reserva.
+     */
     public function reserveDetails()
     {
         return $this->hasMany(ReserveDetail::class, 'emprendedor_service_id');
     }
+
+    /**
+     * Relación a una venta detallada.
+     */
     public function saleDetail()
     {
         return $this->hasOne(SaleDetail::class, 'emprendedor_service_id');

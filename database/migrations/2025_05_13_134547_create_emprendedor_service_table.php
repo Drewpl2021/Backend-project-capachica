@@ -16,14 +16,13 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->unique(['service_id', 'emprendedor_id']);
 
-            $table->string('code')->nullable();
-            $table->integer('cantidad')->default(0);
-            $table->string('name');
-            $table->text('description')->nullable();
-
+            //Campos Esenciales
+            $table->boolean('status')->default(true);
             $table->foreignUuid('service_id')->constrained('services')->onDelete('cascade');
             $table->foreignUuid('emprendedor_id')->constrained('emprendedors')->onDelete('cascade');
-
+            $table->decimal('costo', 10, 2)->nullable();
+            $table->string('code')->unique(); // Código único para identificar el servicio
+            $table->decimal('costo_unidad', 10, 2)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

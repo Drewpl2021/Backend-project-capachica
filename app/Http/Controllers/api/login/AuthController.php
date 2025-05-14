@@ -10,6 +10,7 @@ use App\Traits\ApiResponseTrait;
 use App\Traits\TokenHelper;
 use App\Traits\ValidatorTrait;
 use App\Traits\RolePermissions;
+use Illuminate\Support\Facades\Log;
 use OpenApi\Annotations as OA;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -128,33 +129,43 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // Buscar al usuario por email o username
-        $user = User::with('permissions')
-            ->where('email', $request->email)
+        $user = User::where('email', $request->email)
             ->orWhere('username', $request->username)
             ->first();
 
-        // Verificar si el usuario existe y si la contraseña es correcta
         if (!$user || !Hash::check($request->password, $user->password)) {
             return $this->error('Credenciales incorrectas', 401);
         }
 
-        // Generar el token JWT
+        // Obtén el token actual
+        $token = JWTAuth::getToken();
+
+        // Verificar si el token se obtiene correctamente
+        if ($token) {
+            // Invalidar el token
+            JWTAuth::invalidate($token);
+            Log::info('Token invalidado');
+        }
+
         try {
-            $token = JWTAuth::fromUser($user);  // Este método genera el token
+            // Generamos un nuevo token
+            $newToken = JWTAuth::fromUser($user);
         } catch (JWTException $e) {
             return $this->error('No se pudo crear el token', 500);
         }
 
-        // Devolver la respuesta con el token y la información del usuario
         return $this->successResponse([
-            'token' => $token,
-            'expires_at' => now()->addMinutes(config('jwt.ttl'))->toDateTimeString(), // Configuración de expiración del token
-            'username' => $user->only(['id', 'username', 'email']),  // Asegúrate de que el 'id' es un UUID
-            'roles' => $user->getRoleNames(),  // Obtener los roles del usuario
-            'permissions' => $user->getAllPermissions()->pluck('name'),  // Obtener los permisos del usuario
+            'token' => $newToken,
+            'expires_at' => now()->addMinutes(config('jwt.ttl'))->toDateTimeString(),
+            'username' => $user->only(['id', 'username', 'email']),
+            'roles' => $user->getRoleNames(),
+            'permissions' => $user->getAllPermissions()->pluck('name'),
         ], 'Usuario iniciado sesión correctamente', 200);
     }
+
+
+
+
 
 
 
@@ -204,7 +215,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         // Revocar el token del usuario
-        JWTAuth::invalidate(JWTAuth::getToken());
+        JWTAuth::invalidate(JWTAuth::getToken());  // Esto invalidará el token que está en uso.
         return $this->successResponse(null, 'Sesión cerrada');
     }
 }

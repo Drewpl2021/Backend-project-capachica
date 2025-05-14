@@ -11,24 +11,26 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('services', function (Blueprint $table) {
+        Schema::create('imgservices', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');               // Nombre del servicio
+            $table->uuid('service_id');
+            $table->string('imagen_url');               // Nombre del servicio
             $table->text('description')->nullable(); // Descripción detallada
             $table->string('code')->unique(); // Código único para identificar el servicio
-            $table->string('category')->nullable();  // Categoría o tipo del servicio (ej. Turismo, Hospedaje)
-            $table->boolean('status')->default(true); // Estado activo/inactivo para control
+            $table->foreign('service_id')
+                ->references('id')
+                ->on('services')
+                ->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });
     }
-
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('services');
+        Schema::dropIfExists('imgservices');
     }
 };
