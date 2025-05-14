@@ -18,6 +18,7 @@ class UserAdminSeeder extends Seeder
                 'name' => 'Administrador',
                 'last_name' => 'Sistema',
                 'code' => 'ADM001',
+                'imagen_url' => 'ADM001.jpg',
                 'username' => 'admin',
                 'password' => Hash::make('admin123'),
             ]
@@ -36,6 +37,7 @@ class UserAdminSeeder extends Seeder
                 'name' => 'Andres',
                 'last_name' => 'Montes',
                 'code' => 'USR001',
+                'imagen_url' => 'USR001.jpg',
                 'username' => 'andres.montes',
                 'password' => Hash::make('12345'),
             ]
@@ -54,6 +56,7 @@ class UserAdminSeeder extends Seeder
                 'name' => 'Admin',
                 'last_name' => 'Familia',
                 'code' => 'FAM001',
+                'imagen_url' => 'FAM001.jpg',
                 'username' => 'admin_familia',
                 'password' => Hash::make('familia123'),
             ]

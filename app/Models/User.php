@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
@@ -75,5 +76,10 @@ class User extends Authenticatable implements JWTSubject
     public function emprendedores()
     {
         return $this->belongsToMany(Emprendedor::class, 'emprendedor_user', 'user_id', 'emprendedor_id');
+    }
+
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'model_has_permissions', 'model_id', 'permission_id');
     }
 }

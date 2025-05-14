@@ -15,7 +15,6 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('razon_social');
             $table->string('address');
-            $table->unsignedBigInteger('user_id')->nullable(); // Asegúrate de que 'user_id' sea BIGINT
             $table->string('code');
             $table->string('ruc');
             $table->text('description')->nullable();
@@ -27,8 +26,6 @@ return new class extends Migration
 
             // Relación con la tabla 'asociacions'
             $table->foreign('asociacion_id')->references('id')->on('asociacions')->onDelete('cascade');
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');  // Clave foránea con 'users'
         });
     }
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Log;
 
 /**
  * @OA\Info(
@@ -34,41 +35,73 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Obtener todos los usuarios con sus roles y permisos
-        $users = User::with('roles', 'permissions')->get();
+        // Tamaño por página, se puede especificar con 'size', si no se pasa, por defecto será 10
+        $size = $request->input('size', 10);
+        $search = $request->input('search'); // Búsqueda por nombre de usuario o email
 
-        // Mapeamos los resultados para incluir todos los campos necesarios
-        $response = $users->map(function ($user) {
+        // Iniciar la consulta para obtener usuarios con roles y permisos
+        $query = User::with('roles', 'permissions');
+
+        // Si hay un término de búsqueda, lo aplicamos a email o username
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('email', 'like', "%$search%")
+                    ->orWhere('username', 'like', "%$search%");
+            });
+        }
+
+        // Obtener los resultados paginados
+        $users = $query->paginate($size);
+
+        // Mapear los resultados de la paginación
+        $response = $users->items();
+
+        // Formatear la respuesta
+        $response = collect($response)->map(function ($user) {
+            // Mapear roles
+            $roles = $user->roles->map(function ($role) {
+                return [
+                    'id' => $role->id,
+                    'name' => $role->name,
+                    'guard_name' => $role->guard_name,
+                    'description' => $role->description ?? null, // Si existe descripción
+                ];
+            });
+
+            // Ordenar los permisos por nombre y devolverlos en un array
+            $permissions = $user->getAllPermissions()->sortBy('name')->map(function ($permission) {
+                return [
+                    'id' => $permission->id,
+                    'name' => $permission->name,
+                    'guard_name' => $permission->guard_name,
+                ];
+            });
             return [
                 'id' => $user->id,
                 'username' => $user->username,
                 'email' => $user->email,
                 'imagen_url' => $user->imagen_url,
-                'roles' => $user->roles->map(function ($role) {
-                    return [
-                        'id' => $role->id,
-                        'name' => $role->name,
-                        'guard_name' => $role->guard_name,
-                    ];
-                }),
-                'permissions' => $user->permissions->map(function ($permission) {
-                    return [
-                        'id' => $permission->id,
-                        'name' => $permission->name,
-                        'guard_name' => $permission->guard_name,
-                    ];
-                }),
-                'created_at' => $user->created_at,
-                'updated_at' => $user->updated_at,
-                'deleted_at' => $user->deleted_at,
+                'roles' => $roles,
+                'permissions' => $permissions,
+                'createdAt' => $user->created_at,
+                'updatedAt' => $user->updated_at,
+                'deletedAt' => $user->deleted_at ? $user->deleted_at : null, // Soft delete
             ];
         });
 
-        // Retornar la respuesta con los datos de los usuarios
-        return response()->json($response);
+        // Retornar la respuesta con los datos paginados
+        return response()->json([
+            'content' => $response,
+            'totalElements' => $users->total(),
+            'currentPage' => $users->currentPage(),
+            'totalPages' => $users->lastPage(),
+        ]);
     }
+
+
+
 
 
     /**
@@ -149,8 +182,35 @@ class UserController extends Controller
     public function show($id)
     {
         // Obtener el usuario con sus roles y permisos
-        return User::with('roles', 'permissions')->findOrFail($id);
+        $user = User::with('roles', 'permissions')->findOrFail($id);
+
+        // Formatear la respuesta
+        return response()->json([
+            'id' => $user->id,
+            'username' => $user->username,
+            'email' => $user->email,
+            'imagen_url' => $user->imagen_url,
+            'roles' => $user->roles->map(function ($role) {
+                return [
+                    'id' => $role->id,
+                    'name' => $role->name,
+                    'guard_name' => $role->guard_name,
+                    'description' => $role->description ?? null,  // Si existe descripción
+                ];
+            }),
+            'permissions' => $user->getAllPermissions()->sortBy('name')->map(function ($permission) {
+                return [
+                    'id' => $permission->id,
+                    'name' => $permission->name,
+                    'guard_name' => $permission->guard_name,
+                ];
+            }),
+            'createdAt' => $user->created_at->toDateTimeString(),
+            'updatedAt' => $user->updated_at->toDateTimeString(),
+            'deletedAt' => $user->deleted_at ? $user->deleted_at->toDateTimeString() : null, // Verificar soft delete
+        ]);
     }
+
 
     /**
      * Actualizar un usuario existente
@@ -188,21 +248,42 @@ class UserController extends Controller
         // Obtener el usuario
         $user = User::findOrFail($id);
 
-        // Actualizar los datos del usuario
-        $user->update($request->only(['username', 'email']));
+        // Inicializamos una variable para verificar si hubo cambios
+        $updated = false;
+
+        // Actualizar los datos del usuario (solo si se proporcionan)
+        if ($request->has('username') || $request->has('email')) {
+            $updated = true; // Marcamos que hubo un cambio
+            $user->update($request->only(['username', 'email']));
+        }
 
         // Si se proporciona una nueva contraseña, actualizarla
         if ($request->filled('password')) {
+            $updated = true; // Marcamos que hubo un cambio
             $user->password = bcrypt($request->password);
             $user->save();
         }
 
         // Actualizar el rol si se proporciona
         if ($request->filled('role')) {
-            $user->syncRoles([$request->role]);
+            $updated = true; // Marcamos que hubo un cambio
+            $user->syncRoles([$request->role]); // Sincroniza el rol del usuario
         }
 
-        return response()->json($user);
+        // Actualizar los permisos si se proporcionan
+        if ($request->filled('permissions')) {
+            $updated = true; // Marcamos que hubo un cambio
+            $user->syncPermissions($request->permissions);
+        }
+
+        // Mensaje de éxito
+        $message = $updated ? 'Usuario actualizado correctamente.' : 'No se realizaron cambios.';
+
+        // Devolver la respuesta con el usuario actualizado y el mensaje
+        return response()->json([
+            'message' => $message,
+            'user' => $user,
+        ]);
     }
 
     /**
