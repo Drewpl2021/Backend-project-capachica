@@ -22,7 +22,7 @@ return new class extends Migration
             $table->float('total');  // Total de la reserva
             $table->string('lugar');  // Lugar donde se realiza la reserva
             $table->timestamps();
-
+            $table->softDeletes();
             // Claves foráneas
             $table->foreign('emprendedor_service_id')->references('id')->on('emprendedor_service')->onDelete('cascade');
             $table->foreign('reserva_id')->references('id')->on('reservas')->onDelete('cascade');

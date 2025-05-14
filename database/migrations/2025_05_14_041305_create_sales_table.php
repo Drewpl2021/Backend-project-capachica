@@ -21,7 +21,7 @@ return new class extends Migration
             $table->float('BI');
             $table->float('total');
             $table->timestamps();
-
+            $table->softDeletes();
             $table->foreign('emprendedor_id')->references('id')->on('emprendedors')->onDelete('cascade');
             $table->foreign('payment_id')->references('id')->on('payments')->onDelete('cascade');
             $table->foreign('reserva_id')->references('id')->on('reservas')->onDelete('cascade');

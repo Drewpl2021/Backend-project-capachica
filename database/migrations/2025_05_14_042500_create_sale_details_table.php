@@ -22,7 +22,7 @@ return new class extends Migration
             $table->float('total');  // Total del detalle
             $table->string('lugar');  // Lugar donde se realiza la venta
             $table->timestamps();
-
+            $table->softDeletes();
             // Claves foráneas
             $table->foreign('emprendedor_service_id')->references('id')->on('emprendedor_service')->onDelete('cascade');
             $table->foreign('sale_id')->references('id')->on('sales')->onDelete('cascade');

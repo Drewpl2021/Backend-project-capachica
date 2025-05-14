@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('bi');  // Base imponible
             $table->string('igv');  // Impuesto general a las ventas
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

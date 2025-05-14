@@ -25,7 +25,7 @@ return new class extends Migration
             $table->foreign('emprendedor_id')->references('id')->on('emprendedors')->onDelete('cascade');
 
             $table->timestamps();
-
+            $table->softDeletes();
         });
     }
 

@@ -15,6 +15,8 @@ use App\Http\Controllers\API\Login\RoleController;
 use App\Http\Controllers\API\Login\UserController;
 use App\Http\Controllers\API\Modules\ModuleController;
 use App\Http\Controllers\API\Modules\ParentModuleController;
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -110,6 +112,7 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
 });
 
 
+
 Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(function () {
     // Prefijo 'municipalidad'
     Route::prefix('municipalidad')->group(function () {
@@ -179,9 +182,21 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
 
 
 
+Route::prefix('service')->group(function () {
+    Route::get('/', [ServiceController::class, 'index']);  // Ruta para paginación de servicios
+    Route::post('/', [ServiceController::class, 'store']);  // Crear nuevo servicio
+    Route::get('/{id}', [ServiceController::class, 'show']);  // Ver servicio específico
+    Route::put('/{id}', [ServiceController::class, 'update']);  // Actualizar servicio
+    Route::delete('/{id}', [ServiceController::class, 'destroy']);  // Eliminar servicio (Soft Delete)
+});
 
-
-
+Route::prefix('payment')->group(function () {
+    Route::get('/', [PaymentController::class, 'index']);  // Ruta para paginación de pagos
+    Route::post('/', [PaymentController::class, 'store']);  // Crear nuevo pago
+    Route::get('/{id}', [PaymentController::class, 'show']);  // Ver pago específico
+    Route::put('/{id}', [PaymentController::class, 'update']);  // Actualizar pago
+    Route::delete('/{id}', [PaymentController::class, 'destroy']);  // Eliminar pago (Soft Delete)
+});
 
 
 
