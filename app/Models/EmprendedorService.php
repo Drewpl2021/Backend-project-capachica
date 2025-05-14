@@ -13,6 +13,7 @@ class EmprendedorService extends Model
     // 👇 porque tu PK es uuid y no autoincremental
     public $incrementing = false;
     protected $keyType = 'string';
+    protected $guarded = ['id'];
 
     /**
      * Los atributos asignables.

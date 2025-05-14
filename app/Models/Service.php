@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Service extends Model
 {
     use HasFactory;
+    protected $guarded = ['id'];
 
     /**
      * Los atributos que son asignables en masa.
@@ -24,14 +25,9 @@ class Service extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
+    // Relación muchos a muchos con Emprendedor
     public function emprendedor()
     {
-        return $this->belongsToMany(
-            emprendedor::class,
-            'emprendedor_service',
-            'service_id',
-            'emprendedor_id'
-        )->withPivot(['code', 'cantidad', 'name', 'description'])
-            ->withTimestamps();
+        return $this->belongsToMany(Emprendedor::class, 'emprendedor_service', 'service_id', 'emprendedor_id');
     }
 }

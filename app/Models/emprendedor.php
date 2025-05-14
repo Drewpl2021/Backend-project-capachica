@@ -51,15 +51,9 @@ class Emprendedor extends Model
     {
         return $this->belongsToMany(User::class, 'emprendedor_user', 'emprendedor_id', 'user_id');
     }
-
     public function services()
     {
-        return $this->belongsToMany(
-            Service::class,
-            'emprendedor_service',    // tabla pivote
-            'emprendedor_id',         // foreign key de company en la pivote
-            'service_id'          // foreign key de service en la pivote
-        )->withPivot(['code', 'cantidad', 'name', 'description'])
-            ->withTimestamps();
+        return $this->belongsToMany(Service::class, 'emprendedor_service', 'emprendedor_id', 'service_id');
     }
+
 }

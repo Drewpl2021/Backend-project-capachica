@@ -65,11 +65,7 @@ class EmprendedorSeeder extends Seeder
                 ]);
             }
 
-            $this->command->info("Emprendedor creado para los usuarios:");
-            $this->command->info("- Razon Social: {$emprendedor->razon_social}");
-            $this->command->info("- Asociación: {$asociacion->nombre}");
         }
 
-        $this->command->info('Se crearon ' . count($asociaciones) . ' emprendedores exitosamente.');
     }
 }

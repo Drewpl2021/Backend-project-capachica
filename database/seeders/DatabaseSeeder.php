@@ -35,6 +35,8 @@ class DatabaseSeeder extends Seeder
             ImgAsociacionSeeder::class,
             EmprendedorSeeder::class,
             DestinosTuriscosSeeder::class,
+            ServiceSedeer::class,
+            EmprendimientoServiceSedeer::class,
         ]);
 
 
