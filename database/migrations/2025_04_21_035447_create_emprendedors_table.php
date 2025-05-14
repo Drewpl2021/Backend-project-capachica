@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('name_family');
             $table->uuid('asociacion_id');  // Relación con la tabla 'asociacions'
             $table->timestamps();
-
+            $table->softDeletes();
             // Relación con la tabla 'asociacions'
             $table->foreign('asociacion_id')->references('id')->on('asociacions')->onDelete('cascade');
         });

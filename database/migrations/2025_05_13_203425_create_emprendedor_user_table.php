@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->uuid('emprendedor_id');  // Columna que hará referencia a los emprendimientos
             $table->timestamps();
-
+            $table->softDeletes();
             // Relaciones de claves foráneas
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');  // Clave foránea con 'users'
             $table->foreign('emprendedor_id')->references('id')->on('emprendedors')->onDelete('cascade');

@@ -77,6 +77,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(Emprendedor::class, 'emprendedor_user', 'user_id', 'emprendedor_id');
     }
-
+    public function reservas()
+    {
+        return $this->hasMany(Reserva::class, 'user_id');  // Aquí indicamos que un usuario puede tener muchas reservas
+    }
 
 }

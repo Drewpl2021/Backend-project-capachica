@@ -23,6 +23,7 @@ return new class extends Migration
                 ->on('municipalidads')
                 ->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

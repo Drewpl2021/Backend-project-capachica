@@ -59,4 +59,12 @@ class EmprendedorService extends Model
     {
         return $this->belongsTo(Service::class, 'service_id', 'id');
     }
+    public function reserveDetails()
+    {
+        return $this->hasMany(ReserveDetail::class, 'emprendedor_service_id');
+    }
+    public function saleDetail()
+    {
+        return $this->hasOne(SaleDetail::class, 'emprendedor_service_id');
+    }
 }

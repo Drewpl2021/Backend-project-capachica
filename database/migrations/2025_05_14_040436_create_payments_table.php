@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('services', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('name');
-            $table->string('code');
+        Schema::create('payments', function (Blueprint $table) {
+            $table->uuid('id')->primary();  // ID de tipo UUID
+            $table->string('code');  // Código del pago
+            $table->string('total');  // Total de pago
+            $table->string('bi');  // Base imponible
+            $table->string('igv');  // Impuesto general a las ventas
             $table->timestamps();
             $table->softDeletes();
         });
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('services');
+        Schema::dropIfExists('payments');
     }
 };

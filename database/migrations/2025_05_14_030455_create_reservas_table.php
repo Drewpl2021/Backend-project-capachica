@@ -12,8 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('reservas', function (Blueprint $table) {
-            $table->id();
+
+            $table->uuid('id')->primary();
+            $table->unsignedBigInteger('user_id');
+            $table->string('code')->nullable();
+            $table->float('igv')->default(0);
+            $table->float('bi')->default(0);
+            $table->float('total')->default(0);
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

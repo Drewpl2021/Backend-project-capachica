@@ -18,7 +18,7 @@ return new class extends Migration
             $table->boolean('estado');
             $table->string('codigo')->nullable();
             $table->timestamps();
-
+            $table->softDeletes();
             // Añadir la clave foránea
             $table->foreign('asociacion_id')
                 ->references('id')

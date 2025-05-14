@@ -55,4 +55,8 @@ class Emprendedor extends Model
     {
         return $this->belongsToMany(Service::class, 'emprendedor_service', 'emprendedor_id', 'service_id');
     }
+    public function sales()
+    {
+        return $this->hasMany(Sale::class, 'emprendimiento_id');
+    }
 }
