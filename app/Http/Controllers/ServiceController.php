@@ -16,7 +16,8 @@ class ServiceController extends Controller
         $services = Service::with(['emprendedorServices.emprendedor', 'imgservices'])
             ->paginate($size);
 
-        $response = $services->getCollection()->map(function ($service) {
+        // Transformar usando collect y map para tener control total
+        $response = collect($services->items())->map(function ($service) {
             return [
                 'id' => $service->id,
                 'name' => $service->name,
@@ -44,11 +45,13 @@ class ServiceController extends Controller
 
         return response()->json([
             'content' => $response,
-            'currentPage' => $services->currentPage() - 1,
+            'currentPage' => $services->currentPage(),
             'totalElements' => $services->total(),
-            'totalPages' => $services->lastPage() - 1,
+            'totalPages' => $services->lastPage(),
         ]);
     }
+
+
 
     // Crear nuevo servicio
     public function store(Request $request)
@@ -127,5 +130,62 @@ class ServiceController extends Controller
         } catch (ModelNotFoundException) {
             return response()->json(['error' => 'Servicio no encontrado'], 404);
         }
+    }
+
+    public function emprendedoresPorServicio(Request $request)
+    {
+        $serviceId = $request->input('service_id');
+        $category = $request->input('category');
+        $size = $request->input('size', 10);
+
+        $query = Service::query();
+
+        if ($serviceId) {
+            $query->where('id', $serviceId);
+        }
+
+        if ($category) {
+            $query->where('category', $category);
+        }
+
+        $services = $query->with(['emprendedorServices.emprendedor'])->paginate($size);
+
+        if ($services->total() === 0) {
+            return response()->json([
+                'message' => 'No se encontraron servicios con esos filtros.',
+                'content' => [],
+                'totalElements' => 0,
+                'currentPage' => 0,
+                'totalPages' => 0,
+                'perPage' => $size,
+            ], 404);
+        }
+
+        $response = collect($services->items())->map(function ($service) {
+            return [
+                'service_id' => $service->id,
+                'service_name' => $service->name,
+                'category' => $service->category,
+                'emprendedores' => $service->emprendedorServices->map(function ($es) {
+                    return [
+                        'emprendedor_id' => $es->emprendedor->id ?? null,
+                        'razon_social' => $es->emprendedor->razon_social ?? null,
+                        'address' => $es->emprendedor->address ?? null,
+                        'code' => $es->code,
+                        'status' => $es->status,
+                        'cantidad' => $es->cantidad,
+                        'costo' => $es->costo,
+                        'description' => $es->description,
+                    ];
+                }),
+            ];
+        });
+
+        return response()->json([
+            'content' => $response,
+            'totalElements' => $services->total(),
+            'currentPage' => $services->currentPage(),
+            'totalPages' => $services->lastPage(),
+        ]);
     }
 }

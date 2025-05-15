@@ -231,7 +231,8 @@ Route::prefix('service')->group(function () {
     Route::post('/', [ServiceController::class, 'store']);  // Crear nuevo servicio
     Route::get('/{id}', [ServiceController::class, 'show']);  // Ver servicio específico
     Route::put('/{id}', [ServiceController::class, 'update']);  // Actualizar servicio
-    Route::delete('/{id}', [ServiceController::class, 'destroy']);  // Eliminar servicio (Soft Delete)
+    Route::delete('/{id}', [ServiceController::class, 'destroy']); // Eliminar servicio (Soft Delete)
+    Route::get('/category/emprendedores', [ServiceController::class, 'emprendedoresPorServicio']);
 });
 
 Route::prefix('payment')->group(function () {
