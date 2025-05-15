@@ -7,6 +7,7 @@ use App\Models\Reserva;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ReservaController extends Controller
 {
@@ -46,19 +47,21 @@ class ReservaController extends Controller
             'total' => 'required|numeric',
             'bi' => 'nullable|numeric',
             'igv' => 'nullable|numeric',
+            'details.*.cantidad' => 'required|numeric|min:1',
             'details' => 'required|array|min:1',
             'details.*.emprendedor_service_id' => 'required|uuid|exists:emprendedor_service,id',
-            'details.*.description' => 'required|string',
-            'details.*.costo' => 'required|numeric',
-            'details.*.IGV' => 'nullable|numeric',
-            'details.*.BI' => 'nullable|numeric',
-            'details.*.total' => 'required|numeric',
-            'details.*.lugar' => 'required|string',
+            'details.*.description' => 'required|string|max:500',
+            'details.*.costo' => 'required|numeric|min:0',
+            'details.*.igv' => 'nullable|numeric|min:0',
+            'details.*.bi' => 'nullable|numeric|min:0',
+            'details.*.total' => 'required|numeric|min:0',
+            'details.*.lugar' => 'required|string|max:255',
         ]);
 
         DB::beginTransaction();
+
         try {
-            // Crear la reserva principal
+            // Crear reserva principal
             $reserva = Reserva::create([
                 'user_id' => $userId,
                 'code' => $validated['code'] ?? null,
@@ -67,29 +70,45 @@ class ReservaController extends Controller
                 'igv' => $validated['igv'] ?? 0,
             ]);
 
-            // Crear cada detalle asociado
-            foreach ($validated['details'] as $detail) {
-                $reserva->reserveDetails()->create([
+            $detailsData = collect($validated['details'])->map(function ($detail) use ($reserva) {
+                return [
+                    'id' => (string) Str::uuid(),
                     'emprendedor_service_id' => $detail['emprendedor_service_id'],
+                    'reserva_id' => $reserva->id,
                     'description' => $detail['description'],
+                    'cantidad' => $detail['cantidad'],  // <-- esto faltaba
                     'costo' => $detail['costo'],
-                    'IGV' => $detail['IGV'] ?? 0,
-                    'BI' => $detail['BI'] ?? 0,
+                    'igv' => $detail['igv'] ?? 0,
+                    'bi' => $detail['bi'] ?? 0,
                     'total' => $detail['total'],
                     'lugar' => $detail['lugar'],
-                ]);
-            }
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            })->toArray();
+
+
+
+            // Insertar todos los detalles de golpe (más eficiente)
+            $reserva->reserveDetails()->insert($detailsData);
 
             DB::commit();
 
-            return response()->json($reserva->load('reserveDetails'), 201);
+            // Recargar reserva con detalles para respuesta
+            $reserva->load('reserveDetails');
+
+            return response()->json([
+                'message' => 'Reserva y detalles creados exitosamente',
+                'reserva' => $reserva,
+            ], 201);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
-                'error' => 'Error creando reserva: ' . $e->getMessage()
+                'error' => 'Error creando reserva: ' . $e->getMessage(),
             ], 500);
         }
     }
+
 
     /**
      * Mostrar una reserva con sus detalles, solo del usuario autenticado.
