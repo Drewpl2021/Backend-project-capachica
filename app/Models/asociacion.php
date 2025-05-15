@@ -12,7 +12,7 @@ class asociacion extends Model
     use HasFactory;
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $fillable = ['nombre', 'descripcion', 'lugar', 'estado', 'municipalidad_id'];
+    protected $fillable = ['nombre', 'descripcion', 'lugar', 'estado', 'municipalidad_id', 'url'];
 
     // Relación: Una asociación pertenece a una municipalidad
     public function municipalidad()

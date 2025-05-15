@@ -85,6 +85,7 @@ class AsociacionController extends Controller
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string',
             'lugar' => 'required|string|max:255',
+            'url' => 'required|string|max:255',
             'estado' => 'required|boolean',
         ]);
 
@@ -128,6 +129,7 @@ class AsociacionController extends Controller
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string',
             'lugar' => 'required|string|max:255',
+            'url' => 'required|string|max:255',
             'estado' => 'required|boolean',
         ]);
 
