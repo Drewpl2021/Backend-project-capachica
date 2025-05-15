@@ -42,7 +42,8 @@ class ReservaDetailSeeder extends Seeder
                 'id' => Str::uuid(),  // Generar un UUID para el detalle de la reserva
                 'emprendedor_service_id' => $service->id,  // Asignar el servicio aleatorio
                 'reserva_id' => $reserva->id,  // Asignar la reserva
-                'description' => 'Detalle de la reserva ' . $reserva->code,  // Descripción de la reserva
+                'description' => 'Detalle de la reserva ' . $reserva->code,
+                'cantidad' => null, // <-- Agrega esto con el valor que corresponda
                 'costo' => 100.00,  // Costo de la reserva
                 'IGV' => 18.00,  // Impuesto general a las ventas (IGV)
                 'BI' => 100.00,  // Base imponible

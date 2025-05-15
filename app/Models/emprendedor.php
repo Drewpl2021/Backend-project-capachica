@@ -56,14 +56,17 @@ class Emprendedor extends Model
         return $this->belongsToMany(User::class, 'emprendedor_user', 'emprendedor_id', 'user_id');
     }
 
-    // Relación muchos a muchos con Service a través de pivote emprendedor_service
     public function services()
     {
         return $this->belongsToMany(Service::class, 'emprendedor_service', 'emprendedor_id', 'service_id')
-            ->withPivot(['id', 'code', 'cantidad', 'name', 'description']) // Datos extras en pivote
+            ->withPivot(['id', 'code', 'cantidad', 'status', 'costo', 'costo_unidad'])
             ->withTimestamps();
     }
 
+    public function emprendedorServices()
+    {
+        return $this->hasMany(EmprendedorService::class, 'emprendedor_id');
+    }
 
     public function sales()
     {

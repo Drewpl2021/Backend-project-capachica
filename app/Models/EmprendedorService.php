@@ -17,11 +17,13 @@ class EmprendedorService extends Model
 
 
     protected $fillable = [
-        'id',
         'service_id',
         'emprendedor_id',
         'code',
+        'status',
         'cantidad',
+        'costo',
+        'costo_unidad',
         'name',
         'description',
     ];

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->uuid('reserva_id');  // Clave foránea a la tabla reservas
             $table->string('description');  // Descripción de la reserva
             $table->float('costo');  // Costo de la reserva
+            $table->float('cantidad');
             $table->float('IGV');  // Impuesto general a las ventas
             $table->float('BI');  // Base imponible
             $table->float('total');  // Total de la reserva
