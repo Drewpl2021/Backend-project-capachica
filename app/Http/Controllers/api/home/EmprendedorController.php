@@ -115,4 +115,37 @@ class EmprendedorController extends Controller
         $emprendedor->delete();
         return $this->successResponse([], 'Emprendedor eliminado exitosamente');
     }
+
+    public function asignarServicios(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'service_id' => 'required|array|min:1',
+            'service_id.*' => 'required|uuid|exists:services,id',
+        ]);
+
+        $emprendedor = Emprendedor::find($id);
+        if (!$emprendedor) {
+            return response()->json(['error' => 'Emprendedor no encontrado'], 404);
+        }
+
+        // Para cada service_id solo asignar con valores por defecto en pivote
+        $syncData = [];
+        foreach ($validated['service_id'] as $serviceId) {
+            $syncData[$serviceId] = [
+                'id' => \Illuminate\Support\Str::uuid(),
+                'cantidad' => 1,
+                'code' => null,
+                'name' => null,
+                'description' => null,
+            ];
+        }
+
+        $emprendedor->services()->sync($syncData);
+
+        return response()->json([
+            'message' => 'Servicios asignados exitosamente',
+            'emprendedor_id' => $emprendedor->id,
+            'services' => $emprendedor->services()->withPivot()->get(),
+        ]);
+    }
 }

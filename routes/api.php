@@ -17,6 +17,7 @@ use App\Http\Controllers\API\Modules\ModuleController;
 use App\Http\Controllers\API\Modules\ParentModuleController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ReservaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,7 @@ use App\Http\Controllers\PaymentController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -39,6 +41,7 @@ Route::get('/test', function () {
 // Rutas de Logueo y Registro
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::middleware('auth:api')->get('/current-user', [AuthController::class, 'getCurrentUser']);
 
 
 // SOLO VER MUNICIPALIDAD RUTA LIBRE
@@ -149,6 +152,7 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
         Route::get('/{id}', [EmprendedorController::class, 'show']); // Mostrar un emprendedor específico
         Route::put('/{id}', [EmprendedorController::class, 'update']); // Actualizar emprendedor
         Route::delete('/{id}', [EmprendedorController::class, 'destroy']); // Eliminar emprendedor
+        Route::post('/services/{id}', [EmprendedorController::class, 'asignarServicios']);
     });
 
 
@@ -173,7 +177,14 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
     });
 });
 
-
+Route::middleware('auth:api')->group(function () {
+    // Rutas CRUD para reservas
+    Route::get('/reservas', [ReservaController::class, 'index']);
+    Route::post('/reservas', [ReservaController::class, 'store']);
+    Route::get('/reservas/{id}', [ReservaController::class, 'show']);
+    Route::put('/reservas/{id}', [ReservaController::class, 'update']);
+    Route::delete('/reservas/{id}', [ReservaController::class, 'destroy']);
+});
 
 
 
@@ -198,7 +209,15 @@ Route::prefix('payment')->group(function () {
     Route::delete('/{id}', [PaymentController::class, 'destroy']);  // Eliminar pago (Soft Delete)
 });
 
+use App\Http\Controllers\SaleController;
 
+Route::prefix('sale')->group(function () {
+    Route::get('/', [SaleController::class, 'index']);  // Ruta para paginación de ventas
+    Route::post('/', [SaleController::class, 'store']);  // Crear nueva venta
+    Route::get('/{id}', [SaleController::class, 'show']);  // Ver venta específica
+    Route::put('/{id}', [SaleController::class, 'update']);  // Actualizar venta
+    Route::delete('/{id}', [SaleController::class, 'destroy']);  // Eliminar venta (Soft Delete)
+});
 
 
 

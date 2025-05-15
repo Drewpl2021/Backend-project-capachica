@@ -23,7 +23,7 @@ class ImgAsociacionController extends Controller
         });
 
         return response()->json([
-            'content' => $images->items(), // Usar items() en la paginación
+            'content' => $images->items(),
             'currentpage' => $images->currentPage(),
             'totalpages' => $images->lastPage(),
             'totalElements' => $images->total(),

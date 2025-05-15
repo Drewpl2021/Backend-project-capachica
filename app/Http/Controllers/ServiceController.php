@@ -4,79 +4,132 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ServiceController extends Controller
 {
-    // Mostrar todos los servicios con paginación
     public function index(Request $request)
     {
-        $page = $request->get('page', 1);
         $size = $request->get('size', 10);
 
-        // Obtener los servicios con paginación
-        $services = Service::paginate($size);
+        $services = Service::with(['emprendedorServices.emprendedor', 'imgservices'])
+            ->paginate($size);
 
-        // Cambiar el índice de las páginas de Laravel
-        $services->setPageName('page');
-        $services->appends(['size' => $size]);
+        $response = $services->getCollection()->map(function ($service) {
+            return [
+                'id' => $service->id,
+                'name' => $service->name,
+                'description' => $service->description,
+                'code' => $service->code,
+                'base_price' => $service->base_price,
+                'category' => $service->category,
+                'status' => $service->status,
+                'emprendedores' => $service->emprendedorServices->map(function ($es) {
+                    return [
+                        'id' => $es->emprendedor->id ?? null,
+                        'razon_social' => $es->emprendedor->razon_social ?? null,
+                        'address' => $es->emprendedor->address ?? null,
+                    ];
+                }),
+                'images' => $service->imgservices->map(function ($img) {
+                    return [
+                        'id' => $img->id,
+                        'imagen_url' => $img->imagen_url,
+                        'description' => $img->description,
+                        'code' => $img->code,
+                    ];
+                }),
+            ];
+        });
 
-        $response = [
-            'content' => $services->items(),
+        return response()->json([
+            'content' => $response,
             'currentPage' => $services->currentPage() - 1,
-            'perPage' => $services->perPage(),
             'totalElements' => $services->total(),
             'totalPages' => $services->lastPage() - 1,
-        ];
-
-        return response()->json($response);
+        ]);
     }
 
-    // Almacenar un nuevo servicio
+    // Crear nuevo servicio
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'code' => 'required|string|max:255',
+            'code' => ['required', 'string', 'max:255', Rule::unique('services')],
+            'description' => 'nullable|string',
+            'base_price' => 'nullable|numeric|min:0',
+            'category' => 'nullable|string|max:100',
+            'status' => 'nullable|boolean',
         ]);
 
-        $service = Service::create([
-            'name' => $request->name,
-            'code' => $request->code,
-        ]);
+        $service = Service::create($validated);
 
-        return response()->json($service, 201);  // Retornar el servicio creado
+        return response()->json($service, 201);
     }
 
-    // Mostrar un servicio específico
+    // Mostrar un servicio específico con emprendedores
     public function show($id)
     {
-        $service = Service::findOrFail($id);
-        return response()->json($service);
+        try {
+            $service = Service::with(['emprendedorServices.emprendedor'])->findOrFail($id);
+
+            $response = [
+                'id' => $service->id,
+                'name' => $service->name,
+                'description' => $service->description,
+                'code' => $service->code,
+                'base_price' => $service->base_price,
+                'category' => $service->category,
+                'status' => $service->status,
+                'emprendedores' => $service->emprendedorServices->map(function ($es) {
+                    return [
+                        'id' => $es->emprendedor->id ?? null,
+                        'razon_social' => $es->emprendedor->razon_social ?? null,
+                        'address' => $es->emprendedor->address ?? null,
+                    ];
+                }),
+            ];
+
+            return response()->json($response);
+        } catch (ModelNotFoundException) {
+            return response()->json(['error' => 'Servicio no encontrado'], 404);
+        }
     }
 
-    // Actualizar un servicio existente
+    // Actualizar un servicio
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'required|string|max:255',
-        ]);
+        try {
+            $service = Service::findOrFail($id);
 
-        $service = Service::findOrFail($id);
-        $service->update([
-            'name' => $request->name,
-            'code' => $request->code,
-        ]);
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'code' => ['required', 'string', 'max:255', Rule::unique('services')->ignore($service->id)],
+                'description' => 'nullable|string',
+                'base_price' => 'nullable|numeric|min:0',
+                'category' => 'nullable|string|max:100',
+                'status' => 'nullable|boolean',
+            ]);
 
-        return response()->json($service);
+            $service->update($validated);
+
+            return response()->json($service);
+        } catch (ModelNotFoundException) {
+            return response()->json(['error' => 'Servicio no encontrado'], 404);
+        }
     }
 
-    // Eliminar un servicio (Soft Delete)
+    // Soft delete un servicio
     public function destroy($id)
     {
-        $service = Service::findOrFail($id);
-        $service->delete();  // Esto realiza un soft delete
+        try {
+            $service = Service::findOrFail($id);
+            $service->delete();
 
-        return response()->json(['message' => 'Service deleted successfully'], 200);
+            return response()->json(['message' => 'Servicio eliminado correctamente'], 200);
+        } catch (ModelNotFoundException) {
+            return response()->json(['error' => 'Servicio no encontrado'], 404);
+        }
     }
 }
