@@ -163,6 +163,40 @@ class AuthController extends Controller
         ], 'Usuario iniciado sesión correctamente', 200);
     }
 
+    public function getCurrentUser(Request $request)
+    {
+        try {
+            // Intentar obtener token del header
+            $token = $request->bearerToken();
+
+            if (!$token) {
+                // No hay token, no autorizado
+                return $this->error('No autorizado - no hay token', 401);
+            }
+
+            // Intentar autenticar usuario con el token recibido
+            if (!$user = JWTAuth::setToken($token)->authenticate()) {
+                return $this->error('No autorizado - usuario no encontrado', 401);
+            }
+
+            // Token y usuario válidos, responder con datos y token
+            return $this->successResponse([
+                'token' => $token,
+                'username' => $user->only(['id', 'username', 'email', 'name', 'last_name']),
+                'roles' => $user->getRoleNames(),
+                'permissions' => $user->getAllPermissions()->pluck('name'),
+            ], 'Sesión activa', 200);
+
+        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+            return $this->error('Token expirado, inicia sesión de nuevo', 401);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+            return $this->error('Token inválido', 401);
+        } catch (\Exception $e) {
+            // Cualquier otro error
+            return $this->error('No autorizado', 401);
+        }
+    }
+
 
 
 
