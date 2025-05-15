@@ -50,9 +50,6 @@ class EmprendimientoServiceSedeer extends Seeder
                     'service_id' => $service->id,  // Asegurarse de que estamos usando el UUID del servicio
                     'emprendedor_id' => $emprendedor->id,  // ID del emprendedor
                     'code' => 'CODE-' . Str::upper(Str::random(5)),  // Código aleatorio para la relación
-                    'cantidad' => rand(1, 10),  // Cantidad aleatoria
-                    'name' => 'Servicio de ' . $service->name,  // Nombre relacionado al servicio
-                    'description' => 'Descripción del servicio para ' . $emprendedor->name,  // Descripción relacionada
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);

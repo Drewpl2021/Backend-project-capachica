@@ -12,7 +12,7 @@ class Emprendedor extends Model
     use HasFactory;
     protected $guarded = ['id'];
     public $incrementing = false;
-
+    protected $keyType = 'string';
     protected $fillable = [
         'razon_social',
         'address',
@@ -25,17 +25,21 @@ class Emprendedor extends Model
         'name_family',
         'asociacion_id',
     ];
-
-    protected $keyType = 'string';
+    //Generar el UUID FACIL PARA LA CREACION
     protected static function boot()
     {
         parent::boot();
 
         static::creating(function ($model) {
-            $model->id = (string) Str::uuid();  // Generar un UUID cuando se crea el modelo
+            $model->id = (string) Str::uuid();
         });
     }
-    // Relación: Un emprendedor pertenece a una asociación
+
+
+    // Relaciónes *****************************
+
+
+    // Asociación con asociación (belongsTo)
     public function asociacion()
     {
         return $this->belongsTo(Asociacion::class);
@@ -51,10 +55,16 @@ class Emprendedor extends Model
     {
         return $this->belongsToMany(User::class, 'emprendedor_user', 'emprendedor_id', 'user_id');
     }
+
+    // Relación muchos a muchos con Service a través de pivote emprendedor_service
     public function services()
     {
-        return $this->belongsToMany(Service::class, 'emprendedor_service', 'emprendedor_id', 'service_id');
+        return $this->belongsToMany(Service::class, 'emprendedor_service', 'emprendedor_id', 'service_id')
+            ->withPivot(['id', 'code', 'cantidad', 'name', 'description']) // Datos extras en pivote
+            ->withTimestamps();
     }
+
+
     public function sales()
     {
         return $this->hasMany(Sale::class, 'emprendimiento_id');

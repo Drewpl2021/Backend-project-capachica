@@ -49,26 +49,6 @@ class UserAdminSeeder extends Seeder
             $andres->assignRole($andresRole);
         }
 
-        // Crear usuario ADMIN_FAMILIA si no existe
-        $adminFam = User::firstOrCreate(
-            ['email' => 'familia@example.com'],
-            [
-                'name' => 'Admin',
-                'last_name' => 'Familia',
-                'code' => 'FAM001',
-                'imagen_url' => 'FAM001.jpg',
-                'username' => 'admin_familia',
-                'password' => Hash::make('familia123'),
-            ]
-        );
-
-        // Asignar rol admin_familia
-        $adminFamRole = Role::where('name', 'admin_familia')->first();
-        if ($adminFamRole && !$adminFam->hasRole('admin_familia')) {
-            $adminFam->assignRole($adminFamRole);
-        }
-
-
         //Rol user
         $usuario = User::firstOrCreate(
             ['email' => 'usuario@example.com'],
