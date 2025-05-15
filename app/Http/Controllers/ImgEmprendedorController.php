@@ -27,7 +27,6 @@ class ImgEmprendedorController extends Controller
             'currentPage' => $images->currentPage(),
             'totalPages' => $images->lastPage(),
             'totalElements' => $images->total(),
-            'perPage' => $images->perPage(),
         ]);
     }
 
@@ -38,7 +37,7 @@ class ImgEmprendedorController extends Controller
     {
         $validated = $request->validate([
             'emprendedor_id' => 'required|uuid|exists:emprendedors,id',
-            'url_image' => 'required|string|max:255',
+            'url_image' => 'required|string|max:255', // coincide con la migración
             'estado' => 'required|boolean',
             'code' => 'nullable|string',
             'description' => 'nullable|string',
@@ -52,6 +51,7 @@ class ImgEmprendedorController extends Controller
             'message' => 'Imagen de emprendedor creada exitosamente'
         ], 201);
     }
+
 
     /**
      * Mostrar imagen por ID

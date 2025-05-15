@@ -13,7 +13,7 @@ class ImgEmprendedor extends Model
     public $incrementing = false;
     protected $keyType = 'string';
     protected $table = 'img_emprendedores';  // Aquí el nombre que usaste en migración
-    protected $fillable = ['emprendedor_id', 'imagen_url', 'description', 'code'];
+    protected $fillable = ['emprendedor_id', 'url_image', 'estado', 'code', 'description'];
 
     protected static function boot()
     {

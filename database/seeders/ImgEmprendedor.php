@@ -12,32 +12,35 @@ class ImgEmprendedor extends Seeder
 {
     public function run()
     {
-        // Obtener todas las asociaciones existentes
-        $asociaciones = Emprendedor::all(); // Obtener todas las asociaciones
+        // Obtener todos los emprendedores
+        $emprendedores = Emprendedor::all();
 
-        foreach ($asociaciones as $asociacion) {
-            // Crear algunas imágenes de asociación para cada asociación
-            ModelsImgEmprendedor::create([
-                'emprendedor_id' => $asociacion->id,
+        // Arreglo con las imágenes a crear por cada emprendedor
+        $imagenes = [
+            [
                 'url_image' => 'https://example.com/imagen1.jpg',
-                'description' => "Imagen para el servicio {$asociacion->name}",
-                'estado' => true,
-                'code' => '101'
-            ]);
-            ModelsImgEmprendedor::create([
-                'emprendedor_id' => $asociacion->id,
+                'code' => '101',
+            ],
+            [
                 'url_image' => 'https://example.com/imagen2.jpg',
-                'description' => "Imagen para el servicio {$asociacion->name}",
-                'estado' => true,
-                'code' => '102'
-            ]);
-            ModelsImgEmprendedor::create([
-                'emprendedor_id' => $asociacion->id,
+                'code' => '102',
+            ],
+            [
                 'url_image' => 'https://example.com/imagen3.jpg',
-                'estado' => true,
-                'description' => "Imagen para el servicio {$asociacion->name}",
-                'code' => '103'
-            ]);
+                'code' => '103',
+            ],
+        ];
+
+        foreach ($emprendedores as $emprendedor) {
+            foreach ($imagenes as $img) {
+                ModelsImgEmprendedor::create([
+                    'emprendedor_id' => $emprendedor->id,
+                    'url_image' => $img['url_image'],
+                    'description' => "Imagen para el emprendedor {$emprendedor->name_family}",
+                    'estado' => true,
+                    'code' => $img['code'] . '-' . $emprendedor->id, // para código único combinando id
+                ]);
+            }
         }
     }
 }
