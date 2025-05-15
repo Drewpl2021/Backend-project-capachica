@@ -12,7 +12,6 @@ class Service extends Model
     protected $guarded = ['id'];
     public $incrementing = false;
     use SoftDeletes;
-
     protected $keyType = 'string';
 
     protected $fillable = [
