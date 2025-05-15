@@ -175,7 +175,7 @@ class AuthController extends Controller
             // Token y usuario válidos, responder con datos y token
             return $this->successResponse([
                 'token' => $token,
-                'username' => $user->only(['id', 'username', 'email']),
+                'username' => $user->only(['id', 'username', 'email', 'name', 'last_name']),
                 'roles' => $user->getRoleNames(),
                 'permissions' => $user->getAllPermissions()->pluck('name'),
             ], 'Sesión activa', 200);
