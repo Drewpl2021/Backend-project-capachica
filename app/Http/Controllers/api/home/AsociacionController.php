@@ -184,4 +184,69 @@ class AsociacionController extends Controller
             'data' => $data
         ], 200);
     }
+
+    // En el archivo AsociacionController.php
+
+    // En el archivo AsociacionController.php
+
+    public function emprendedoresByAsociacion($id, Request $request)
+    {
+        // Número de elementos por página (por defecto 10)
+        $size = $request->input('size', 10);
+
+        // Buscar la asociación por ID
+        $asociacion = Asociacion::find($id);
+
+        if (!$asociacion) {
+            return response()->json([
+                'message' => 'Asociación no encontrada',
+                'error' => 'No se pudo encontrar la asociación con el ID proporcionado'
+            ], 404);
+        }
+
+        // Obtener los emprendedores asociados a esta asociación con paginación
+        $emprendedores = $asociacion->emprendedores() // Relación de emprendedores de la asociación
+            ->paginate($size);
+
+        // Verificar si se encontraron emprendedores
+        if ($emprendedores->isEmpty()) {
+            return response()->json([
+                'message' => 'No se encontraron emprendedores asociados a esta asociación.',
+                'content' => [],
+                'totalElements' => 0,
+                'currentPage' => 0,
+                'totalPages' => 0,
+                'perPage' => $size
+            ], 404);
+        }
+
+        // Formatear los datos antes de enviarlos
+        $response = collect($emprendedores->items())->map(function ($emprendedor) {
+            return [
+                'id' => $emprendedor->id,
+                'razon_social' => $emprendedor->razon_social,
+                'address' => $emprendedor->address,
+                'user_id' => $emprendedor->user_id,
+                'code' => $emprendedor->code,
+                'ruc' => $emprendedor->ruc,
+                'description' => $emprendedor->description,
+                'lugar' => $emprendedor->lugar,
+                'img_logo' => $emprendedor->img_logo,
+                'name_family' => $emprendedor->name_family,
+                'estado' => (bool) $emprendedor->estado, // Convertir a booleano
+                'asociacionId' => $emprendedor->asociacion_id,
+                'createdAt' => $emprendedor->created_at,
+                'updatedAt' => $emprendedor->updated_at,
+                'deletedAt' => $emprendedor->deleted_at,
+            ];
+        });
+
+        return response()->json([
+            'content' => $response,
+            'totalElements' => $emprendedores->total(),
+            'currentPage' => $emprendedores->currentPage(),
+            'totalPages' => $emprendedores->lastPage(),
+            'perPage' => $emprendedores->perPage(),
+        ]);
+    }
 }
