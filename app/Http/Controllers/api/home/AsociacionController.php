@@ -49,7 +49,6 @@ class AsociacionController extends Controller
                 'nombre' => $asociacion->nombre,
                 'descripcion' => $asociacion->descripcion,
                 'lugar' => $asociacion->lugar,
-                'url' => $asociacion->url,
                 'estado' => (bool) $asociacion->estado,  // Convertir a booleano
                 'municipalidadId' => $asociacion->municipalidad_id,
                 'imagenes' => $asociacion->imgAsociacions->map(function ($img) {

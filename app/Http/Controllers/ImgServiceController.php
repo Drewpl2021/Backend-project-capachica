@@ -27,7 +27,6 @@ class ImgServiceController extends Controller
             'currentPage' => $images->currentPage(),
             'totalPages' => $images->lastPage(),
             'totalElements' => $images->total(),
-            'perPage' => $images->perPage(),
         ]);
     }
 
