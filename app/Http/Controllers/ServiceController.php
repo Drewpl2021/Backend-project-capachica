@@ -22,7 +22,6 @@ class ServiceController extends Controller
                 'name' => $service->name,
                 'description' => $service->description,
                 'code' => $service->code,
-                'base_price' => $service->base_price,
                 'category' => $service->category,
                 'status' => $service->status,
                 'emprendedores' => $service->emprendedorServices->map(function ($es) {
@@ -58,7 +57,6 @@ class ServiceController extends Controller
             'name' => 'required|string|max:255',
             'code' => ['required', 'string', 'max:255', Rule::unique('services')],
             'description' => 'nullable|string',
-            'base_price' => 'nullable|numeric|min:0',
             'category' => 'nullable|string|max:100',
             'status' => 'nullable|boolean',
         ]);
@@ -79,7 +77,6 @@ class ServiceController extends Controller
                 'name' => $service->name,
                 'description' => $service->description,
                 'code' => $service->code,
-                'base_price' => $service->base_price,
                 'category' => $service->category,
                 'status' => $service->status,
                 'emprendedores' => $service->emprendedorServices->map(function ($es) {
@@ -107,7 +104,6 @@ class ServiceController extends Controller
                 'name' => 'required|string|max:255',
                 'code' => ['required', 'string', 'max:255', Rule::unique('services')->ignore($service->id)],
                 'description' => 'nullable|string',
-                'base_price' => 'nullable|numeric|min:0',
                 'category' => 'nullable|string|max:100',
                 'status' => 'nullable|boolean',
             ]);
