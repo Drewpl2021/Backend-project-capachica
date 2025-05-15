@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();  // Cambia el tipo de 'id' a UUID
             $table->string('name');
             $table->string('last_name');
-            $table->string('code');
+            $table->string('code') -> nullable();
             $table->string('username');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();

@@ -74,7 +74,7 @@ class AuthController extends Controller
         $validation = $this->validateRequest($request, [
             'name'     => 'required|string|max:255|unique:users',
             'last_name'     => 'required|string|max:255|unique:users',
-            'code'     => 'required|string|max:255|unique:users',
+            //'code'     => 'required|string|max:255|unique:users',
             'username'     => 'required|string|max:255|unique:users',
             'email'    => 'nullable|string|email|max:255|unique:users',
             'password' => 'required|string',
@@ -88,7 +88,7 @@ class AuthController extends Controller
         $user = User::create([
             'name'     => $request->name,
             'last_name'    => $request->last_name,
-            'code'    => $request->code,
+            //'code'    => $request->code,
             'username'     => $request->username,
             'email'    => $request->email,
             'password' => bcrypt($request->password),
