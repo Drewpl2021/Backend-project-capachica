@@ -72,4 +72,10 @@ class Emprendedor extends Model
     {
         return $this->hasMany(Sale::class, 'emprendimiento_id');
     }
+
+    // Relación: Una asociación tiene muchas imágenes asociadas
+    public function imgEmprendedores()
+    {
+        return $this->hasMany(ImgEmprendedor::class, 'emprendedor_id');
+    }
 }

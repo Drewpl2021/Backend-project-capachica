@@ -6,19 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-
-class img_asociacion extends Model
+class ImgEmprendedor extends Model
 {
     use HasFactory;
+
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $fillable = [
-        'asociacion_id',
-        'url_image',
-        'estado',
-        'codigo'
-    ];
-
+    protected $table = 'img_emprendedores';  // Aquí el nombre que usaste en migración
+    protected $fillable = ['emprendedor_id', 'imagen_url', 'description', 'code'];
 
     protected static function boot()
     {
@@ -29,8 +24,8 @@ class img_asociacion extends Model
         });
     }
 
-    public function asociacion()
+    public function services()
     {
-        return $this->belongsTo(Asociacion::class);
+        return $this->belongsTo(Emprendedor::class);
     }
 }
