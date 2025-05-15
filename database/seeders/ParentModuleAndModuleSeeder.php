@@ -32,8 +32,6 @@ class ParentModuleAndModuleSeeder extends Seeder
         //$this->seedParentModule('heroicons_outline:user-group', '/userManagement', 5, 'Usuarios', 'Administración', 'collapsable', '05');
         // Agrega más Padres Módulos aquí...
 
-        // Modules Venta
-        $this->seedModule('heroicons_outline:currency-dollar', '/homeScreen/sales/payment', 1, 'Pagos', 'basic', '01', '02'); //YO
 
 
         // Modules configuración
@@ -44,10 +42,12 @@ class ParentModuleAndModuleSeeder extends Seeder
         $this->seedModule('heroicons_outline:cog', '/homeScreen/setup/sections', 5, 'Configuración Página', 'basic', '05', '01');
         $this->seedModule('heroicons_outline:user-group', '/homeScreen/setup/role', 6, 'Roles', 'basic', '06', '01');
         $this->seedModule('heroicons_outline:user-group', '/homeScreen/setup/asociaciones', 7, 'Asociaciones', 'basic', '07', '01');
-        $this->seedModule('heroicons_outline:arrow-trending-up', '/homeScreen/setup/service', 8, 'Servicios Ofrecidos', 'basic', '08', '01'); //SAPO
+        $this->seedModule('heroicons_outline:arrow-trending-up', '/homeScreen/setup/service', 8, 'Tipo de Servicios', 'basic', '08', '01'); //SAPO
+        // Modules Venta
+        $this->seedModule('heroicons_outline:currency-dollar', '/homeScreen/sales/payment', 1, 'Pagos', 'basic', '09', '02'); //YO
 
         // Reservas y productros
-        $this->seedModule('heroicons_outline:queue-list', '/homeScreen/product/product', 1, 'Productos', 'basic', '01', '03'); //YO
+        $this->seedModule('heroicons_outline:queue-list', '/homeScreen/product/product', 1, 'Productos Ofrecidos', 'basic', '10', '03'); //YO
 
     }
 
