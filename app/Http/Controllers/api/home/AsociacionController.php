@@ -171,7 +171,7 @@ class AsociacionController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Validación básica
+        // Validación básica sin restricciones de código único
         $validated = $request->validate([
             'municipalidad_id' => 'required|uuid|exists:municipalidads,id',
             'nombre' => 'required|string|max:255',
@@ -194,45 +194,16 @@ class AsociacionController extends Controller
 
         DB::beginTransaction();
         try {
-            // Validar códigos únicos dentro del array enviado
-            $codigos = collect($validated['imagenes'] ?? [])
-                ->pluck('codigo')
-                ->filter(); // Quita nulls
-
-            // Verificar códigos duplicados dentro del array (enviados en la petición)
-            if ($codigos->count() !== $codigos->unique()->count()) {
-                return response()->json([
-                    'message' => 'Error: Hay códigos duplicados en las imágenes enviadas.'
-                ], 422);
-            }
-
-            // Validar que ningún código enviado exista en otras imágenes diferentes
-            foreach ($validated['imagenes'] as $imgData) {
-                if (isset($imgData['codigo']) && $imgData['codigo']) {
-                    $query = $asociacion->imgAsociacions()
-                        ->where('codigo', $imgData['codigo']);
-
-                    if (isset($imgData['id'])) {
-                        // Excluir la imagen que estamos actualizando para no comparar consigo misma
-                        $query->where('id', '!=', $imgData['id']);
-                    }
-
-                    if ($query->exists()) {
-                        return response()->json([
-                            'message' => "Error: El código '{$imgData['codigo']}' ya está en uso por otra imagen."
-                        ], 422);
-                    }
-                }
-            }
-
-            // Si pasa las validaciones, actualizar asociación y manejar imágenes
+            // Actualizar asociación
             $asociacion->update($validated);
 
+            // Manejo de imágenes: agregar o actualizar
             $imagenesEnviadasIds = collect($validated['imagenes'] ?? [])
                 ->pluck('id')
                 ->filter()
                 ->all();
 
+            // Eliminar imágenes que no están en la petición (soft delete)
             $asociacion->imgAsociacions()
                 ->whereNotIn('id', $imagenesEnviadasIds)
                 ->delete();
@@ -262,6 +233,7 @@ class AsociacionController extends Controller
             ], 500);
         }
     }
+
 
 
 
