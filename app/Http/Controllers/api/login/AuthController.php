@@ -72,6 +72,9 @@ class AuthController extends Controller
     {
         // Validación de los datos con el trait ValidatorTrait
         $validation = $this->validateRequest($request, [
+            'name'     => 'required|string|max:255|unique:users',
+            'last_name'     => 'required|string|max:255|unique:users',
+            'code'     => 'required|string|max:255|unique:users',
             'username'     => 'required|string|max:255|unique:users',
             'email'    => 'nullable|string|email|max:255|unique:users',
             'password' => 'required|string',
@@ -83,6 +86,9 @@ class AuthController extends Controller
 
         // Crear el usuario y guardarlo en la base de datos
         $user = User::create([
+            'name'     => $request->name,
+            'last_name'    => $request->last_name,
+            'code'    => $request->code,
             'username'     => $request->username,
             'email'    => $request->email,
             'password' => bcrypt($request->password),
