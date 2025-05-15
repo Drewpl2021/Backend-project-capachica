@@ -18,6 +18,7 @@ use App\Http\Controllers\API\Modules\ParentModuleController;
 use App\Http\Controllers\EmprendedorServiceController;
 use App\Http\Controllers\ImgServiceController;
 use App\Http\Controllers\ImgEmprendedorController;
+use App\Http\Controllers\ImgEmprendedorServiceController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReservaController;
@@ -212,12 +213,24 @@ Route::middleware('auth:api')->group(function () {
 });
 
 Route::prefix('emprendedor-service')->group(function () {
+
+    Route::get('/by-service', [EmprendedorServiceController::class, 'getByService']); // PRIMERO esta ruta
     Route::get('/', [EmprendedorServiceController::class, 'index']);
     Route::post('/', [EmprendedorServiceController::class, 'store']);
-    Route::get('/{id}', [EmprendedorServiceController::class, 'show']);
+    Route::get('/restore/{id}', [EmprendedorServiceController::class, 'restore']); // antes de los de id
+    Route::get('/{id}', [EmprendedorServiceController::class, 'show']); // LUEGO la ruta con parámetro
     Route::put('/{id}', [EmprendedorServiceController::class, 'update']);
     Route::delete('/{id}', [EmprendedorServiceController::class, 'destroy']);
-    Route::post('/restore/{id}', [EmprendedorServiceController::class, 'restore']); // opcional
+
+
+    // Subgrupo para manejo de imágenes relacionadas a EmprendedorService
+    Route::prefix('images')->group(function () {
+        Route::get('/', [ImgEmprendedorServiceController::class, 'index'])->name('emprendedor-service.images.index');        // Listar imágenes con paginación
+        Route::post('/', [ImgEmprendedorServiceController::class, 'store'])->name('emprendedor-service.images.store');       // Crear imagen
+        Route::get('/{id}', [ImgEmprendedorServiceController::class, 'show'])->name('emprendedor-service.images.show');      // Mostrar imagen específica
+        Route::put('/{id}', [ImgEmprendedorServiceController::class, 'update'])->name('emprendedor-service.images.update');  // Actualizar imagen
+        Route::delete('/{id}', [ImgEmprendedorServiceController::class, 'destroy'])->name('emprendedor-service.images.destroy'); // Eliminar imagen (soft delete)
+    });
 });
 
 
