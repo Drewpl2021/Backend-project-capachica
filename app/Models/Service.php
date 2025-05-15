@@ -19,7 +19,6 @@ class Service extends Model
         'name',
         'description',
         'code',
-        'base_price',
         'costo',
         'category',
         'status',
