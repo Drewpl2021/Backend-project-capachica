@@ -69,4 +69,10 @@ class EmprendedorService extends Model
     {
         return $this->hasOne(SaleDetail::class, 'emprendedor_service_id');
     }
+
+    // Relación imágenes de emprendedor service
+    public function imgEmprendedorServices()
+    {
+        return $this->hasMany(ImgEmprendedorService::class, 'emprendedor_service_id');
+    }
 }
