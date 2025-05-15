@@ -16,6 +16,7 @@ return new class extends Migration
             $table->uuid('municipalidad_id');
             $table->string('nombre');
             $table->string('descripcion');
+            $table->string('url');
             $table->string('lugar');
             $table->boolean('estado');
             $table->foreign('municipalidad_id')

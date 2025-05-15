@@ -16,6 +16,8 @@ use App\Http\Controllers\API\Login\UserController;
 use App\Http\Controllers\API\Modules\ModuleController;
 use App\Http\Controllers\API\Modules\ParentModuleController;
 use App\Http\Controllers\EmprendedorServiceController;
+use App\Http\Controllers\ImgEmprendedorController;
+use App\Http\Controllers\ImgServiceController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReservaController;
@@ -174,6 +176,28 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
         Route::put('/{id}', [ImgAsociacionController::class, 'update']); // Actualizar imagen
         Route::delete('/{id}', [ImgAsociacionController::class, 'destroy']); // Eliminar imagen
         Route::get('/img/{asociacionId}', [ImgAsociacionController::class, 'getImagesByAsociacionId']);
+    });
+
+    Route::prefix('img-emprendedores')->group(function () {
+        Route::get('/', [ImgEmprendedorController::class, 'index']);                  // Listar imágenes con paginación
+        Route::post('/', [ImgEmprendedorController::class, 'store']);                 // Crear nueva imagen
+        Route::get('/{id}', [ImgEmprendedorController::class, 'show']);               // Mostrar imagen por ID
+        Route::put('/{id}', [ImgEmprendedorController::class, 'update']);             // Actualizar imagen por ID
+        Route::delete('/{id}', [ImgEmprendedorController::class, 'destroy']);         // Eliminar imagen por ID
+
+        // Listar imágenes por emprendedor con paginación y filtrado
+        Route::get('/emprendedor/{emprendedorId}', [ImgEmprendedorController::class, 'getImagesByEmprendedorId']);
+    });
+
+    Route::prefix('imgservices')->group(function () {
+        Route::get('/', [ImgServiceController::class, 'index']);                  // Listar imágenes con paginación
+        Route::post('/', [ImgServiceController::class, 'store']);                 // Crear imagen
+        Route::get('/{id}', [ImgServiceController::class, 'show']);               // Mostrar imagen específica
+        Route::put('/{id}', [ImgServiceController::class, 'update']);             // Actualizar imagen
+        Route::delete('/{id}', [ImgServiceController::class, 'destroy']);         // Eliminar imagen (soft delete)
+
+        // Listar imágenes filtradas por service_id con paginación
+        Route::get('/service/{serviceId}', [ImgServiceController::class, 'getImagesByServiceId']);
     });
 });
 
