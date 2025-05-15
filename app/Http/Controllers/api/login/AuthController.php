@@ -163,7 +163,7 @@ class AuthController extends Controller
         return $this->successResponse([
             'token' => $newToken,
             'expires_at' => now()->addMinutes(config('jwt.ttl'))->toDateTimeString(),
-            'username' => $user->only(['id', 'username', 'email']),
+            'username' => $user->only(['id','name','last_name', 'username', 'email']),
             'roles' => $user->getRoleNames(),
             'permissions' => $user->getAllPermissions()->pluck('name'),
         ], 'Usuario iniciado sesión correctamente', 200);
