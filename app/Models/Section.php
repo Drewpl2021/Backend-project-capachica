@@ -12,6 +12,7 @@ class Section extends Model
 
     // Definir la clave primaria como UUID
     protected $primaryKey = 'id';
+
     public $incrementing = false;
     protected $keyType = 'string';
 

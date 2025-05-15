@@ -7,23 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Module extends Model
+class ImgEmprendedorService extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'modules';
+    protected $table = 'img_emprenpedor_service'; // cuidado con el nombre (corrige si lo escribiste mal)
+
     public $incrementing = false;
     protected $keyType = 'string';
+
+    protected $guarded = ['id'];
+
     protected $fillable = [
-        'title',
-        'subtitle',
-        'type',
+        'emprendedor_service_id',
+        'url_image',
+        'description',
+        'estado',
         'code',
-        'icon',
-        'status',
-        'moduleOrder',
-        'link',
-        'parent_module_id',
     ];
 
     protected static function boot()
@@ -32,12 +32,12 @@ class Module extends Model
 
         static::creating(function ($model) {
             $model->id = (string) Str::uuid();
-            $model->status = true;
         });
     }
 
-    public function parentModule()
+    // Relación inversa: pertenece a un emprendedor_service
+    public function emprendedorService()
     {
-        return $this->belongsTo(ParentModule::class, 'parent_module_id');
+        return $this->belongsTo(EmprendedorService::class, 'emprendedor_service_id');
     }
 }

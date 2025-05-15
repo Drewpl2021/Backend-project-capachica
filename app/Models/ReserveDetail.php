@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class ReserveDetail extends Model
 {
     use HasFactory;
+    use SoftDeletes;
     protected $guarded = ['id'];
     public $incrementing = false;
     protected $table = 'reserve_detail';

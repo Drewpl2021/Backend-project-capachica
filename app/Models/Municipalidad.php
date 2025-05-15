@@ -4,12 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class Municipalidad extends Model
 {
 
     use HasFactory;
+    use SoftDeletes;
     // Relación uno a uno con la descripción
     // Si el nombre de la tabla no sigue la convención plural, especifica el nombre de la tabla aquí
     // protected $table = 'municipalidads'; // (si necesario)
