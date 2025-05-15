@@ -14,7 +14,6 @@ class Module extends Model
     protected $table = 'modules';
     public $incrementing = false;
     protected $keyType = 'string';
-
     protected $fillable = [
         'title',
         'subtitle',

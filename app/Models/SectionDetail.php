@@ -14,6 +14,7 @@ class SectionDetail extends Model
     // Definir la clave primaria como UUID
     protected $primaryKey = 'id';
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     // Definir qué campos pueden ser asignados masivamente

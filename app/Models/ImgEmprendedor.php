@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class ImgEmprendedor extends Model
 {
     use HasFactory;
-
+    use SoftDeletes;
     public $incrementing = false;
     protected $keyType = 'string';
     protected $table = 'img_emprendedores';  // Aquí el nombre que usaste en migración

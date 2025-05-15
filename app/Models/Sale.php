@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Sale extends Model
 {
@@ -11,6 +12,7 @@ class Sale extends Model
 
     // Definir la tabla si el nombre no sigue la convención
     protected $table = 'sales';
+    use SoftDeletes;
     public $incrementing = false;
     protected $keyType = 'string';
     protected $guarded = ['id'];
@@ -30,7 +32,7 @@ class Sale extends Model
     // Relación muchos a uno con la tabla emprendimiento
     public function emprendimiento()
     {
-        return $this->belongsTo(Emprendimiento::class, 'emprendimiento_id');
+        return $this->belongsTo(Emprendedor::class, 'emprendimiento_id');
     }
 
     // Relación muchos a uno con la tabla payment

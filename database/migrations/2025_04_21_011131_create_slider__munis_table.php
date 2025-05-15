@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('url_images');
             $table->foreign('municipalidad_id')->references('id')->on('municipalidads')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -4,11 +4,15 @@ namespace App\Http\Controllers\API\home;
 
 use App\Http\Controllers\Controller;
 use App\Models\asociacion;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class AsociacionController extends Controller
 {
+    use SoftDeletes;  // Esto activa soft deletes
+
     /**
      * Display a listing of the resource.
      */
@@ -81,16 +85,40 @@ class AsociacionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'municipalidad_id' => 'required|uuid|exists:municipalidads,id', // Relación con la municipalidad
+            'municipalidad_id' => 'required|uuid|exists:municipalidads,id',
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string',
             'lugar' => 'required|string|max:255',
             'url' => 'required|string|max:255',
             'estado' => 'required|boolean',
+            'imagenes' => 'array', // Validar que sea arreglo (opcional)
+            'imagenes.*.url_image' => 'required|string|max:255',
+            'imagenes.*.estado' => 'required|boolean',
+            'imagenes.*.codigo' => 'nullable|string',
+            'imagenes.*.description' => 'nullable|string',
         ]);
 
-        $asociacion = Asociacion::create($validated);
-        return response()->json($asociacion, 201);
+        DB::beginTransaction();
+        try {
+            $asociacion = Asociacion::create($validated);
+
+            // Crear imágenes si llegan
+            if (!empty($validated['imagenes'])) {
+                foreach ($validated['imagenes'] as $img) {
+                    $asociacion->imgAsociacions()->create($img);
+                }
+            }
+
+            DB::commit();
+
+            return response()->json($asociacion, 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Error al crear asociación con imágenes',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -110,20 +138,9 @@ class AsociacionController extends Controller
         return response()->json($asociacion);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
-        $asociacion = Asociacion::find($id);
-
-        if (!$asociacion) {
-            return response()->json([
-                'message' => 'Asociación no encontrada',
-                'error' => 'No se pudo encontrar la asociación con el ID proporcionado'
-            ], 404);
-        }
-
+        // Validación básica
         $validated = $request->validate([
             'municipalidad_id' => 'required|uuid|exists:municipalidads,id',
             'nombre' => 'required|string|max:255',
@@ -131,20 +148,91 @@ class AsociacionController extends Controller
             'lugar' => 'required|string|max:255',
             'url' => 'required|string|max:255',
             'estado' => 'required|boolean',
+            'imagenes' => 'array',
+            'imagenes.*.id' => 'nullable|uuid|exists:img_asociacions,id',
+            'imagenes.*.url_image' => 'required|string|max:255',
+            'imagenes.*.estado' => 'required|boolean',
+            'imagenes.*.codigo' => 'nullable|string',
+            'imagenes.*.description' => 'nullable|string',
         ]);
 
-        // Depuración: Mostrar los datos antes de la actualización
-        Log::info("Actualizando Asociación con ID: $id");
-        Log::info("Datos antes de la actualización: ", $asociacion->toArray());
-        Log::info("Datos enviados al servidor: ", $validated);
+        $asociacion = Asociacion::find($id);
+        if (!$asociacion) {
+            return response()->json(['message' => 'Asociación no encontrada'], 404);
+        }
 
-        $asociacion->update($validated);
+        DB::beginTransaction();
+        try {
+            // Validar códigos únicos dentro del array enviado
+            $codigos = collect($validated['imagenes'] ?? [])
+                ->pluck('codigo')
+                ->filter(); // Quita nulls
 
-        // Depuración: Confirmar que los datos se actualizaron correctamente
-        log::info("Datos después de la actualización: ", $asociacion->toArray());
+            // Verificar códigos duplicados dentro del array (enviados en la petición)
+            if ($codigos->count() !== $codigos->unique()->count()) {
+                return response()->json([
+                    'message' => 'Error: Hay códigos duplicados en las imágenes enviadas.'
+                ], 422);
+            }
 
-        return response()->json($asociacion);
+            // Validar que ningún código enviado exista en otras imágenes diferentes
+            foreach ($validated['imagenes'] as $imgData) {
+                if (isset($imgData['codigo']) && $imgData['codigo']) {
+                    $query = $asociacion->imgAsociacions()
+                        ->where('codigo', $imgData['codigo']);
+
+                    if (isset($imgData['id'])) {
+                        // Excluir la imagen que estamos actualizando para no comparar consigo misma
+                        $query->where('id', '!=', $imgData['id']);
+                    }
+
+                    if ($query->exists()) {
+                        return response()->json([
+                            'message' => "Error: El código '{$imgData['codigo']}' ya está en uso por otra imagen."
+                        ], 422);
+                    }
+                }
+            }
+
+            // Si pasa las validaciones, actualizar asociación y manejar imágenes
+            $asociacion->update($validated);
+
+            $imagenesEnviadasIds = collect($validated['imagenes'] ?? [])
+                ->pluck('id')
+                ->filter()
+                ->all();
+
+            $asociacion->imgAsociacions()
+                ->whereNotIn('id', $imagenesEnviadasIds)
+                ->delete();
+
+            foreach ($validated['imagenes'] as $imgData) {
+                if (isset($imgData['id'])) {
+                    $image = $asociacion->imgAsociacions()->withTrashed()->find($imgData['id']);
+                    if ($image) {
+                        if ($image->trashed()) {
+                            $image->restore();
+                        }
+                        $image->update($imgData);
+                    }
+                } else {
+                    $asociacion->imgAsociacions()->create($imgData);
+                }
+            }
+
+            DB::commit();
+
+            return response()->json($asociacion);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Error al actualizar asociación con imágenes',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
+
+
 
     /**
      * Remove the specified resource from storage.
@@ -160,33 +248,15 @@ class AsociacionController extends Controller
             ], 404);
         }
 
-        $asociacion->delete();
+        $asociacion->delete(); // Aquí solo marca deleted_at
+
         return response()->json([
             'message' => 'Asociación eliminada exitosamente'
         ]);
     }
 
-    /**
-     * Método auxiliar para responder con un error.
-     */
-    private function errorResponse($message, $statusCode)
-    {
-        return response()->json([
-            'message' => $message,
-            'error' => 'Ocurrió un error al procesar la solicitud'
-        ], $statusCode);
-    }
 
-    /**
-     * Método auxiliar para responder con éxito.
-     */
-    private function successResponse($data, $message)
-    {
-        return response()->json([
-            'message' => $message,
-            'data' => $data
-        ], 200);
-    }
+
 
     // En el archivo AsociacionController.php
 
