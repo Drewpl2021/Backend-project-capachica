@@ -43,7 +43,7 @@ class ReservaDetailSeeder extends Seeder
                 'emprendedor_service_id' => $service->id,  // Asignar el servicio aleatorio
                 'reserva_id' => $reserva->id,  // Asignar la reserva
                 'description' => 'Detalle de la reserva ' . $reserva->code,
-                'cantidad' => null, // <-- Agrega esto con el valor que corresponda
+                'cantidad' => 1, // <-- Agrega esto con el valor que corresponda
                 'costo' => 100.00,  // Costo de la reserva
                 'IGV' => 18.00,  // Impuesto general a las ventas (IGV)
                 'BI' => 100.00,  // Base imponible

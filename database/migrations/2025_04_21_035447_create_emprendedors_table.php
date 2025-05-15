@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('lugar')->nullable();
             $table->string('img_logo')->nullable();
             $table->string('name_family');
+            $table->boolean('status')->default(true); // Estado activo/inactivo para control
             $table->uuid('asociacion_id');  // Relación con la tabla 'asociacions'
             $table->timestamps();
             $table->softDeletes();

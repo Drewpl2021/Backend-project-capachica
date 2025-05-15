@@ -187,14 +187,10 @@ class AsociacionController extends Controller
 
     // En el archivo AsociacionController.php
 
-    // En el archivo AsociacionController.php
-
     public function emprendedoresByAsociacion($id, Request $request)
     {
-        // Número de elementos por página (por defecto 10)
         $size = $request->input('size', 10);
 
-        // Buscar la asociación por ID
         $asociacion = Asociacion::find($id);
 
         if (!$asociacion) {
@@ -204,11 +200,11 @@ class AsociacionController extends Controller
             ], 404);
         }
 
-        // Obtener los emprendedores asociados a esta asociación con paginación
-        $emprendedores = $asociacion->emprendedores() // Relación de emprendedores de la asociación
+        $emprendedores = $asociacion->emprendedores()
+            ->with(['services', 'asociacion']) // cargo los servicios y la asociación
             ->paginate($size);
 
-        // Verificar si se encontraron emprendedores
+
         if ($emprendedores->isEmpty()) {
             return response()->json([
                 'message' => 'No se encontraron emprendedores asociados a esta asociación.',
@@ -220,24 +216,34 @@ class AsociacionController extends Controller
             ], 404);
         }
 
-        // Formatear los datos antes de enviarlos
         $response = collect($emprendedores->items())->map(function ($emprendedor) {
             return [
+                'asociacionId' => $emprendedor->asociacion_id,
+                'nombreAsociacion' => $emprendedor->asociacion ? $emprendedor->asociacion->nombre : null,
                 'id' => $emprendedor->id,
                 'razon_social' => $emprendedor->razon_social,
                 'address' => $emprendedor->address,
-                'user_id' => $emprendedor->user_id,
                 'code' => $emprendedor->code,
                 'ruc' => $emprendedor->ruc,
                 'description' => $emprendedor->description,
                 'lugar' => $emprendedor->lugar,
                 'img_logo' => $emprendedor->img_logo,
                 'name_family' => $emprendedor->name_family,
-                'estado' => (bool) $emprendedor->estado, // Convertir a booleano
-                'asociacionId' => $emprendedor->asociacion_id,
+                'status' => $emprendedor->status,
                 'createdAt' => $emprendedor->created_at,
                 'updatedAt' => $emprendedor->updated_at,
-                'deletedAt' => $emprendedor->deleted_at,
+
+                // Aquí agregamos los servicios con sus campos que quieres exponer
+                'servicios' => $emprendedor->services->map(function ($service) {
+                    return [
+                        'id' => $service->id,
+                        'name' => $service->name,
+                        'description' => $service->description,
+                        'code' => $service->code,
+                        'category' => $service->category,
+                        'status' => $service->status,
+                    ];
+                }),
             ];
         });
 

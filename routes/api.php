@@ -15,6 +15,7 @@ use App\Http\Controllers\API\Login\RoleController;
 use App\Http\Controllers\API\Login\UserController;
 use App\Http\Controllers\API\Modules\ModuleController;
 use App\Http\Controllers\API\Modules\ParentModuleController;
+use App\Http\Controllers\EmprendedorServiceController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReservaController;
@@ -185,6 +186,14 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('/reservas/{id}', [ReservaController::class, 'destroy']);
 });
 
+Route::prefix('emprendedor-service')->group(function () {
+    Route::get('/', [EmprendedorServiceController::class, 'index']);
+    Route::post('/', [EmprendedorServiceController::class, 'store']);
+    Route::get('/{id}', [EmprendedorServiceController::class, 'show']);
+    Route::put('/{id}', [EmprendedorServiceController::class, 'update']);
+    Route::delete('/{id}', [EmprendedorServiceController::class, 'destroy']);
+    Route::post('/restore/{id}', [EmprendedorServiceController::class, 'restore']); // opcional
+});
 
 
 

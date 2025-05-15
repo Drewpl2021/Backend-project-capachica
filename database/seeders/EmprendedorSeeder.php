@@ -42,6 +42,7 @@ class EmprendedorSeeder extends Seeder
                 'asociacion_id' => $asociacion->id,
                 'razon_social' => 'Emprendimiento en ' . $asociacion->nombre,
                 'name_family' => 'Familia ' . Str::upper(Str::random(1)),
+                'status' => true,
                 'address' => 'Calle ' . rand(1, 100) . ', ' . $asociacion->lugar,
                 'code' => 'EMP-' . Str::upper(Str::random(5)),
                 'ruc' => rand(10000000000, 99999999999),
@@ -64,8 +65,6 @@ class EmprendedorSeeder extends Seeder
                     'updated_at' => now(),
                 ]);
             }
-
         }
-
     }
 }
