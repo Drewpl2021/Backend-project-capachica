@@ -124,9 +124,12 @@ class AsociacionController extends Controller
     /**
      * Display the specified resource.
      */
+    /**
+     * Display the specified resource with all related data.
+     */
     public function show($id)
     {
-        $asociacion = Asociacion::find($id);
+        $asociacion = Asociacion::with('imgAsociacions')->find($id);
 
         if (!$asociacion) {
             return response()->json([
@@ -135,8 +138,36 @@ class AsociacionController extends Controller
             ], 404);
         }
 
-        return response()->json($asociacion);
+        // Formatear la respuesta para devolver todos los campos + imágenes (convertir booleanos)
+        $response = [
+            'id' => $asociacion->id,
+            'nombre' => $asociacion->nombre,
+            'descripcion' => $asociacion->descripcion,
+            'lugar' => $asociacion->lugar,
+            'url' => $asociacion->url,
+            'estado' => (bool) $asociacion->estado,
+            'municipalidadId' => $asociacion->municipalidad_id,
+            'imagenes' => $asociacion->imgAsociacions->map(function ($img) {
+                return [
+                    'id' => $img->id,
+                    'url_image' => $img->url_image,
+                    'estado' => (bool) $img->estado,
+                    'codigo' => $img->codigo,
+                    'createdAt' => $img->created_at,
+                    'updatedAt' => $img->updated_at,
+                    'deletedAt' => $img->deleted_at,
+                ];
+            }),
+            'createdAt' => $asociacion->created_at,
+            'updatedAt' => $asociacion->updated_at,
+            'deletedAt' => $asociacion->deleted_at,
+        ];
+
+        return response()->json([
+            'content' => $response,
+        ]);
     }
+
 
     public function update(Request $request, $id)
     {
