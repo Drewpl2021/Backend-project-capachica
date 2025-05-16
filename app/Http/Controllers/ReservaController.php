@@ -51,6 +51,9 @@ class ReservaController extends Controller
             'details' => 'required|array|min:1',
             'details.*.emprendedor_service_id' => 'required|uuid|exists:emprendedor_service,id',
             'details.*.lugar' => 'required|string|max:255',
+            'details.*.igv' => 'nullable|numeric|min:0',  // agregados
+            'details.*.bi' => 'nullable|numeric|min:0',
+            'details.*.total' => 'nullable|numeric|min:0',
         ]);
 
         DB::beginTransaction();
@@ -81,9 +84,9 @@ class ReservaController extends Controller
                     'description' => $emprendedorService->description,  // toma la descripción de la tabla emprendedor_service
                     'cantidad' => $detail['cantidad'],
                     'costo' => $emprendedorService->costo, // toma el costo actual del servicio
-                    'igv' => 0,  // si quieres lo calculas después o lo pones en 0
-                    'bi' => 0,   // igual
-                    'total' => 0, // igual, puedes calcular o ajustar aquí
+                    'igv' => $detail['igv'] ?? 0,  // toma del input
+                    'bi' => $detail['bi'] ?? 0,    // toma del input
+                    'total' => $detail['total'] ?? 0, // toma del input
                     'lugar' => $detail['lugar'],
                     'created_at' => now(),
                     'updated_at' => now(),
@@ -95,6 +98,7 @@ class ReservaController extends Controller
 
             DB::commit();
 
+            // Carga la relación para la respuesta
             $reserva->load('reserveDetails');
 
             return response()->json([
@@ -108,6 +112,7 @@ class ReservaController extends Controller
             ], 500);
         }
     }
+
 
 
 
