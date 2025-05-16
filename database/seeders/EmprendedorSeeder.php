@@ -34,7 +34,7 @@ class EmprendedorSeeder extends Seeder
         // Crear un emprendedor para cada conjunto de usuarios
         foreach ($asociaciones as $asociacion) {
             // Seleccionar al menos dos usuarios aleatorios para este emprendedor
-            $selectedUsers = $users->random(2);  // Tomar dos usuarios aleatorios
+            $selectedUsers = $users->random(1);  // Tomar dos usuarios aleatorios
 
             // Datos del emprendedor
             $emprendedorData = [

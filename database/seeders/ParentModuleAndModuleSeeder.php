@@ -43,10 +43,7 @@ class ParentModuleAndModuleSeeder extends Seeder
         $this->seedModule('heroicons_outline:user-group', '/homeScreen/setup/role', 6, 'Roles', 'basic', '06', '01');
         $this->seedModule('heroicons_outline:user-group', '/homeScreen/setup/asociaciones', 7, 'Asociaciones', 'basic', '07', '01');
         $this->seedModule('heroicons_outline:arrow-trending-up', '/homeScreen/setup/service', 8, 'Tipo de Servicios', 'basic', '08', '01'); //SAPO
-        // Modules Venta
         $this->seedModule('heroicons_outline:currency-dollar', '/homeScreen/sales/payment', 1, 'Pagos', 'basic', '09', '02'); //YO
-
-        // Reservas y productros
         $this->seedModule('heroicons_outline:queue-list', '/homeScreen/product/product', 1, 'Productos Ofrecidos', 'basic', '10', '03'); //YO
 
     }

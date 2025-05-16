@@ -67,5 +67,24 @@ class UserAdminSeeder extends Seeder
         if ($usuarios && !$usuario->hasRole('usuario')) {
             $usuario->assignRole($usuarios);
         }
+
+        // Crear usuario con rol admin_familia
+        $familiaUsuario = User::firstOrCreate(
+            ['email' => 'nuevo.familia@example.com'],
+            [
+                'name' => 'Nuevo',
+                'last_name' => 'Familia',
+                'code' => 'FAM002',
+                'imagen_url' => 'FAM002.jpg',
+                'username' => 'admin.familia',
+                'password' => Hash::make('12345'),
+            ]
+        );
+
+        // Asignar rol admin_familia
+        $adminFamiliaRole = Role::where('name', 'admin_familia')->first();
+        if ($adminFamiliaRole && !$familiaUsuario->hasRole('admin_familia')) {
+            $familiaUsuario->assignRole($adminFamiliaRole);
+        }
     }
 }

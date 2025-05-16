@@ -19,6 +19,7 @@ class User extends Authenticatable implements JWTSubject
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
     protected $guarded = ['id'];
     use SoftDeletes;
+    protected $guard_name = 'api';
 
 
     protected $table = 'users';
@@ -74,6 +75,7 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [
+            'id' => $this->id, // Agregar 'username' al token
             'name' => $this->name, // Agregar 'username' al token
             'last_name' => $this->last_name, // Agregar 'username' al token
             'username' => $this->username, // Agregar 'username' al token

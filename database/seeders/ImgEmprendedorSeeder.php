@@ -20,15 +20,15 @@ class ImgEmprendedorSeeder extends Seeder
         // Arreglo con las imágenes a crear por cada emprendedor
         $imagenes = [
             [
-                'url_image' => 'https://example.com/imagen1.jpg',
+                'url_image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRYzzAWe4X_PjGyaWOwV5AJoMbyCnN-43PsA&s',
                 'code' => '101',
             ],
             [
-                'url_image' => 'https://example.com/imagen2.jpg',
+                'url_image' => 'https://i0.wp.com/foodandpleasure.com/wp-content/uploads/2022/11/hoteles-boho-chic-mexico-habitas-bacalar-2.jpeg?resize=600%2C401&ssl=1',
                 'code' => '102',
             ],
             [
-                'url_image' => 'https://example.com/imagen3.jpg',
+                'url_image' => 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/528629425.jpg?k=a14193160f63cc0b4f05d9d37ea4b3d134536504920310e018b66e5b84671afd&o=&hp=1',
                 'code' => '103',
             ],
         ];

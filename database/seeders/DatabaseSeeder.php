@@ -44,7 +44,8 @@ class DatabaseSeeder extends Seeder
             SaleDetailSeeder::class,
             ImgService::class,
             ImgEmprendedor::class,
-            ImgEmprendedorSeeder::class
+            ImgEmprendedorSeeder::class,
+            ModuleRoleSeeder::class
         ]);
 
 
