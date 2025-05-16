@@ -9,17 +9,20 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('slider__munis', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('municipio_descrip_id'); // Cambié el nombre de la tabla referenciada aquí
+            $table->uuid('municipalidad_id');
             $table->string('titulo');
             $table->string('descripcion');
-            $table->foreign('municipio_descrip_id')->references('id')->on('municipalidad__descripcions')->onDelete('cascade'); // Corrigido aquí
+            $table->string('url_images');
+            $table->foreign('municipalidad_id')->references('id')->on('municipalidads')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
+
 
     /**
      * Reverse the migrations.

@@ -15,16 +15,12 @@ class UserAdminSeeder extends Seeder
         $admin = User::firstOrCreate(
             ['email' => 'admin@example.com'],
             [
-                'username' => 'Administrador',
+                'name' => 'Administrador',
+                'last_name' => 'Sistema',
+                'code' => 'ADM001',
+                'imagen_url' => 'ADM001.jpg',
+                'username' => 'admin',
                 'password' => Hash::make('admin123'),
-            ]
-        );
-
-        $admin = User::firstOrCreate(
-            ['email' => 'andres.montes@example.com'],
-            [
-                'username' => 'andres.montes',
-                'password' => Hash::make('12345'),
             ]
         );
 
@@ -34,19 +30,61 @@ class UserAdminSeeder extends Seeder
             $admin->assignRole($adminRole);
         }
 
-        // Crear usuario ADMIN_FAMILIA si no existe
-        $adminFam = User::firstOrCreate(
-            ['email' => 'familia@example.com'],
+        // Crear usuario Andres Montes si no existe
+        $andres = User::firstOrCreate(
+            ['email' => 'andres.montes@example.com'],
             [
-                'username' => 'Admin Familia',
-                'password' => Hash::make('familia123'),
+                'name' => 'Andres',
+                'last_name' => 'Montes',
+                'code' => 'USR001',
+                'imagen_url' => 'USR001.jpg',
+                'username' => 'andres.montes',
+                'password' => Hash::make('12345'),
+            ]
+        );
+
+        // Asignar rol user
+        $andresRole = Role::where('name', 'admin')->first();
+        if ($andresRole && !$andres->hasRole('admin')) {
+            $andres->assignRole($andresRole);
+        }
+
+        //Rol user
+        $usuario = User::firstOrCreate(
+            ['email' => 'usuario@example.com'],
+            [
+                'name' => 'Marleny',
+                'last_name' => 'Torres',
+                'code' => 'UM001',
+                'imagen_url' => 'asdasd.jpg',
+                'username' => 'marleny.torres',
+                'password' => Hash::make('12345'),
             ]
         );
 
         // Asignar rol admin_familia
-        $adminFamRole = Role::where('name', 'admin_familia')->first();
-        if ($adminFamRole && !$adminFam->hasRole('admin_familia')) {
-            $adminFam->assignRole($adminFamRole);
+        $usuarios = Role::where('name', 'usuario')->first();
+        if ($usuarios && !$usuario->hasRole('usuario')) {
+            $usuario->assignRole($usuarios);
+        }
+
+        // Crear usuario con rol admin_familia
+        $familiaUsuario = User::firstOrCreate(
+            ['email' => 'nuevo.familia@example.com'],
+            [
+                'name' => 'Nuevo',
+                'last_name' => 'Familia',
+                'code' => 'FAM002',
+                'imagen_url' => 'FAM002.jpg',
+                'username' => 'admin.familia',
+                'password' => Hash::make('12345'),
+            ]
+        );
+
+        // Asignar rol admin_familia
+        $adminFamiliaRole = Role::where('name', 'admin_familia')->first();
+        if ($adminFamiliaRole && !$familiaUsuario->hasRole('admin_familia')) {
+            $familiaUsuario->assignRole($adminFamiliaRole);
         }
     }
 }

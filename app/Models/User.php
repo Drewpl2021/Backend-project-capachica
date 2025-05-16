@@ -6,22 +6,32 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasEvents;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    protected $guarded = ['id'];
+    use SoftDeletes;
+    protected $guard_name = 'api';
 
+
+    protected $table = 'users';
     /**
      * Los atributos que son asignables en masa.
      *
      * @var array<int, string>
      */
     protected $fillable = [
+        'name',
+        'last_name',
+        'code',
         'username',
         'email',
         'password',
@@ -54,7 +64,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function getJWTIdentifier()
     {
-        return $this->getKey(); // Retorna la clave primaria del modelo, generalmente el 'id'
+        return $this->getKey(); // Retorna el 'id' del usuario (que es un UUID)
     }
 
     /**
@@ -65,8 +75,20 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [
+            'id' => $this->id, // Agregar 'username' al token
+            'name' => $this->name, // Agregar 'username' al token
+            'last_name' => $this->last_name, // Agregar 'username' al token
             'username' => $this->username, // Agregar 'username' al token
             'email' => $this->email,       // Agregar 'email' al token
         ];
+    }
+    // Relación muchos a muchos con Emprendedor
+    public function emprendedores()
+    {
+        return $this->belongsToMany(Emprendedor::class, 'emprendedor_user', 'user_id', 'emprendedor_id');
+    }
+    public function reservas()
+    {
+        return $this->hasMany(Reserva::class, 'user_id');  // Aquí indicamos que un usuario puede tener muchas reservas
     }
 }

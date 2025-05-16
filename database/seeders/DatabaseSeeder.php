@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
             SectionsSeeder::class,
             SectionsDetailSeeder::class,
             SectionDetailEndSeeder::class,
-            ImagenSliderSeeder::class,
+            SliderMuniSeeder::class,
         ]);
 
         $this->call([
@@ -35,6 +35,17 @@ class DatabaseSeeder extends Seeder
             ImgAsociacionSeeder::class,
             EmprendedorSeeder::class,
             DestinosTuriscosSeeder::class,
+            ServiceSedeer::class,
+            EmprendimientoServiceSedeer::class,
+            ReservaSeeder::class,
+            ReservaDetailSeeder::class,
+            PaymentSeeder::class,
+            SaleSeeder::class,
+            SaleDetailSeeder::class,
+            ImgService::class,
+            ImgEmprendedor::class,
+            ImgEmprendedorSeeder::class,
+            ModuleRoleSeeder::class
         ]);
 
 

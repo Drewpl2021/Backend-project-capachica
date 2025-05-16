@@ -10,6 +10,7 @@ use App\Traits\ApiResponseTrait;
 use App\Traits\TokenHelper;
 use App\Traits\ValidatorTrait;
 use App\Traits\RolePermissions;
+use Illuminate\Support\Facades\Log;
 use OpenApi\Annotations as OA;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -71,6 +72,9 @@ class AuthController extends Controller
     {
         // Validación de los datos con el trait ValidatorTrait
         $validation = $this->validateRequest($request, [
+            'name'     => 'required|string|max:255|unique:users',
+            'last_name'     => 'required|string|max:255|unique:users',
+            //'code'     => 'required|string|max:255|unique:users',
             'username'     => 'required|string|max:255|unique:users',
             'email'    => 'nullable|string|email|max:255|unique:users',
             'password' => 'required|string',
@@ -82,6 +86,9 @@ class AuthController extends Controller
 
         // Crear el usuario y guardarlo en la base de datos
         $user = User::create([
+            'name'     => $request->name,
+            'last_name'    => $request->last_name,
+            //'code'    => $request->code,
             'username'     => $request->username,
             'email'    => $request->email,
             'password' => bcrypt($request->password),
@@ -128,8 +135,7 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        $user = User::with('permissions')
-            ->where('email', $request->email)
+        $user = User::where('email', $request->email)
             ->orWhere('username', $request->username)
             ->first();
 
@@ -137,21 +143,70 @@ class AuthController extends Controller
             return $this->error('Credenciales incorrectas', 401);
         }
 
-        // Crear el token JWT
+        // Obtén el token actual
+        $token = JWTAuth::getToken();
+
+        // Verificar si el token se obtiene correctamente
+        if ($token) {
+            // Invalidar el token
+            JWTAuth::invalidate($token);
+            Log::info('Token invalidado');
+        }
+
         try {
-            $token = JWTAuth::fromUser($user); // Este método genera el token
+            // Generamos un nuevo token
+            $newToken = JWTAuth::fromUser($user);
         } catch (JWTException $e) {
             return $this->error('No se pudo crear el token', 500);
         }
 
         return $this->successResponse([
-            'token' => $token,
+            'token' => $newToken,
             'expires_at' => now()->addMinutes(config('jwt.ttl'))->toDateTimeString(),
-            'username' => $user->only(['id', 'username', 'email']),
+            'username' => $user->only(['id','name','last_name', 'username', 'email']),
             'roles' => $user->getRoleNames(),
             'permissions' => $user->getAllPermissions()->pluck('name'),
         ], 'Usuario iniciado sesión correctamente', 200);
     }
+
+    public function getCurrentUser(Request $request)
+    {
+        try {
+            // Intentar obtener token del header
+            $token = $request->bearerToken();
+
+            if (!$token) {
+                // No hay token, no autorizado
+                return $this->error('No autorizado - no hay token', 401);
+            }
+
+            // Intentar autenticar usuario con el token recibido
+            if (!$user = JWTAuth::setToken($token)->authenticate()) {
+                return $this->error('No autorizado - usuario no encontrado', 401);
+            }
+
+            // Token y usuario válidos, responder con datos y token
+            return $this->successResponse([
+                'token' => $token,
+                'username' => $user->only(['id', 'username', 'email', 'name', 'last_name']),
+                'roles' => $user->getRoleNames(),
+                'permissions' => $user->getAllPermissions()->pluck('name'),
+            ], 'Sesión activa', 200);
+
+        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+            return $this->error('Token expirado, inicia sesión de nuevo', 401);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+            return $this->error('Token inválido', 401);
+        } catch (\Exception $e) {
+            // Cualquier otro error
+            return $this->error('No autorizado', 401);
+        }
+    }
+
+
+
+
+
 
 
     /**
@@ -200,7 +255,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         // Revocar el token del usuario
-        JWTAuth::invalidate(JWTAuth::getToken());
+        JWTAuth::invalidate(JWTAuth::getToken());  // Esto invalidará el token que está en uso.
         return $this->successResponse(null, 'Sesión cerrada');
     }
 }

@@ -4,14 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Imagen_Slider extends Model
+
+class Payment extends Model
 {
     use HasFactory;
-    protected $fillable = ['url_image', 'estado', 'codigo'];
+    use SoftDeletes;
+    protected $table = 'payments';
     public $incrementing = false;
     protected $keyType = 'string';
+    protected $guarded = ['id'];
     protected static function boot()
     {
         parent::boot();
@@ -20,8 +24,16 @@ class Imagen_Slider extends Model
             $model->id = (string) Str::uuid();
         });
     }
-    public function slider()
+
+    // Definir los campos que son asignables en masa
+    protected $fillable = [
+        'code',
+        'total',
+        'bi',
+        'igv',
+    ];
+    public function sales()
     {
-        return $this->belongsTo(Slider_Muni::class, 'slider_id');
+        return $this->hasMany(Sale::class, 'payment_id');
     }
 }

@@ -4,12 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class Slider_Muni extends Model
 {
     use HasFactory;
     public $incrementing = false;
+    use SoftDeletes;
+
     protected $keyType = 'string';
     protected static function boot()
     {
@@ -20,14 +23,12 @@ class Slider_Muni extends Model
         });
     }
     // Campos que pueden ser asignados masivamente
-    protected $fillable = ['municipio_descrip_id', 'titulo', 'descripcion'];
-    public function municipioDescrip()
-    {
-        return $this->belongsTo(Municipalidad_Descripcion::class, 'municipio_descrip_id');
-    }
+    protected $fillable = ['municipalidad_id', 'titulo', 'descripcion'];
 
-    public function images()
+
+    // Relación pertenece a una Municipalidad
+    public function Municipalidad()
     {
-        return $this->hasMany(Imagen_Slider::class, 'slider_id');
+        return $this->belongsTo(Municipalidad::class, 'municipalidad_id');
     }
 }

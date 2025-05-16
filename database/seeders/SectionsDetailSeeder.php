@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Section;
 use App\Models\SectionDetail;
+use Illuminate\Support\Str;
 
 class SectionsDetailSeeder extends Seeder
 {
@@ -14,7 +15,7 @@ class SectionsDetailSeeder extends Seeder
         // Buscar las secciones por su código y obtener el `id` automáticamente
         $sectionDetails = [
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '01',
                 'title' => 'Descrubre la Península de Capachica',
@@ -25,7 +26,7 @@ class SectionsDetailSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '02',
                 'title' => 'Descubre - Vive - Conecta',
@@ -36,7 +37,7 @@ class SectionsDetailSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '03',
                 'title' => 'Vea nuestras ultimas ideas de vacaciones',
@@ -47,7 +48,7 @@ class SectionsDetailSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '04',
                 'title' => 'Lo mejor de Capachica',
@@ -58,7 +59,7 @@ class SectionsDetailSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '05',
                 'title' => 'Destinos mas Populares',
@@ -69,7 +70,7 @@ class SectionsDetailSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '06',
                 'title' => 'Hospedajes populares',
@@ -80,7 +81,7 @@ class SectionsDetailSeeder extends Seeder
                 'deleted_at' => null
             ],
             [
-                'id' => \Str::uuid(),
+                'id' => Str::uuid(),
                 'status' => true,
                 'code' => '07',
                 'title' => 'Mejores Lugares para Comer',

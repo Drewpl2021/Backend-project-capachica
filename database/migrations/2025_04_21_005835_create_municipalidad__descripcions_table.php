@@ -26,6 +26,7 @@ return new class extends Migration
                 ->references('id')
                 ->on('municipalidads')
                 ->onDelete('cascade');
+            $table->softDeletes();
         });
     }
 

@@ -14,13 +14,19 @@ return new class extends Migration
         Schema::create('emprendedors', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('razon_social');
-            $table->string('familia');
-            $table->uuid('asociacion_id'); // Cambiado a uuid
-            $table->foreign('asociacion_id') // Clave foránea
-                ->references('id')
-                ->on('asociacions')
-                ->onDelete('cascade');
+            $table->string('address');
+            $table->string('code');
+            $table->string('ruc');
+            $table->text('description')->nullable();
+            $table->string('lugar')->nullable();
+            $table->string('img_logo')->nullable();
+            $table->string('name_family');
+            $table->boolean('status')->default(true); // Estado activo/inactivo para control
+            $table->uuid('asociacion_id');  // Relación con la tabla 'asociacions'
             $table->timestamps();
+            $table->softDeletes();
+            // Relación con la tabla 'asociacions'
+            $table->foreign('asociacion_id')->references('id')->on('asociacions')->onDelete('cascade');
         });
     }
 

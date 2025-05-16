@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class Municipalidad_Descripcion extends Model
 {
     use HasFactory;
+    use SoftDeletes;
     protected $fillable = ['municipalidad_id', 'logo', 'direccion', 'descripcion', 'ruc', 'correo', 'nombre_alcalde', 'anio_gestion'];
     public $incrementing = false;
     protected $keyType = 'string';

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 class Module extends Model
 {
@@ -14,7 +15,6 @@ class Module extends Model
     protected $table = 'modules';
     public $incrementing = false;
     protected $keyType = 'string';
-
     protected $fillable = [
         'title',
         'subtitle',
@@ -40,5 +40,10 @@ class Module extends Model
     public function parentModule()
     {
         return $this->belongsTo(ParentModule::class, 'parent_module_id');
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'module_role', 'module_id', 'role_id');
     }
 }

@@ -22,6 +22,7 @@ return new class extends Migration
                 ->on('emprendedors')
                 ->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

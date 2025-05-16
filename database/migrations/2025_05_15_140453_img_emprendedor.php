@@ -11,14 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('imagen__sliders', function (Blueprint $table) {
+        Schema::create('img_emprendedores', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('slider_id');
+            $table->uuid('emprendedor_id'); // Cambiado a uuid
             $table->string('url_image');
+            $table->text('description')->nullable(); // Descripción detallada
             $table->boolean('estado');
-            $table->integer('codigo');
+            $table->string('code');
             $table->timestamps();
-            $table->foreign('slider_id')->references('id')->on('slider__munis')->onDelete('cascade'); // Corrigido aquí
+            $table->softDeletes();
+            $table->foreign('emprendedor_id')
+                ->references('id')
+                ->on('emprendedors')
+                ->onDelete('cascade');
         });
     }
 
@@ -27,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('imagen__sliders');
+        Schema::dropIfExists('img_emprendedores');
     }
 };

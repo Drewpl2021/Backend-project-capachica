@@ -16,9 +16,9 @@ return new class extends Migration
             $table->uuid('asociacion_id'); // Asegurarse de que sea uuid
             $table->string('url_image');
             $table->boolean('estado');
-            $table->integer('codigo')->nullable();
+            $table->string('codigo')->nullable();
             $table->timestamps();
-
+            $table->softDeletes();
             // Añadir la clave foránea
             $table->foreign('asociacion_id')
                 ->references('id')

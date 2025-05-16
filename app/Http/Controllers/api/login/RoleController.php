@@ -49,15 +49,31 @@ class RoleController extends Controller
      *     )
      * )
      */
-    public function index()
+    public function index(Request $request)
     {
-        $roles = Role::all();
+        $pageSize = $request->get('size', 10);
+        $page = $request->get('page', 0);
+        $name = $request->get('name'); // 🔍 Variable de búsqueda
+
+        // Construir query con filtro si hay búsqueda
+        $query = Role::query();
+
+        if (!empty($name)) {
+            $query->where('name', 'like', '%' . $name . '%');
+        }
+
+        // Paginar
+        $roles = $query->paginate($pageSize, ['*'], 'page', $page + 1); // base 1 para Laravel
 
         return response()->json([
-            'content' => $roles,
-            'account' => $roles->count(),
+            'content' => $roles->items(),
+            'totalElements' => $roles->total(),
+            'currentPage' => $roles->currentPage() - 1,
+            'totalPages' => $roles->lastPage()
         ]);
     }
+
+
 
     /**
      * @OA\Post(
@@ -288,4 +304,84 @@ class RoleController extends Controller
             'role' => $role->name,
         ]);
     }
+
+    /**
+     * @OA\Post(
+     *     path="/roles/{roleId}/assign-modules",
+     *     summary="Asignar módulos a un rol usando IDs UUID",
+     *     tags={"Roles"},
+     *     @OA\Parameter(
+     *         name="roleId",
+     *         in="path",
+     *         required=true,
+     *         description="ID del rol al que se le asignarán los módulos",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"modules"},
+     *             @OA\Property(property="modules", type="array", @OA\Items(type="string"))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Módulos asignados exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="role", ref="#/components/schemas/Role"),
+     *             @OA\Property(property="modules", type="array", @OA\Items(type="string"))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Rol no encontrado"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Módulos inválidos"
+     *     )
+     * )
+     */
+    public function assignModulesToRole(Request $request, $roleId)
+    {
+        // Validación de los módulos enviados (verificar que sean UUIDs válidos)
+        $request->validate([
+            'modules' => 'required|array',
+            'modules.*' => 'uuid|exists:modules,id', // Validar que cada módulo sea un UUID y exista en la tabla 'modules'
+        ]);
+
+        // Buscar el rol por ID
+        $role = Role::find($roleId);
+
+        if (!$role) {
+            Log::error("Rol con ID $roleId no encontrado.");
+            return response()->json(['message' => 'Rol no encontrado'], 404);
+        }
+
+        // Log para saber que rol estamos actualizando
+        Log::info("Rol con ID $roleId encontrado. Asignando módulos.");
+
+        // Obtener los módulos por sus IDs UUID
+        $modules = Module::whereIn('id', $request->modules)->get();
+
+        if ($modules->isEmpty()) {
+            Log::error("No se encontraron módulos con los IDs proporcionados.");
+            return response()->json(['message' => 'Módulos no encontrados'], 422);
+        }
+
+        // Asignar los módulos al rol
+        foreach ($modules as $module) {
+            // Sincronizar los módulos con el rol (sin eliminar los módulos previamente asignados)
+            $role->modules()->syncWithoutDetaching([$module->id]);
+            Log::info("Módulo con ID {$module->id} asignado al rol con ID $roleId.");
+        }
+
+        // Devolver la respuesta con los módulos asignados
+        return response()->json([
+            'message' => 'Módulos asignados exitosamente',
+            'role' => $role,
+            'modules' => $modules->pluck('id'),
+        ]);
+    }
+
 }
