@@ -45,6 +45,7 @@ class ParentModuleAndModuleSeeder extends Seeder
         $this->seedModule('heroicons_outline:arrow-trending-up', '/homeScreen/setup/service', 8, 'Tipo de Servicios', 'basic', '08', '01'); //SAPO
         $this->seedModule('heroicons_outline:currency-dollar', '/homeScreen/sales/payment', 1, 'Pagos', 'basic', '09', '02'); //YO
         $this->seedModule('heroicons_outline:queue-list', '/homeScreen/product/product', 1, 'Productos Ofrecidos', 'basic', '10', '03'); //YO
+        $this->seedModule('heroicons_outline:shield-check', '/homeScreen/product/reservas', 2, 'Reservas', 'basic', '11', '03'); //YO
 
     }
 

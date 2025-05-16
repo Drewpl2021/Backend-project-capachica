@@ -8,37 +8,31 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
+
+
 class ImgEmprendedor extends Seeder
 {
     public function run()
     {
-        // Obtener todos los emprendedores
+        // Obtener todos los emprendedores (familias)
         $emprendedores = Emprendedor::all();
 
-        // Arreglo con las imágenes a crear por cada emprendedor
+        // URLs de imágenes bonitas para familias (ejemplos de Unsplash)
         $imagenes = [
-            [
-                'url_image' => 'https://example.com/imagen1.jpg',
-                'code' => '101',
-            ],
-            [
-                'url_image' => 'https://example.com/imagen2.jpg',
-                'code' => '102',
-            ],
-            [
-                'url_image' => 'https://example.com/imagen3.jpg',
-                'code' => '103',
-            ],
+            'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=800&q=80',
         ];
 
         foreach ($emprendedores as $emprendedor) {
-            foreach ($imagenes as $img) {
+            foreach ($imagenes as $index => $url) {
+                $numeroImagen = $index + 1;  // Aquí haces la suma fuera del array
                 ModelsImgEmprendedor::create([
                     'emprendedor_id' => $emprendedor->id,
-                    'url_image' => $img['url_image'],
-                    'description' => "Imagen para el emprendedor {$emprendedor->name_family}",
+                    'url_image' => $url,
+                    'description' => "Imagen {$numeroImagen} para la familia {$emprendedor->name_family}",
                     'estado' => true,
-                    'code' => $img['code'] . '-' . $emprendedor->id, // para código único combinando id
+                    'code' => 'IMG-' . strtoupper(Str::random(4)) . '-' . $emprendedor->name_family,
                 ]);
             }
         }

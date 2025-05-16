@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\API\home;
+use App\Models\Sale;
 use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\Controller;
@@ -258,4 +259,74 @@ class EmprendedorController extends Controller
 
         return response()->json($response);
     }
+
+    public function reporteVentas($emprendedorId, Request $request)
+    {
+        $size = $request->input('size', 10);
+
+        // Validar que el emprendedor exista
+        $emprendedor = Emprendedor::find($emprendedorId);
+        if (!$emprendedor) {
+            return response()->json(['message' => 'Emprendedor no encontrado'], 404);
+        }
+
+        // Consultar ventas con sus detalles y relaciones
+        $ventas = Sale::with(['saleDetails.emprendimientoService.service', 'payment', 'reserva'])
+            ->where('emprendedor_id', $emprendedorId)
+            ->orderBy('created_at', 'desc')
+            ->paginate($size);
+
+        $response = collect($ventas->items())->map(function ($venta) {
+            return [
+                'id' => $venta->id,
+                'code' => $venta->code,
+                'IGV' => $venta->IGV,
+                'BI' => $venta->BI,
+                'total' => $venta->total,
+                'createdAt' => $venta->created_at,
+                'updatedAt' => $venta->updated_at,
+                'reserva' => [
+                    'id' => $venta->reserva->id ?? null,
+                    'code' => $venta->reserva->code ?? null,
+                    'status' => $venta->reserva->status ?? null,
+                ],
+                'payment' => [
+                    'id' => $venta->payment->id ?? null,
+                    'code' => $venta->payment->code ?? null,
+                    'total' => $venta->payment->total ?? null,
+                ],
+                'detalles' => $venta->saleDetails->map(function ($detalle) {
+                    return [
+                        'id' => $detalle->id,
+                        'description' => $detalle->description,
+                        'costo' => $detalle->costo,
+                        'IGV' => $detalle->IGV,
+                        'BI' => $detalle->BI,
+                        'total' => $detalle->total,
+                        'lugar' => $detalle->lugar,
+                        'emprendimiento_service' => [
+                            'id' => $detalle->emprendimientoService->id ?? null,
+                            'name' => $detalle->emprendimientoService->name ?? null,
+                            'service' => [
+                                'id' => $detalle->emprendimientoService->service->id ?? null,
+                                'name' => $detalle->emprendimientoService->service->name ?? null,
+                            ],
+                        ],
+                    ];
+                }),
+            ];
+        });
+
+        return response()->json([
+            'message' => 'Reporte de ventas por emprendedor',
+            'emprendedorNombre' => $emprendedor->razon_social,
+            'nombre_familia' => $emprendedor->name_family,
+            'content' => $response,
+            'totalElements' => $ventas->total(),
+            'currentPage' => $ventas->currentPage(),
+            'totalPages' => $ventas->lastPage(),
+        ]);
+    }
+
+
 }
