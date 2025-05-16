@@ -7,13 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Municipalidad_Descripcion extends Model
+class ImgEmprendedor extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    protected $fillable = ['municipalidad_id', 'logo', 'direccion', 'descripcion', 'ruc', 'correo', 'nombre_alcalde', 'anio_gestion'];
     public $incrementing = false;
     protected $keyType = 'string';
+    protected $table = 'img_emprendedores';  // Aquí el nombre que usaste en migración
+    protected $fillable = ['emprendedor_id', 'url_image', 'estado', 'code', 'description'];
+
     protected static function boot()
     {
         parent::boot();
@@ -22,13 +24,9 @@ class Municipalidad_Descripcion extends Model
             $model->id = (string) Str::uuid();
         });
     }
-    // Relación inversa: cada descripción pertenece a una municipalidad
-    public function municipalidad()
+
+    public function services()
     {
-        return $this->belongsTo(Municipalidad::class, 'municipalidad_id');
-    }
-    public function sliders()
-    {
-        return $this->hasMany(Slider_Muni::class, 'municipio_descrip_id');
+        return $this->belongsTo(Emprendedor::class);
     }
 }

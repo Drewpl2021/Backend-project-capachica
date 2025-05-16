@@ -11,20 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('asociacions', function (Blueprint $table) {
+        Schema::create('img_emprenpedor_service', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('municipalidad_id');
-            $table->string('nombre');
-            $table->string('descripcion');
-            $table->string('url');
-            $table->string('lugar');
+            $table->uuid('emprendedor_service_id');
+            $table->string('url_image');
+            $table->text('description')->nullable();
             $table->boolean('estado');
-            $table->foreign('municipalidad_id')
-                ->references('id')
-                ->on('municipalidads')
-                ->onDelete('cascade');
+            $table->string('code');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('emprendedor_service_id')
+                ->references('id')
+                ->on('emprendedor_service')
+                ->onDelete('cascade');
         });
     }
 
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('asociacions');
+        Schema::dropIfExists('img_emprenpedor_service');
     }
 };

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SaleDetail extends Model
 {
@@ -11,6 +12,8 @@ class SaleDetail extends Model
 
     // Definir la tabla si el nombre no sigue la convención
     protected $table = 'sale_details';
+    use SoftDeletes;
+
     public $incrementing = false;
     protected $keyType = 'string';
     protected $guarded = ['id'];

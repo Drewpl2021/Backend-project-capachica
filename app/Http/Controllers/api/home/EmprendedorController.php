@@ -20,8 +20,8 @@ class EmprendedorController extends Controller
         $size = $request->input('size', 10);
         $name = $request->input('name');
 
-        // Cargamos relación asociacion y services (con campos pivote)
-        $query = Emprendedor::with(['asociacion', 'services']);
+        // Cargamos relación asociacion, servicios y imágenes
+        $query = Emprendedor::with(['asociacion', 'services', 'imgEmprendedores']);
 
         if ($name) {
             $query->where('razon_social', 'like', "%$name%");
@@ -38,8 +38,14 @@ class EmprendedorController extends Controller
                 'createdAt' => $emprendedor->created_at,
                 'updatedAt' => $emprendedor->updated_at,
                 'deletedAt' => $emprendedor->deleted_at,
-
-                // Agregamos servicios con sus datos y pivot
+                'imagenes' => $emprendedor->imgEmprendedores->map(function ($img) {
+                    return [
+                        'id' => $img->id,
+                        'url_image' => $img->url_image, // Incluyendo la URL de la imagen
+                        'estado' => (bool) $img->estado, // Convertir a booleano
+                        'code' => $img->code, // Código asociado (si existe)
+                    ];
+                }),
                 'services' => $emprendedor->services->map(function ($service) {
                     return [
                         'id' => $service->id,
@@ -55,10 +61,12 @@ class EmprendedorController extends Controller
         return response()->json([
             'content' => $response,
             'totalElements' => $emprendedores->total(),
-            'currentPage' => $emprendedores->currentPage() - 1,
+            'currentPage' => $emprendedores->currentPage(), // sin restar 1
             'totalPages' => $emprendedores->lastPage(),
+            'perPage' => $emprendedores->perPage(),
         ]);
     }
+
 
     /**
      * Store a newly created resource in storage.

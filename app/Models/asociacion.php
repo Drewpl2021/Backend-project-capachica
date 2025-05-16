@@ -4,15 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 
 class asociacion extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $fillable = ['nombre', 'descripcion', 'lugar', 'estado', 'municipalidad_id'];
+    protected $fillable = ['nombre', 'descripcion', 'lugar', 'estado', 'municipalidad_id', 'url'];
 
     // Relación: Una asociación pertenece a una municipalidad
     public function municipalidad()

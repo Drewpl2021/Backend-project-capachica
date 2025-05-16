@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class EmprendedorService extends Model
 {
     use HasFactory;
-
+    use SoftDeletes;
     protected $table = 'emprendedor_service';
     public $incrementing = false;
     protected $keyType = 'string';
@@ -67,5 +68,11 @@ class EmprendedorService extends Model
     public function saleDetail()
     {
         return $this->hasOne(SaleDetail::class, 'emprendedor_service_id');
+    }
+
+    // Relación imágenes de emprendedor service
+    public function imgEmprendedorServices()
+    {
+        return $this->hasMany(ImgEmprendedorService::class, 'emprendedor_service_id');
     }
 }
