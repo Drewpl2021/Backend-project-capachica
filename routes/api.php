@@ -22,7 +22,9 @@ use App\Http\Controllers\ImgEmprendedorServiceController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReservaController;
-
+use App\Http\Controllers\ReserveDetailController;
+use App\Http\Controllers\SaleController;
+use App\Http\Controllers\SaleDetailController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -206,14 +208,61 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
     });
 });
 
+// Grupo de rutas protegidas (middleware auth:api o sanctum, según uses)
 Route::middleware('auth:api')->group(function () {
-    // Rutas CRUD para reservas
-    Route::get('/reservas', [ReservaController::class, 'index']);
-    Route::post('/reservas', [ReservaController::class, 'store']);
-    Route::get('/reservas/{id}', [ReservaController::class, 'show']);
-    Route::put('/reservas/{id}', [ReservaController::class, 'update']);
-    Route::delete('/reservas/{id}', [ReservaController::class, 'destroy']);
+
+    // Reservas (reservas)
+    Route::prefix('reservas')->group(function () {
+        Route::get('/', [ReservaController::class, 'index']);
+        Route::post('/', [ReservaController::class, 'store']);
+        Route::get('/{id}', [ReservaController::class, 'show']);
+        Route::put('/{id}', [ReservaController::class, 'update']);
+        Route::delete('/{id}', [ReservaController::class, 'destroy']);
+    });
+
+    // Detalles de reserva (reserve-detail)
+    Route::prefix('reserve-detail')->group(function () {
+        Route::get('/', [ReserveDetailController::class, 'index']);
+        Route::post('/', [ReserveDetailController::class, 'store']);
+        Route::get('/{id}', [ReserveDetailController::class, 'show']);
+        Route::put('/{id}', [ReserveDetailController::class, 'update']);
+        Route::delete('/{id}', [ReserveDetailController::class, 'destroy']);
+    });
+
+    // Pagos (payments)
+    Route::prefix('payment')->group(function () {
+        Route::get('/', [PaymentController::class, 'index']);  // Ruta para paginación de pagos
+        Route::post('/', [PaymentController::class, 'store']);  // Crear nuevo pago
+        Route::get('/{id}', [PaymentController::class, 'show']);  // Ver pago específico
+        Route::put('/{id}', [PaymentController::class, 'update']);  // Actualizar pago
+        Route::delete('/{id}', [PaymentController::class, 'destroy']);  // Eliminar pago (Soft Delete)
+    });
+
+    // Ventas (sales)
+    Route::prefix('sale')->group(function () {
+        Route::get('/', [SaleController::class, 'index']);  // Ruta para paginación de ventas
+        Route::post('/', [SaleController::class, 'store']);  // Crear nueva venta
+        Route::get('/{id}', [SaleController::class, 'show']);  // Ver venta específica
+        Route::put('/{id}', [SaleController::class, 'update']);  // Actualizar venta
+        Route::delete('/{id}', [SaleController::class, 'destroy']);  // Eliminar venta (Soft Delete)
+    });
+
+
+    // Detalles de venta (sale-details)
+    Route::prefix('sale-details')->group(function () {
+        Route::get('/', [SaleDetailController::class, 'index']);
+        Route::post('/', [SaleDetailController::class, 'store']);
+        Route::get('/{id}', [SaleDetailController::class, 'show']);
+        Route::put('/{id}', [SaleDetailController::class, 'update']);
+        Route::delete('/{id}', [SaleDetailController::class, 'destroy']);
+    });
+
 });
+
+
+
+
+
 Route::get('/emprendedor/user/{userId}', [EmprendedorController::class, 'getByUserId']);
 
 Route::prefix('emprendedor-service')->group(function () {
@@ -252,23 +301,9 @@ Route::prefix('service')->group(function () {
     Route::get('/category/emprendedores', [ServiceController::class, 'emprendedoresPorServicio']);
 });
 
-Route::prefix('payment')->group(function () {
-    Route::get('/', [PaymentController::class, 'index']);  // Ruta para paginación de pagos
-    Route::post('/', [PaymentController::class, 'store']);  // Crear nuevo pago
-    Route::get('/{id}', [PaymentController::class, 'show']);  // Ver pago específico
-    Route::put('/{id}', [PaymentController::class, 'update']);  // Actualizar pago
-    Route::delete('/{id}', [PaymentController::class, 'destroy']);  // Eliminar pago (Soft Delete)
-});
 
-use App\Http\Controllers\SaleController;
 
-Route::prefix('sale')->group(function () {
-    Route::get('/', [SaleController::class, 'index']);  // Ruta para paginación de ventas
-    Route::post('/', [SaleController::class, 'store']);  // Crear nueva venta
-    Route::get('/{id}', [SaleController::class, 'show']);  // Ver venta específica
-    Route::put('/{id}', [SaleController::class, 'update']);  // Actualizar venta
-    Route::delete('/{id}', [SaleController::class, 'destroy']);  // Eliminar venta (Soft Delete)
-});
+
 
 
 

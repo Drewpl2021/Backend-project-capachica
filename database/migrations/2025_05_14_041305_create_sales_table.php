@@ -17,9 +17,9 @@ return new class extends Migration
             $table->uuid('payment_id');
             $table->uuid('reserva_id');
             $table->string('code');
-            $table->float('IGV');
-            $table->float('BI');
-            $table->float('total');
+            $table->decimal('IGV');
+            $table->decimal('BI');
+            $table->decimal('total');
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('emprendedor_id')->references('id')->on('emprendedors')->onDelete('cascade');

@@ -19,9 +19,7 @@ class ReserveDetail extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            if (empty($model->id)) {
-                $model->id = (string) Str::uuid();
-            }
+            $model->id = (string) Str::uuid();
         });
     }
     // Definir los campos que son asignables en masa

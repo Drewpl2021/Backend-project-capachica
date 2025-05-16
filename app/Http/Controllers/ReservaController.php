@@ -76,7 +76,7 @@ class ReservaController extends Controller
                     'emprendedor_service_id' => $detail['emprendedor_service_id'],
                     'reserva_id' => $reserva->id,
                     'description' => $detail['description'],
-                    'cantidad' => $detail['cantidad'],  // <-- esto faltaba
+                    'cantidad' => $detail['cantidad'],
                     'costo' => $detail['costo'],
                     'igv' => $detail['igv'] ?? 0,
                     'bi' => $detail['bi'] ?? 0,
