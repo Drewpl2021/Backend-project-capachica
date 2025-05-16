@@ -51,7 +51,7 @@ class ReservaController extends Controller
             'details' => 'required|array|min:1',
             'details.*.emprendedor_service_id' => 'required|uuid|exists:emprendedor_service,id',
             'details.*.lugar' => 'required|string|max:255',
-            'details.*.igv' => 'nullable|numeric|min:0',  // agregados
+            'details.*.igv' => 'nullable|numeric|min:0',
             'details.*.bi' => 'nullable|numeric|min:0',
             'details.*.total' => 'nullable|numeric|min:0',
         ]);
