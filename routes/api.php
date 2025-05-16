@@ -86,13 +86,14 @@ Route::prefix('role')->middleware('auth:api')->group(function () {
     Route::get('/', [RoleController::class, 'index']);
     Route::get('/{id}', [RoleController::class, 'show']);
     Route::middleware('permission:editar_roles')->post('/', [RoleController::class, 'store']);
-
     Route::middleware('permission:editar_roles')->put('/{id}', [RoleController::class, 'update']);
-
     Route::middleware('permission:editar_roles')->delete('/{id}', [RoleController::class, 'destroy']);
-
     Route::middleware('permission:editar_roles')->post('/assign-role/{userId}', [RoleController::class, 'assignRole']);
+
+    // Nueva ruta para asignar módulos a un rol
+    Route::middleware('role:admin')->post('/assign-modules/{roleId}', [RoleController::class, 'assignModulesToRole']);
 });
+
 
 Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(function () {
     // Rutas ParentModuleController
