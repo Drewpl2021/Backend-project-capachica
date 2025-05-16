@@ -328,5 +328,60 @@ class EmprendedorController extends Controller
         ]);
     }
 
+    public function reservasPorEmprendedor($emprendedorId)
+    {
+        $emprendedor = Emprendedor::find($emprendedorId);
+        if (!$emprendedor) {
+            return response()->json(['message' => 'Emprendedor no encontrado'], 404);
+        }
+
+        // IDs de servicios del emprendedor
+        $emprendedorServiceIds = $emprendedor->emprendedorServices()->pluck('id');
+
+        // Obtener todos los detalles relacionados a esos emprendedor_service_id con su reserva y servicio
+        $reserveDetails = \App\Models\ReserveDetail::with(['reserva', 'emprendimientoService'])
+            ->whereIn('emprendedor_service_id', $emprendedorServiceIds)
+            ->get();
+
+        // Agrupar por emprendimiento_service_id para la estructura deseada
+        $agrupado = $reserveDetails->groupBy('emprendedor_service_id')->map(function ($detalles, $serviceId) {
+            $primerDetalle = $detalles->first();
+            $servicio = $primerDetalle->emprendimientoService;
+
+            return [
+                'emprendimiento_service' => [
+                    'id' => $servicio->id,
+                    'name' => $servicio->name,
+                    'code' => $servicio->code,
+                    'costo' => $servicio->costo,
+                ],
+                'emprendimiento_service_detalle' => $detalles->map(function ($detalle) {
+                    return [
+                        'id' => $detalle->id,
+                        'cantidad' => $detalle->cantidad,
+                        'lugar' => $detalle->lugar,
+                        'description' => $detalle->description,
+                        'reserva' => [
+                            'id' => $detalle->reserva->id ?? null,
+                            'code' => $detalle->reserva->code ?? null,
+                            'status' => $detalle->reserva->status ?? null,
+                            'total' => $detalle->reserva->total ?? null,
+                        ],
+                    ];
+                }),
+            ];
+        })->values();
+
+        return response()->json([
+            'emprendedor_id' => $emprendedor->id,
+            'razon_social' => $emprendedor->razon_social,
+            'reservas' => $agrupado,
+        ]);
+    }
+
+
+
+
+
 
 }
