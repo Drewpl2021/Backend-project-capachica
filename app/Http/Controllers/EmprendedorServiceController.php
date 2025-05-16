@@ -17,8 +17,14 @@ class EmprendedorServiceController extends Controller
     {
         $size = $request->input('size', 10);
         $search = $request->input('search');
+        $emprendedorId = $request->input('emprendedor_id');
 
         $query = EmprendedorService::query();
+
+        // Filtro por emprendedor_id si viene en la petición
+        if ($emprendedorId) {
+            $query->where('emprendedor_id', $emprendedorId);
+        }
 
         // Filtro de búsqueda en 'code' o 'name'
         if ($search) {
@@ -29,7 +35,7 @@ class EmprendedorServiceController extends Controller
         }
 
         // Carga relaciones para mostrar info asociada
-        $query->with(['emprendedor', 'service', 'imgEmprendedorServices']); // Incluyendo imágenes
+        $query->with(['emprendedor', 'service', 'imgEmprendedorServices']);
 
         $results = $query->paginate($size);
 
@@ -40,6 +46,7 @@ class EmprendedorServiceController extends Controller
             'totalPages' => $results->lastPage(),
         ]);
     }
+
 
     /**
      * Crear un nuevo registro.
