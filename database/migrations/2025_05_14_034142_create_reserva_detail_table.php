@@ -12,23 +12,29 @@ return new class extends Migration
     public function up()
     {
         Schema::create('reserve_detail', function (Blueprint $table) {
-            $table->uuid('id')->primary();  // ID de tipo UUID
-            $table->uuid('emprendedor_service_id');  // Clave foránea a la tabla emprendimiento_servicio
-            $table->uuid('reserva_id');  // Clave foránea a la tabla reservas
-            $table->string('description');  // Descripción de la reserva
-            $table->float('costo');  // Costo de la reserva
-            $table->float('cantidad');
-            $table->float('IGV');  // Impuesto general a las ventas
-            $table->float('BI');  // Base imponible
-            $table->float('total');  // Total de la reserva
-            $table->string('lugar');  // Lugar donde se realiza la reserva
+            $table->uuid('id')->primary();  // ID UUID único
+
+            $table->uuid('emprendedor_service_id');  // FK a emprendedor_service
+            $table->uuid('reserva_id');  // FK a reservas
+
+            $table->decimal('costo', 12, 2);  // Costo unitario o total (según definición)
+            $table->decimal('cantidad', 12, 2); // Mejor decimal para cantidades
+            $table->decimal('IGV', 12, 2);  // Impuesto general a las ventas
+            $table->decimal('BI', 12, 2);  // Base imponible (subtotal sin impuestos)
+            $table->decimal('total', 12, 2);  // Total final de este detalle (BI + IGV)
+
+            $table->string('lugar')->nullable();// Lugar (si es opcional, hazlo nullable)
+            $table->string('description')->nullable(); // Description (si es opcional, hazlo nullable)
+
             $table->timestamps();
             $table->softDeletes();
-            // Claves foráneas
+
+            // Llaves foráneas con cascada
             $table->foreign('emprendedor_service_id')->references('id')->on('emprendedor_service')->onDelete('cascade');
             $table->foreign('reserva_id')->references('id')->on('reservas')->onDelete('cascade');
         });
     }
+
 
     /**
      * Reverse the migrations.

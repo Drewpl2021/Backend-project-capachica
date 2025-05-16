@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\API\home;
+use App\Models\Sale;
 use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\Controller;
@@ -258,4 +259,129 @@ class EmprendedorController extends Controller
 
         return response()->json($response);
     }
+
+    public function reporteVentas($emprendedorId, Request $request)
+    {
+        $size = $request->input('size', 10);
+
+        // Validar que el emprendedor exista
+        $emprendedor = Emprendedor::find($emprendedorId);
+        if (!$emprendedor) {
+            return response()->json(['message' => 'Emprendedor no encontrado'], 404);
+        }
+
+        // Consultar ventas con sus detalles y relaciones
+        $ventas = Sale::with(['saleDetails.emprendimientoService.service', 'payment', 'reserva'])
+            ->where('emprendedor_id', $emprendedorId)
+            ->orderBy('created_at', 'desc')
+            ->paginate($size);
+
+        $response = collect($ventas->items())->map(function ($venta) {
+            return [
+                'id' => $venta->id,
+                'code' => $venta->code,
+                'IGV' => $venta->IGV,
+                'BI' => $venta->BI,
+                'total' => $venta->total,
+                'createdAt' => $venta->created_at,
+                'updatedAt' => $venta->updated_at,
+                'reserva' => [
+                    'id' => $venta->reserva->id ?? null,
+                    'code' => $venta->reserva->code ?? null,
+                    'status' => $venta->reserva->status ?? null,
+                ],
+                'payment' => [
+                    'id' => $venta->payment->id ?? null,
+                    'code' => $venta->payment->code ?? null,
+                    'total' => $venta->payment->total ?? null,
+                ],
+                'detalles' => $venta->saleDetails->map(function ($detalle) {
+                    return [
+                        'id' => $detalle->id,
+                        'description' => $detalle->description,
+                        'costo' => $detalle->costo,
+                        'IGV' => $detalle->IGV,
+                        'BI' => $detalle->BI,
+                        'total' => $detalle->total,
+                        'lugar' => $detalle->lugar,
+                        'emprendimiento_service' => [
+                            'id' => $detalle->emprendimientoService->id ?? null,
+                            'name' => $detalle->emprendimientoService->name ?? null,
+                            'service' => [
+                                'id' => $detalle->emprendimientoService->service->id ?? null,
+                                'name' => $detalle->emprendimientoService->service->name ?? null,
+                            ],
+                        ],
+                    ];
+                }),
+            ];
+        });
+
+        return response()->json([
+            'message' => 'Reporte de ventas por emprendedor',
+            'emprendedorNombre' => $emprendedor->razon_social,
+            'nombre_familia' => $emprendedor->name_family,
+            'content' => $response,
+            'totalElements' => $ventas->total(),
+            'currentPage' => $ventas->currentPage(),
+            'totalPages' => $ventas->lastPage(),
+        ]);
+    }
+
+    public function reservasPorEmprendedor($emprendedorId)
+    {
+        $emprendedor = Emprendedor::find($emprendedorId);
+        if (!$emprendedor) {
+            return response()->json(['message' => 'Emprendedor no encontrado'], 404);
+        }
+
+        // IDs de servicios del emprendedor
+        $emprendedorServiceIds = $emprendedor->emprendedorServices()->pluck('id');
+
+        // Obtener todos los detalles relacionados a esos emprendedor_service_id con su reserva y servicio
+        $reserveDetails = \App\Models\ReserveDetail::with(['reserva', 'emprendimientoService'])
+            ->whereIn('emprendedor_service_id', $emprendedorServiceIds)
+            ->get();
+
+        // Agrupar por emprendimiento_service_id para la estructura deseada
+        $agrupado = $reserveDetails->groupBy('emprendedor_service_id')->map(function ($detalles, $serviceId) {
+            $primerDetalle = $detalles->first();
+            $servicio = $primerDetalle->emprendimientoService;
+
+            return [
+                'emprendimiento_service' => [
+                    'id' => $servicio->id,
+                    'name' => $servicio->name,
+                    'code' => $servicio->code,
+                    'costo' => $servicio->costo,
+                ],
+                'emprendimiento_service_detalle' => $detalles->map(function ($detalle) {
+                    return [
+                        'id' => $detalle->id,
+                        'cantidad' => $detalle->cantidad,
+                        'lugar' => $detalle->lugar,
+                        'description' => $detalle->description,
+                        'reserva' => [
+                            'id' => $detalle->reserva->id ?? null,
+                            'code' => $detalle->reserva->code ?? null,
+                            'status' => $detalle->reserva->status ?? null,
+                            'total' => $detalle->reserva->total ?? null,
+                        ],
+                    ];
+                }),
+            ];
+        })->values();
+
+        return response()->json([
+            'emprendedor_id' => $emprendedor->id,
+            'razon_social' => $emprendedor->razon_social,
+            'reservas' => $agrupado,
+        ]);
+    }
+
+
+
+
+
+
 }

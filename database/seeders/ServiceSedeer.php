@@ -16,50 +16,52 @@ class ServiceSedeer  extends Seeder
         $services = [
             [
                 'name' => 'Hospedaje',
-                'description' => 'Alojamiento cómodo y acogedor en espacios diseñados para ofrecer descanso y tranquilidad, con servicios adaptados a las necesidades de viajeros de todo el mundo.',
+                'description' => 'Alojamiento cómodo y acogedor en espacios diseñados para ofrecer descanso y tranquilidad, con servicios adaptados a los viajeros.',
                 'code' => '01',
                 'category' => 'Hospedaje',
-                'status' => '1',
+                'status' => true,
             ],
             [
                 'name' => 'Tours',
-                'description' => 'Excursiones guiadas que combinan cultura, naturaleza y aventura para que los viajeros descubran y disfruten destinos de manera auténtica y enriquecedora.',
+                'description' => 'Excursiones guiadas que combinan cultura, naturaleza y aventura para descubrir destinos de manera auténtica y enriquecedora.',
                 'code' => '02',
                 'category' => 'Turismo',
-                'status' => '1',
+                'status' => true,
             ],
             [
                 'name' => 'Gastronomía',
-                'description' => 'Experiencias culinarias que permiten a los visitantes degustar platos tradicionales y contemporáneos, destacando ingredientes frescos y sabores únicos.',
+                'description' => 'Experiencias culinarias para degustar platos tradicionales y contemporáneos, con ingredientes frescos y sabores únicos.',
                 'code' => '03',
                 'category' => 'Gastronomía',
-                'status' => '1',
+                'status' => true,
             ],
             [
                 'name' => 'Artesanías',
-                'description' => 'Visitas a mercados y talleres locales donde se pueden adquirir piezas artesanales auténticas que reflejan la cultura y tradición del destino.',
+                'description' => 'Visitas a mercados y talleres locales para adquirir piezas artesanales auténticas que reflejan la cultura y tradición local.',
                 'code' => '04',
-                'category' => 'Artesanias',
-                'status' => '1',
+                'category' => 'Artesanías',
+                'status' => true,
             ],
             [
                 'name' => 'Transporte',
-                'description' => 'Servicios de traslado cómodos y seguros que facilitan el movimiento de los viajeros entre puntos clave del destino, garantizando puntualidad y atención personalizada.',
+                'description' => 'Servicios de traslado cómodos y seguros que facilitan el movimiento entre puntos clave del destino.',
                 'code' => '05',
                 'category' => 'Transporte',
-                'status' => '1',
+                'status' => true,
             ],
         ];
 
         foreach ($services as $service) {
-            Service::create([
-                'id' => Str::uuid(),
-                'name' => $service['name'],
-                'description' => $service['description'],
-                'code' => $service['code'],
-                'category' => $service['category'],
-                'status' => $service['status'],
-            ]);
+            Service::updateOrCreate(
+                ['code' => $service['code']],
+                [
+                    'id' => (string) Str::uuid(),
+                    'name' => $service['name'],
+                    'description' => $service['description'],
+                    'category' => $service['category'],
+                    'status' => $service['status'],
+                ]
+            );
         }
     }
 }
