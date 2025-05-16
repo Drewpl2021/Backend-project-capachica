@@ -148,6 +148,8 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
         Route::put('/{id}', [AsociacionController::class, 'update']); // Actualizar asociación
         Route::delete('/{id}', [AsociacionController::class, 'destroy']); // Eliminar asociación
         Route::get('/emprendedores/{id}', [AsociacionController::class, 'emprendedoresByAsociacion']);
+        Route::get('/emprendedores-servicios/{id}', [AsociacionController::class, 'showWithEmprendedoresYServicios']);
+
     });
 
     // Rutas para los emprendedores

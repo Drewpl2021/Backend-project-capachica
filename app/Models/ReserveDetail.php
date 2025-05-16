@@ -37,14 +37,13 @@ class ReserveDetail extends Model
     ];
 
     // Relación muchos a uno con la tabla emprendedor_service
-    public function emprendimientoService()
-    {
-        return $this->belongsTo(EmprendedorService::class, 'emprendedor_service_id');
-    }
-
-    // Relación muchos a uno con la tabla reservas
     public function reserva()
     {
         return $this->belongsTo(Reserva::class, 'reserva_id');
+    }
+
+    public function emprendimientoService()
+    {
+        return $this->belongsTo(EmprendedorService::class, 'emprendedor_service_id');
     }
 }

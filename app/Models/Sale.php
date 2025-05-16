@@ -32,7 +32,7 @@ class Sale extends Model
     // Relación muchos a uno con la tabla emprendimiento
     public function emprendimiento()
     {
-        return $this->belongsTo(Emprendedor::class, 'emprendimiento_id');
+        return $this->belongsTo(Emprendedor::class, 'emprendedor_id');
     }
 
     // Relación muchos a uno con la tabla payment
