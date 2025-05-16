@@ -12,56 +12,52 @@ use Faker\Factory as Faker;
 class EmprendimientoServiceSedeer extends Seeder
 {
     public function run()
-    {
-        $emprendedores = Emprendedor::all();
-        $services = Service::all();
+        {
+            $emprendedorServices = EmprendedorService::all();
 
-        if ($emprendedores->isEmpty() || $services->isEmpty()) {
-            $this->command->error('No hay emprendedores o servicios para relacionar.');
-            return;
-        }
+            // Si tienes categorías o tipos, podrías mapear imágenes por categoría
+            // Ejemplo:
+            $imagenesPorCategoria = [
+                'Hospedaje' => [
+                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRYzzAWe4X_PjGyaWOwV5AJoMbyCnN-43PsA&s',
+                    'https://i0.wp.com/foodandpleasure.com/wp-content/uploads/2022/11/hoteles-boho-chic-mexico-habitas-bacalar-2.jpeg?resize=600%2C401&ssl=1',
+                ],
+                'Tours' => [
+                    'https://cf.bstatic.com/xdata/images/hotel/max1024x768/528629425.jpg?k=a14193160f63cc0b4f05d9d37ea4b3d134536504920310e018b66e5b84671afd&o=&hp=1',
+                    'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
+                ],
+                // agrega más categorías si quieres
+            ];
 
-        $totalEmprendedores = $emprendedores->count();
-        $totalServicios = $services->count();
+            // Opcional: imágenes genéricas si no hay categoría o no quieres filtrar
+            $imagenesGenericas = [
+                'https://images.unsplash.com/photo-1526772662000-3f88f10405ff?auto=format&fit=crop&w=800&q=80',
+                'https://images.unsplash.com/photo-1486308510493-cb4096d6f55c?auto=format&fit=crop&w=800&q=80',
+                'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=80',
+            ];
 
-        foreach ($emprendedores as $indexE => $emprendedor) {
-            // Seleccionar 1 a 3 servicios, evitando que el nombre sea repetitivo
-            $selectedServices = $services->shuffle()->take(rand(1, 3));
+            foreach ($emprendedorServices as $eservice) {
+                // Aquí puedes obtener la categoría si la tienes en $eservice (por ej: $eservice->category)
+                // Como ejemplo lo dejo vacío para que uses imágenes genéricas siempre.
+                $categoria = $eservice->category ?? null;
 
-            foreach ($selectedServices as $indexS => $service) {
-                // Validar duplicados
-                $exists = DB::table('emprendedor_service')
-                    ->where('service_id', $service->id)
-                    ->where('emprendedor_id', $emprendedor->id)
-                    ->exists();
+                $imagenes = $imagenesGenericas;
 
-                if ($exists) {
-                    $this->command->warn("Relación ya existe: {$emprendedor->razon_social} - {$service->name}");
-                    continue;
+                // Si hay categoría y imágenes definidas, las usamos
+                if ($categoria && isset($imagenesPorCategoria[$categoria])) {
+                    $imagenes = $imagenesPorCategoria[$categoria];
                 }
 
-                // Generar valores personalizados únicos
-                $randomSuffix = strtoupper(Str::random(3));
-                $costoBase = rand(50, 200);
-
-                $name = "{$service->name} Exclusivo {$randomSuffix} de {$emprendedor->razon_social}";
-                $description = "Servicio {$service->name} personalizado para {$emprendedor->razon_social} - Código {$randomSuffix}";
-
-                DB::table('emprendedor_service')->insert([
-                    'id' => (string) Str::uuid(),
-                    'service_id' => $service->id,
-                    'emprendedor_id' => $emprendedor->id,
-                    'code' => 'CODE-' . $randomSuffix,
-                    'status' => true,
-                    'costo' => $costoBase,
-                    'cantidad' => rand(1, 30),
-                    'costo_unidad' => round($costoBase / rand(1, 5), 2),
-                    'name' => $name,
-                    'description' => $description,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
+                foreach ($imagenes as $index => $url) {
+                    ImgEmprendedorService::create([
+                        'id' => Str::uuid(),
+                        'emprendedor_service_id' => $eservice->id,
+                        'url_image' => $url,
+                        'description' => "Imagen " . ($index + 1) . " para el servicio personalizado {$eservice->name}",
+                        'estado' => true,
+                        'code' => 'IMG-' . strtoupper(Str::random(4)) . '-' . substr($eservice->code ?? 'XXX', 0, 3),
+                    ]);
+                }
             }
         }
-    }
 }
