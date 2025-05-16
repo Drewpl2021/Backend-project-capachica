@@ -57,16 +57,16 @@ class SaleController extends Controller
         $userId = Auth::id();
 
         $validated = $request->validate([
-            'emprendedor_id' => 'required|uuid|exists:emprendedors,id',
-            'payment_id' => 'required|uuid|exists:payments,id',
             'reserva_id' => 'required|uuid|exists:reservas,id',
-            'code' => 'required|string|max:255',
-            'IGV' => 'required|numeric|min:0',
-            'BI' => 'required|numeric|min:0',
-            'total' => 'required|numeric|min:0',
+            'payment_id' => 'required|uuid|exists:payments,id',
+            'ventas' => 'required|array|min:1',
+            'ventas.*.emprendedor_id' => 'required|uuid|exists:emprendedors,id',
+            'ventas.*.code' => 'required|string|max:255',
+            'ventas.*.IGV' => 'required|numeric|min:0',
+            'ventas.*.BI' => 'required|numeric|min:0',
+            'ventas.*.total' => 'required|numeric|min:0',
         ]);
 
-        // Verificar que la reserva sea del usuario
         $reserva = Reserva::where('id', $validated['reserva_id'])
             ->where('user_id', $userId)
             ->first();
@@ -75,72 +75,77 @@ class SaleController extends Controller
             return response()->json(['message' => 'Reserva no encontrada o no pertenece al usuario'], 403);
         }
 
-        // Obtener todos los emprendedor_service_id y emprendedor_id de los detalles
-        $reserveDetails = $reserva->reserveDetails()->with('emprendimientoService')->get();
-
-        // Verificar que el emprendedor_id enviado esté en los emprendedores de la reserva
-        $emprendedoresEnReserva = $reserveDetails->map(function($detail) {
-            return $detail->emprendimientoService->emprendedor_id;
-        })->unique()->toArray();
-
-        if (!in_array($validated['emprendedor_id'], $emprendedoresEnReserva)) {
-            return response()->json(['message' => 'El emprendedor_id no corresponde a la reserva'], 422);
-        }
-
         $payment = Payment::find($validated['payment_id']);
         if (!$payment) {
             return response()->json(['message' => 'Pago no encontrado'], 404);
         }
 
+        $reserveDetails = $reserva->reserveDetails()->with('emprendimientoService')->get();
+
         DB::beginTransaction();
 
         try {
-            $saleId = (string) \Illuminate\Support\Str::uuid();
+            $ventasCreadas = [];
 
-            $sale = Sale::create([
-                'id' => $saleId,
-                'emprendedor_id' => $validated['emprendedor_id'],
-                'payment_id' => $validated['payment_id'],
-                'reserva_id' => $validated['reserva_id'],
-                'code' => $validated['code'],
-                'IGV' => $validated['IGV'],
-                'BI' => $validated['BI'],
-                'total' => $validated['total'],
-            ]);
+            foreach ($validated['ventas'] as $ventaData) {
+                $emprendedorId = $ventaData['emprendedor_id'];
 
-            // Crear detalles de venta desde los detalles de reserva vinculados al emprendedor correcto
-            foreach ($reserveDetails as $detail) {
-                if ($detail->emprendimientoService->emprendedor_id === $validated['emprendedor_id']) {
-                    $sale->saleDetails()->create([
-                        'id' => (string) \Illuminate\Support\Str::uuid(),
-                        'emprendedor_service_id' => $detail->emprendedor_service_id,
-                        'description' => $detail->description,
-                        'costo' => $detail->costo,
-                        'IGV' => $detail->IGV,
-                        'BI' => $detail->BI,
-                        'total' => $detail->total,
-                        'lugar' => $detail->lugar,
-                    ]);
+                // Verificar que el emprendedor_id esté en los detalles
+                $emprendedoresEnReserva = $reserveDetails->map(function ($detail) {
+                    return $detail->emprendimientoService->emprendedor_id;
+                })->unique()->toArray();
+
+                if (!in_array($emprendedorId, $emprendedoresEnReserva)) {
+                    DB::rollBack();
+                    return response()->json(['message' => "El emprendedor_id {$emprendedorId} no corresponde a la reserva"], 422);
                 }
+
+                $saleId = (string) \Illuminate\Support\Str::uuid();
+
+                $sale = Sale::create([
+                    'id' => $saleId,
+                    'emprendedor_id' => $emprendedorId,
+                    'payment_id' => $validated['payment_id'],
+                    'reserva_id' => $validated['reserva_id'],
+                    'code' => $ventaData['code'],
+                    'IGV' => $ventaData['IGV'],
+                    'BI' => $ventaData['BI'],
+                    'total' => $ventaData['total'],
+                ]);
+
+                // Crear detalles solo para ese emprendedor
+                foreach ($reserveDetails as $detail) {
+                    if ($detail->emprendimientoService->emprendedor_id === $emprendedorId) {
+                        $sale->saleDetails()->create([
+                            'id' => (string) \Illuminate\Support\Str::uuid(),
+                            'emprendedor_service_id' => $detail->emprendedor_service_id,
+                            'description' => $detail->description,
+                            'costo' => $detail->costo,
+                            'IGV' => $detail->IGV,
+                            'BI' => $detail->BI,
+                            'total' => $detail->total,
+                            'lugar' => $detail->lugar,
+                        ]);
+                    }
+                }
+
+                $ventasCreadas[] = $sale;
             }
 
+            // Opcional: Cambiar estado reserva a 'pagada' o 'vendida' cuando todas las ventas creadas
             $reserva->update(['status' => 'pagada']);
 
             DB::commit();
 
-            $sale->load(['emprendimiento', 'payment', 'reserva', 'saleDetails.emprendimientoService.service']);
-
             return response()->json([
-                'message' => 'Venta creada exitosamente con sus detalles',
-                'sale' => $sale,
+                'message' => 'Ventas creadas exitosamente',
+                'ventas' => $ventasCreadas,
             ], 201);
-
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['error' => 'Error creando venta: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Error creando ventas: ' . $e->getMessage()], 500);
         }
     }
-
 
 
 

@@ -50,11 +50,6 @@ class ReservaController extends Controller
             'details.*.cantidad' => 'required|numeric|min:1',
             'details' => 'required|array|min:1',
             'details.*.emprendedor_service_id' => 'required|uuid|exists:emprendedor_service,id',
-            'details.*.description' => 'required|string|max:500',
-            'details.*.costo' => 'required|numeric|min:0',
-            'details.*.igv' => 'nullable|numeric|min:0',
-            'details.*.bi' => 'nullable|numeric|min:0',
-            'details.*.total' => 'required|numeric|min:0',
             'details.*.lugar' => 'required|string|max:255',
         ]);
 
@@ -70,31 +65,36 @@ class ReservaController extends Controller
                 'igv' => $validated['igv'] ?? 0,
             ]);
 
+            // Mapear detalles con datos obtenidos desde emprendedor_service
             $detailsData = collect($validated['details'])->map(function ($detail) use ($reserva) {
+                // Buscar emprendedor_service para el detalle
+                $emprendedorService = \App\Models\EmprendedorService::find($detail['emprendedor_service_id']);
+
+                if (!$emprendedorService) {
+                    throw new \Exception("El servicio con ID {$detail['emprendedor_service_id']} no existe.");
+                }
+
                 return [
                     'id' => (string) Str::uuid(),
-                    'emprendedor_service_id' => $detail['emprendedor_service_id'],
+                    'emprendedor_service_id' => $emprendedorService->id,
                     'reserva_id' => $reserva->id,
-                    'description' => $detail['description'],
+                    'description' => $emprendedorService->description,  // toma la descripción de la tabla emprendedor_service
                     'cantidad' => $detail['cantidad'],
-                    'costo' => $detail['costo'],
-                    'igv' => $detail['igv'] ?? 0,
-                    'bi' => $detail['bi'] ?? 0,
-                    'total' => $detail['total'],
+                    'costo' => $emprendedorService->costo, // toma el costo actual del servicio
+                    'igv' => 0,  // si quieres lo calculas después o lo pones en 0
+                    'bi' => 0,   // igual
+                    'total' => 0, // igual, puedes calcular o ajustar aquí
                     'lugar' => $detail['lugar'],
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
             })->toArray();
 
-
-
-            // Insertar todos los detalles de golpe (más eficiente)
+            // Insertar detalles
             $reserva->reserveDetails()->insert($detailsData);
 
             DB::commit();
 
-            // Recargar reserva con detalles para respuesta
             $reserva->load('reserveDetails');
 
             return response()->json([
@@ -102,12 +102,13 @@ class ReservaController extends Controller
                 'reserva' => $reserva,
             ], 201);
         } catch (\Exception $e) {
-            DB::rollback();
+            DB::rollBack();
             return response()->json([
                 'error' => 'Error creando reserva: ' . $e->getMessage(),
             ], 500);
         }
     }
+
 
 
     /**

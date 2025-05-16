@@ -162,6 +162,8 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
         Route::put('/{id}', [EmprendedorController::class, 'update']); // Actualizar emprendedor
         Route::delete('/{id}', [EmprendedorController::class, 'destroy']); // Eliminar emprendedor
         Route::post('/services/{id}', [EmprendedorController::class, 'asignarServicios']);
+        Route::get('/ventas/{emprendedorId}', [EmprendedorController::class, 'reporteVentas']);
+
     });
 
 
