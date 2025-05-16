@@ -103,14 +103,15 @@ class ModuleController extends Controller
 
         // Consulta con filtro por roles
         try {
+            // Filtramos los módulos que el usuario puede ver según sus roles
             $modules = ParentModule::whereHas('modules.roles', function ($query) use ($userRoleIds) {
                 $query->whereIn('roles.id', $userRoleIds);
             })
-                ->with(['modules' => function ($query) use ($userRoleIds) {
-                    $query->whereHas('roles', function ($q) use ($userRoleIds) {
-                        $q->whereIn('roles.id', $userRoleIds);
-                    });
-                }])->get();
+            ->with(['modules' => function ($query) use ($userRoleIds) {
+                $query->whereHas('roles', function ($q) use ($userRoleIds) {
+                    $q->whereIn('roles.id', $userRoleIds);
+                });
+            }])->get();
 
             Log::info("Módulos obtenidos:", ['count' => $modules->count()]);
         } catch (\Exception $e) {
@@ -118,6 +119,7 @@ class ModuleController extends Controller
             return response()->json(['message' => 'Error al obtener módulos'], 500);
         }
 
+        // Formatear los módulos para el menú
         $menu = $modules->map(function ($parent) {
             return [
                 'id' => $parent->id,
@@ -151,6 +153,9 @@ class ModuleController extends Controller
 
         return response()->json($menu);
     }
+
+
+
 
 
     /**
