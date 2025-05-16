@@ -331,4 +331,90 @@ class AsociacionController extends Controller
             'perPage' => $emprendedores->perPage(),
         ]);
     }
+    public function showWithEmprendedoresYServicios(Request $request, $asociacionId)
+    {
+        $size = $request->input('size', 10);
+        $search = $request->input('search');
+
+        // Buscar la asociación
+        $asociacion = Asociacion::find($asociacionId);
+        if (!$asociacion) {
+            return response()->json(['message' => 'Asociación no encontrada'], 404);
+        }
+
+        // Consulta base para emprendedores de la asociación, con emprendedorServices y sus imágenes
+        $query = $asociacion->emprendedores()
+            ->with(['emprendedorServices.imgEmprendedorServices']);
+
+        // Aplicar filtro de búsqueda si hay
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('razon_social', 'like', "%$search%")
+                    ->orWhere('address', 'like', "%$search%")
+                    ->orWhere('code', 'like', "%$search%");
+            });
+        }
+
+        // Paginación
+        $emprendedores = $query->paginate($size);
+
+        // Formatear datos para la respuesta
+        $response = collect($emprendedores->items())->map(function ($emprendedor) {
+            return [
+                'id' => $emprendedor->id,
+                'razon_social' => $emprendedor->razon_social,
+                'address' => $emprendedor->address,
+                'code' => $emprendedor->code,
+                'ruc' => $emprendedor->ruc,
+                'description' => $emprendedor->description,
+                'lugar' => $emprendedor->lugar,
+                'img_logo' => $emprendedor->img_logo,
+                'name_family' => $emprendedor->name_family,
+                'status' => $emprendedor->status,
+                'emprendedorServices' => $emprendedor->emprendedorServices->map(function ($service) {
+                    return [
+                        'id' => $service->id,
+                        'service_id' => $service->service_id,
+                        'code' => $service->code,
+                        'name' => $service->name,
+                        'description' => $service->description,
+                        'cantidad' => $service->cantidad,
+                        'costo' => $service->costo,
+                        'costo_unidad' => $service->costo_unidad,
+                        'status' => $service->status,
+                        // Aquí agregamos las imágenes
+                        'imagenes' => $service->imgEmprendedorServices->map(function ($img) {
+                            return [
+                                'id' => $img->id,
+                                'url_image' => $img->url_image,
+                                'description' => $img->description,
+                                'estado' => (bool) $img->estado,
+                                'code' => $img->code,
+                            ];
+                        }),
+                    ];
+                }),
+            ];
+        });
+
+        return response()->json([
+            'asociacion' => [
+                'id' => $asociacion->id,
+                'nombre' => $asociacion->nombre,
+                'descripcion' => $asociacion->descripcion,
+                'url' => $asociacion->url,
+                'lugar' => $asociacion->lugar,
+                'estado' => $asociacion->estado,
+                'createdAt' => $asociacion->created_at,
+                'updatedAt' => $asociacion->updated_at,
+                'deletedAt' => $asociacion->deleted_at,
+            ],
+            'emprendedores' => $response,
+            'totalElements' => $emprendedores->total(),
+            'currentPage' => $emprendedores->currentPage() - 1,
+            'totalPages' => $emprendedores->lastPage(),
+        ]);
+    }
+
+
 }

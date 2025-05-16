@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->uuid('id')->primary();  // ID de tipo UUID
             $table->string('code');  // Código del pago
-            $table->string('total');  // Total de pago
-            $table->string('bi');  // Base imponible
-            $table->string('igv');  // Impuesto general a las ventas
+            $table->decimal('total');  // Total de pago
+            $table->decimal('bi');  // Base imponible
+            $table->decimal('igv');  // Impuesto general a las ventas
             $table->timestamps();
             $table->softDeletes();
         });

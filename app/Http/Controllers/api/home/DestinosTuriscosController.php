@@ -48,7 +48,6 @@ class DestinosTuriscosController extends Controller
             'totalElements' => $destinos->total(),
             'currentPage' => $destinos->currentPage() - 1,
             'totalPages' => $destinos->lastPage(),
-            'perPage' => $destinos->perPage(),
         ]);
     }
 
