@@ -211,6 +211,7 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/reservas/{id}', [ReservaController::class, 'update']);
     Route::delete('/reservas/{id}', [ReservaController::class, 'destroy']);
 });
+Route::get('/emprendedor/user/{userId}', [EmprendedorController::class, 'getByUserId']);
 
 Route::prefix('emprendedor-service')->group(function () {
 

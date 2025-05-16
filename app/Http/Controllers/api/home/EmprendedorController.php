@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\API\home;
+use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\Controller;
 use App\Models\emprendedor;
@@ -208,5 +209,53 @@ class EmprendedorController extends Controller
             'emprendedor_id' => $emprendedor->id,
             'assigned_services' => $insertedItems,
         ]);
+    }
+
+    public function getByUserId($userId)
+    {
+        // Buscar el emprendedor_id en la tabla emprendedor_user por user_id
+        $emprendedorUser = DB::table('emprendedor_user')->where('user_id', $userId)->first();
+
+        if (!$emprendedorUser) {
+            return $this->errorResponse('No se encontró emprendedor asociado a este usuario', 404);
+        }
+
+        // Buscar el emprendedor con relaciones
+        $emprendedor = Emprendedor::with(['asociacion', 'services', 'imgEmprendedores'])
+            ->find($emprendedorUser->emprendedor_id);
+
+        if (!$emprendedor) {
+            return $this->errorResponse('Emprendedor no encontrado', 404);
+        }
+
+        // Preparar la respuesta como en index()
+        $response = [
+            'id' => $emprendedor->id,
+            'razonSocial' => $emprendedor->razon_social,
+            'asociacionId' => $emprendedor->asociacion_id,
+            'nombre_asociacion' => $emprendedor->asociacion->nombre ?? null,
+            'createdAt' => $emprendedor->created_at,
+            'updatedAt' => $emprendedor->updated_at,
+            'deletedAt' => $emprendedor->deleted_at,
+            'imagenes' => $emprendedor->imgEmprendedores->map(function ($img) {
+                return [
+                    'id' => $img->id,
+                    'url_image' => $img->url_image,
+                    'estado' => (bool) $img->estado,
+                    'code' => $img->code,
+                ];
+            }),
+            'services' => $emprendedor->services->map(function ($service) {
+                return [
+                    'id' => $service->id,
+                    'name' => $service->name ?? null,
+                    'description' => $service->description ?? null,
+                    'code' => $service->pivot->code ?? null,
+                    'status' => $service->pivot->status ?? null,
+                ];
+            }),
+        ];
+
+        return response()->json($response);
     }
 }
