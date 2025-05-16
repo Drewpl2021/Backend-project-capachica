@@ -19,7 +19,7 @@ return new class extends Migration
             // $table->uuid('user_id');
             $table->unsignedBigInteger('user_id');
 
-            $table->string('code')->nullable()->unique(); // código único opcional para la reserva
+            $table->string('code')->nullable(); // código único opcional para la reserva
 
             $table->decimal('bi', 12, 2)->default(0);   // Base imponible (total sin impuestos)
             $table->decimal('igv', 12, 2)->default(0);  // Impuesto general a las ventas
