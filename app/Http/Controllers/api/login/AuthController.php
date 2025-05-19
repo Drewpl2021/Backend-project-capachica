@@ -69,44 +69,49 @@ class AuthController extends Controller
      * )
      */
     public function register(Request $request)
-    {
-        // Validación de los datos con el trait ValidatorTrait
-        $validation = $this->validateRequest($request, [
-            'name'     => 'required|string|max:255|unique:users',
-            'last_name'     => 'required|string|max:255|unique:users',
-            //'code'     => 'required|string|max:255|unique:users',
-            'username'     => 'required|string|max:255|unique:users',
-            'email'    => 'nullable|string|email|max:255|unique:users',
-            'password' => 'required|string',
-        ]);
+{
+    // Validación de los datos, incluyendo el campo 'rol'
+    $validation = $this->validateRequest($request, [
+        'name'      => 'required|string|max:255|unique:users',
+        'last_name' => 'required|string|max:255|unique:users',
+        'username'  => 'required|string|max:255|unique:users',
+        'email'     => 'nullable|string|email|max:255|unique:users',
+        'password'  => 'required|string',
+        'rol'       => 'required|in:1,2', // Validamos que sea 1 o 2
+    ]);
 
-        if ($validation->fails()) {
-            return $this->validationErrorResponse($validation->errors());
-        }
-
-        // Crear el usuario y guardarlo en la base de datos
-        $user = User::create([
-            'name'     => $request->name,
-            'last_name'    => $request->last_name,
-            //'code'    => $request->code,
-            'username'     => $request->username,
-            'email'    => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
-
-        // Asignar rol al usuario (por defecto es 'usuario')
-        $rol = $request->get('rol', 'usuario');
-        $this->assignRoleToUser($user, $rol);
-
-        // Crear token con JWT
-        $token = JWTAuth::fromUser($user);
-
-        return $this->successResponse([
-            'token' => $token,
-            'user' => $user->only(['id', 'username', 'email']),
-            'roles' => $user->getRoleNames(),
-        ], 'Usuario registrado correctamente', 201);
+    if ($validation->fails()) {
+        return $this->validationErrorResponse($validation->errors());
     }
+
+    // Crear el usuario y guardarlo en la base de datos
+    $user = User::create([
+        'name'      => $request->name,
+        'last_name' => $request->last_name,
+        'username'  => $request->username,
+        'email'     => $request->email,
+        'password'  => bcrypt($request->password),
+    ]);
+
+    // Asignar rol según el código recibido
+    if ($request->rol == '1') {
+        $rolNombre = 'usuario';
+    } elseif ($request->rol == '2') {
+        $rolNombre = 'admin_familia';
+    }
+
+    $this->assignRoleToUser($user, $rolNombre);
+
+    // Crear token con JWT
+    $token = JWTAuth::fromUser($user);
+
+    return $this->successResponse([
+        'token' => $token,
+        'user'  => $user->only(['id', 'username', 'email']),
+        'roles' => $user->getRoleNames(),
+    ], 'Usuario registrado correctamente', 201);
+}
+
 
     /**
      * @OA\Post(
