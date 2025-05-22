@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Img_Asociacion;
-use App\Models\Asociacion; // Asegúrate de tener el modelo de Asociacion
+
+use App\Models\Asociacion;
+use App\Models\img_asociacion;
 use Illuminate\Database\Seeder;
 
 class ImgAsociacionSeeder extends Seeder
@@ -24,7 +25,7 @@ class ImgAsociacionSeeder extends Seeder
                 'estado' => true,
                 'codigo' => 101
             ]);
-            Img_Asociacion::create([
+            img_asociacion::create([
                 'asociacion_id' => $asociacion->id,
                 'url_image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYpsgH3y4Sc4KtA_O9XOL9M2f1kHvPCXM9Dg&s',
                 'estado' => true,
