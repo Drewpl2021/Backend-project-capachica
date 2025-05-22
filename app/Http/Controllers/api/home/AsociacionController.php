@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\home;
+namespace App\Http\Controllers\api\home;
 
 use App\Http\Controllers\Controller;
 use App\Models\asociacion;
@@ -415,6 +415,4 @@ class AsociacionController extends Controller
             'totalPages' => $emprendedores->lastPage(),
         ]);
     }
-
-
 }
