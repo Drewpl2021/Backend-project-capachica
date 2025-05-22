@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\asociacion;
+use App\Models\Asociacion;
 use App\Models\Municipalidad;
 use Illuminate\Database\Seeder;
 
@@ -74,7 +74,7 @@ class AsociacionSeeder extends Seeder
         ];
 
         foreach ($data as $asociacion) {
-            asociacion::create($asociacion);
+            Asociacion::create($asociacion);
         }
     }
 }

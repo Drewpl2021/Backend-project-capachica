@@ -13,7 +13,7 @@ use Faker\Factory as Faker;
 
 class EmprendedorSeeder extends Seeder
 {
-    //sadasdasdas
+    //sadasdasdasasdasdasd
     public function run()
     {
         $faker = Faker::create();

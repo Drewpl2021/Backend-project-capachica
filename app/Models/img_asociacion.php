@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 
-class img_asociacion extends Model
+class Img_asociacion extends Model
 {
     use HasFactory;
     use SoftDeletes;
