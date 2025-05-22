@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Emprendedor;
+
 use App\Models\Asociacion;
+use App\Models\Emprendedor;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +13,7 @@ use Faker\Factory as Faker;
 
 class EmprendedorSeeder extends Seeder
 {
+    //sadasdasdas
     public function run()
     {
         $faker = Faker::create();
