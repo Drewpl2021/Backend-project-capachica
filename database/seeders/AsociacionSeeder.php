@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Asociacion;
+use App\Models\asociacion;
 use App\Models\Municipalidad;
 use Illuminate\Database\Seeder;
 
@@ -13,6 +13,7 @@ class AsociacionSeeder extends Seeder
      */
     public function run()
     {
+        //COPIAR
         // Obtener la primera municipalidad existente
         $municipalidad = Municipalidad::first();
 
@@ -73,7 +74,7 @@ class AsociacionSeeder extends Seeder
         ];
 
         foreach ($data as $asociacion) {
-            Asociacion::create($asociacion);
+            asociacion::create($asociacion);
         }
     }
 }
