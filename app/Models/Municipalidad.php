@@ -17,6 +17,7 @@ class Municipalidad extends Model
     // protected $table = 'municipalidads'; // (si necesario)
     public $incrementing = false;
     protected $keyType = 'string';
+    protected $table = 'municipalidads';
     // Permite la asignación masiva de estos campos
     protected $fillable = [
         'distrito',

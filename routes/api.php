@@ -126,22 +126,22 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
 Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(function () {
     // Prefijo 'municipalidad'
     Route::prefix('municipalidad')->group(function () {
+
         // Rutas para la municipalidad
-        Route::middleware('permission:editar_municipalidad')->post('/crear', [MunicipalidadController::class, 'store']);
-        Route::middleware('permission:editar_municipalidad')->put('/{id}', [MunicipalidadController::class, 'update']);
-        Route::middleware('permission:editar_municipalidad')->delete('/{id}', [MunicipalidadController::class, 'destroy']);
+        Route::post('/crear', [MunicipalidadController::class, 'store']);
+        Route::put('/{id}', [MunicipalidadController::class, 'update']);
+        Route::delete('/{id}', [MunicipalidadController::class, 'destroy']);
         Route::get('/{id}', [MunicipalidadController::class, 'show']);
         Route::get('/code/{codigo}', [MunicipalidadController::class, 'searchByCode']);
         //BUSCAR MUNICIPALIDAD CON SUS ASOCIACIONES
         Route::get('/asociaciones/{id}', [MunicipalidadController::class, 'asociacionesByMunicipalidad']);
-
-
         // Rutas para descripciones de la municipalidad
         Route::post('/descripcion/{municipalidadId}', [MunicipalidadDescripcionController::class, 'store']);
         Route::get('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'show']);
         Route::put('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'update']);
         Route::delete('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'destroy']);
     });
+
 
     // Rutas para las asociaciones
     Route::prefix('asociacion')->group(function () {
@@ -151,7 +151,6 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
         Route::delete('/{id}', [AsociacionController::class, 'destroy']); // Eliminar asociación
         Route::get('/emprendedores/{id}', [AsociacionController::class, 'emprendedoresByAsociacion']);
         Route::get('/emprendedores-servicios/{id}', [AsociacionController::class, 'showWithEmprendedoresYServicios']);
-
     });
 
     // Rutas para los emprendedores
@@ -164,7 +163,7 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
         Route::post('/services/{id}', [EmprendedorController::class, 'asignarServicios']);
         Route::get('/ventas/{emprendedorId}', [EmprendedorController::class, 'reporteVentas']);
         Route::get('/reservas/{emprendedorId}', [EmprendedorController::class, 'reservasPorEmprendedor']);
-
+        Route::get('/user/{userId}', [EmprendedorController::class, 'getByUserId']);
     });
 
 
@@ -259,14 +258,13 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/{id}', [SaleDetailController::class, 'update']);
         Route::delete('/{id}', [SaleDetailController::class, 'destroy']);
     });
-
 });
 
 
 
 
 
-Route::get('/emprendedor/user/{userId}', [EmprendedorController::class, 'getByUserId']);
+
 
 Route::prefix('emprendedor-service')->group(function () {
 

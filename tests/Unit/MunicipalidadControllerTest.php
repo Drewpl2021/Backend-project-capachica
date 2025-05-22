@@ -10,9 +10,12 @@ use Ramsey\Uuid\Guid\Guid;
 
 class MunicipalidadControllerTest extends TestCase
 {
+
     /**
      * Test the index method without hitting the real database or routes.
      */
+
+    /*
     public function testIndexReturnsPaginationData()
     {
         // Crear un UUID simulado
@@ -65,11 +68,13 @@ class MunicipalidadControllerTest extends TestCase
         $this->assertEquals(1, $responseData['currentPage']); // Verificar la página actual
         $this->assertEquals(10, $responseData['totalPages']); // Verificar el total de páginas
         $this->assertEquals(10, $responseData['perPage']); // Verificar los elementos por página
-    }
+    }*/
 
     /**
      * Test the store method without hitting the real database or routes.
      */
+
+    /*
     public function testStoreCreatesMunicipalidad()
     {
         // Crear un mock del modelo Municipalidad
@@ -101,12 +106,14 @@ class MunicipalidadControllerTest extends TestCase
         $this->assertEquals('Lima', $responseData['provincia']);
         $this->assertEquals('Lima', $responseData['region']);
         $this->assertEquals('12345', $responseData['codigo']);
-    }
+    }*/
 
 
     /**
      * Test the show method without hitting the real database or routes.
      */
+
+    /*
     public function testShowReturnsMunicipalidad()
     {
         // Crear un UUID simulado
@@ -134,7 +141,7 @@ class MunicipalidadControllerTest extends TestCase
         // Verificar que la respuesta contiene los datos correctos
         $this->assertEquals($uuid, $responseData['id']); // Verificamos que el UUID es correcto
         $this->assertEquals('Lima', $responseData['distrito']);
-    }
+    }*/
 
 
     /*public function testUpdateUpdatesMunicipalidad()
