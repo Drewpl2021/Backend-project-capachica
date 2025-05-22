@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\api\home;
+namespace App\Http\Controllers\API\home;
 
 use App\Http\Controllers\Controller;
 use App\Models\asociacion;
