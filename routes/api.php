@@ -1,17 +1,17 @@
 <?php
 
-use App\Http\Controllers\api\home\AsociacionController;
-use App\Http\Controllers\api\home\EmprendedorController;
-use App\Http\Controllers\api\home\ImgAsociacionController;
-use App\Http\Controllers\api\home\MunicipalidadController;
-use App\Http\Controllers\api\home\MunicipalidadDescripcionController;
-use App\Http\Controllers\api\home\SectionController;
-use App\Http\Controllers\api\home\SectionDetailController;
-use App\Http\Controllers\api\home\SectionDetailEndController;
-use App\Http\Controllers\api\home\SliderMuniController;
-use App\Http\Controllers\api\Login\AuthController;
-use App\Http\Controllers\api\Login\RoleController;
-use App\Http\Controllers\api\Login\UserController;
+use App\Http\Controllers\API\home\AsociacionController;
+use App\Http\Controllers\API\home\AuthController;
+use App\Http\Controllers\API\home\EmprendedorController;
+use App\Http\Controllers\API\home\ImgAsociacionController;
+use App\Http\Controllers\API\home\MunicipalidadController;
+use App\Http\Controllers\API\home\MunicipalidadDescripcionController;
+use App\Http\Controllers\API\home\RoleController;
+use App\Http\Controllers\API\home\SectionController;
+use App\Http\Controllers\API\home\SectionDetailController;
+use App\Http\Controllers\API\home\SectionDetailEndController;
+use App\Http\Controllers\API\home\SliderMuniController;
+use App\Http\Controllers\API\home\UserController;
 use App\Http\Controllers\API\Modules\ModuleController;
 use App\Http\Controllers\API\Modules\ParentModuleController;
 use Illuminate\Support\Facades\Route;

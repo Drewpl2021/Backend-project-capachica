@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\home;
+namespace App\Http\Controllers\api\home;
 
 use App\Models\Sale;
 use Illuminate\Support\Facades\DB;
