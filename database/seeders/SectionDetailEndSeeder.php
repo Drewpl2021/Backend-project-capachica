@@ -287,6 +287,19 @@ class SectionDetailEndSeeder extends Seeder
                 'updated_at' => now(),
                 'deleted_at' => null
             ],
+                        [
+                'id' => Str::uuid(),
+                'status' => true,
+                'code' => '22',
+                'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAp3kUc1KTu7f1VIikOAVF6-Tt9Mdw7rv8eA&s',
+                'title' => 'Capachica',
+                'description' => '',
+                'subtitle' => '',
+                'section_detail_id' => SectionDetail::where('code', '08')->first()->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+                'deleted_at' => null
+            ],
 
         ];
 
