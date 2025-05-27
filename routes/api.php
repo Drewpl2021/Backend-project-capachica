@@ -302,7 +302,11 @@ Route::prefix('service')->group(function () {
     Route::get('/category/emprendedores', [ServiceController::class, 'emprendedoresPorServicio']);
 });
 
-
+Route::get('service/test', [ServiceController::class, 'index']);  // Ruta para paginación de servicios
+Route::post('service/test', [ServiceController::class, 'store']);  // Crear nuevo servicio
+Route::get('service/test/{id}', [ServiceController::class, 'show']);  // Ver servicio específico
+Route::put('service/test/{id}', [ServiceController::class, 'update']);  // Actualizar servicio
+Route::delete('service/test/{id}', [ServiceController::class, 'destroy']); // Eliminar servicio (Soft Delete)
 
 
 
