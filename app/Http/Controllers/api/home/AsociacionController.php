@@ -415,6 +415,4 @@ class AsociacionController extends Controller
             'totalPages' => $emprendedores->lastPage(),
         ]);
     }
-
-
 }

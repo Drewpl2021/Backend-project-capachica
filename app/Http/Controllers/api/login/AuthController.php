@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\Login;
+namespace App\Http\Controllers\API\login;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -168,7 +168,7 @@ class AuthController extends Controller
         return $this->successResponse([
             'token' => $newToken,
             'expires_at' => now()->addMinutes(config('jwt.ttl'))->toDateTimeString(),
-            'username' => $user->only(['id','name','last_name', 'username', 'email']),
+            'username' => $user->only(['id', 'name', 'last_name', 'username', 'email']),
             'roles' => $user->getRoleNames(),
             'permissions' => $user->getAllPermissions()->pluck('name'),
         ], 'Usuario iniciado sesión correctamente', 200);
@@ -197,7 +197,6 @@ class AuthController extends Controller
                 'roles' => $user->getRoleNames(),
                 'permissions' => $user->getAllPermissions()->pluck('name'),
             ], 'Sesión activa', 200);
-
         } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
             return $this->error('Token expirado, inicia sesión de nuevo', 401);
         } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {

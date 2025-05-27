@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 
 class Service extends Model
 {
+    use HasFactory;
     protected $guarded = ['id'];
     public $incrementing = false;
     use SoftDeletes;

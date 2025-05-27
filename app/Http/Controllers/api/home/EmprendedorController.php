@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\API\home;
+
 use App\Models\Sale;
 use Illuminate\Support\Facades\DB;
 
@@ -112,7 +113,6 @@ class EmprendedorController extends Controller
         $validated = $request->validate([
             'asociacion_id' => 'required|uuid|exists:asociacions,id',
             'razon_social' => 'required|string|max:255',
-            'new_column' => 'nullable|integer',
         ]);
 
         $emprendedor->update($validated);
@@ -378,10 +378,4 @@ class EmprendedorController extends Controller
             'reservas' => $agrupado,
         ]);
     }
-
-
-
-
-
-
 }

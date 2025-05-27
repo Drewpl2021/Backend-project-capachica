@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\Login;
+namespace App\Http\Controllers\API\login;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -385,5 +385,4 @@ class RoleController extends Controller
             'modules' => $modules->pluck('id'),
         ]);
     }
-
 }

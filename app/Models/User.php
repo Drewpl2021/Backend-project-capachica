@@ -79,14 +79,22 @@ class User extends Authenticatable implements JWTSubject
             'name' => $this->name, // Agregar 'username' al token
             'last_name' => $this->last_name, // Agregar 'username' al token
             'username' => $this->username, // Agregar 'username' al token
-            'email' => $this->email,       // Agregar 'email' al token
+            'email' => $this->email,
+            // Agregar 'email' al token
         ];
     }
     // Relación muchos a muchos con Emprendedor
     public function emprendedores()
     {
-        return $this->belongsToMany(Emprendedor::class, 'emprendedor_user', 'user_id', 'emprendedor_id');
+        return $this->belongsToMany(
+            Emprendedor::class,
+            'emprendedor_user',
+            'user_id',
+            'emprendedor_id'
+        )->withTimestamps(); // esto es opcional si tienes timestamps en la tabla pivote
     }
+
+
     public function reservas()
     {
         return $this->hasMany(Reserva::class, 'user_id');  // Aquí indicamos que un usuario puede tener muchas reservas
