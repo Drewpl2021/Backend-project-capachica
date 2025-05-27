@@ -1,17 +1,17 @@
 <?php
 
-use App\Http\Controllers\api\home\AsociacionController;
-use App\Http\Controllers\API\home\AuthController;
-use App\Http\Controllers\api\home\EmprendedorController;
-use App\Http\Controllers\api\home\ImgAsociacionController;
-use App\Http\Controllers\api\home\MunicipalidadController;
-use App\Http\Controllers\api\home\MunicipalidadDescripcionController;
-use App\Http\Controllers\API\home\RoleController;
-use App\Http\Controllers\api\home\SectionController;
-use App\Http\Controllers\api\home\SectionDetailController;
-use App\Http\Controllers\api\home\SectionDetailEndController;
-use App\Http\Controllers\api\home\SliderMuniController;
-use App\Http\Controllers\API\home\UserController;
+use App\Http\Controllers\API\home\AsociacionController;
+use App\Http\Controllers\API\home\EmprendedorController;
+use App\Http\Controllers\API\home\ImgAsociacionController;
+use App\Http\Controllers\API\home\MunicipalidadController;
+use App\Http\Controllers\API\home\MunicipalidadDescripcionController;
+use App\Http\Controllers\API\home\SectionController;
+use App\Http\Controllers\API\home\SectionDetailController;
+use App\Http\Controllers\API\home\SectionDetailEndController;
+use App\Http\Controllers\API\home\SliderMuniController;
+use App\Http\Controllers\API\login\AuthController;
+use App\Http\Controllers\API\login\RoleController;
+use App\Http\Controllers\API\login\UserController;
 use App\Http\Controllers\API\Modules\ModuleController;
 use App\Http\Controllers\API\Modules\ParentModuleController;
 use Illuminate\Support\Facades\Route;
@@ -266,29 +266,28 @@ Route::middleware('auth:api')->group(function () {
 
 
 
+Route::middleware(['auth:api'])->group(function () {
+    Route::prefix('emprendedor-service')->group(function () {
 
-Route::prefix('emprendedor-service')->group(function () {
-
-    Route::get('/by-service', [EmprendedorServiceController::class, 'getByService']); // PRIMERO esta ruta
-    Route::get('/', [EmprendedorServiceController::class, 'index']);
-    Route::post('/', [EmprendedorServiceController::class, 'store']);
-    Route::get('/restore/{id}', [EmprendedorServiceController::class, 'restore']); // antes de los de id
-    Route::get('/{id}', [EmprendedorServiceController::class, 'show']); // LUEGO la ruta con parámetro
-    Route::put('/{id}', [EmprendedorServiceController::class, 'update']);
-    Route::delete('/{id}', [EmprendedorServiceController::class, 'destroy']);
+        Route::get('/by-service', [EmprendedorServiceController::class, 'getByService']); // PRIMERO esta ruta
+        Route::get('/', [EmprendedorServiceController::class, 'index']);
+        Route::post('/', [EmprendedorServiceController::class, 'store']);
+        Route::get('/restore/{id}', [EmprendedorServiceController::class, 'restore']); // antes de los de id
+        Route::get('/{id}', [EmprendedorServiceController::class, 'show']); // LUEGO la ruta con parámetro
+        Route::put('/{id}', [EmprendedorServiceController::class, 'update']);
+        Route::delete('/{id}', [EmprendedorServiceController::class, 'destroy']);
 
 
-    // Subgrupo para manejo de imágenes relacionadas a EmprendedorService
-    Route::prefix('images')->group(function () {
-        Route::get('/', [ImgEmprendedorServiceController::class, 'index'])->name('emprendedor-service.images.index');        // Listar imágenes con paginación
-        Route::post('/', [ImgEmprendedorServiceController::class, 'store'])->name('emprendedor-service.images.store');       // Crear imagen
-        Route::get('/{id}', [ImgEmprendedorServiceController::class, 'show'])->name('emprendedor-service.images.show');      // Mostrar imagen específica
-        Route::put('/{id}', [ImgEmprendedorServiceController::class, 'update'])->name('emprendedor-service.images.update');  // Actualizar imagen
-        Route::delete('/{id}', [ImgEmprendedorServiceController::class, 'destroy'])->name('emprendedor-service.images.destroy'); // Eliminar imagen (soft delete)
+        // Subgrupo para manejo de imágenes relacionadas a EmprendedorService
+        Route::prefix('images')->group(function () {
+            Route::get('/', [ImgEmprendedorServiceController::class, 'index'])->name('emprendedor-service.images.index');        // Listar imágenes con paginación
+            Route::post('/', [ImgEmprendedorServiceController::class, 'store'])->name('emprendedor-service.images.store');       // Crear imagen
+            Route::get('/{id}', [ImgEmprendedorServiceController::class, 'show'])->name('emprendedor-service.images.show');      // Mostrar imagen específica
+            Route::put('/{id}', [ImgEmprendedorServiceController::class, 'update'])->name('emprendedor-service.images.update');  // Actualizar imagen
+            Route::delete('/{id}', [ImgEmprendedorServiceController::class, 'destroy'])->name('emprendedor-service.images.destroy'); // Eliminar imagen (soft delete)
+        });
     });
 });
-
-
 
 
 

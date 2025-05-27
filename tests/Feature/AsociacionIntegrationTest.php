@@ -5,10 +5,8 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\Asociacion;
 use App\Models\img_asociacion;
-use App\Models\ImgAsociacion;
 use App\Models\User;
 use App\Models\Municipalidad;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AsociacionIntegrationTest extends TestCase
 {

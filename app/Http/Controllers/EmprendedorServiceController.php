@@ -18,16 +18,26 @@ class EmprendedorServiceController extends Controller
     {
         $size = $request->input('size', 10);
         $search = $request->input('search');
-        $emprendedorId = $request->input('emprendedor_id');
 
-        $query = EmprendedorService::query();
+        // Obtener el usuario autenticado
+        $user = Auth::user();
 
-        // Filtro por emprendedor_id si viene en la petición
-        if ($emprendedorId) {
-            $query->where('emprendedor_id', $emprendedorId);
+        // Obtener los IDs de emprendimientos asociados directamente desde la tabla pivote
+        $emprendedoresIds = DB::table('emprendedor_user')
+            ->where('user_id', $user->id)
+            ->pluck('emprendedor_id');
+
+        if ($emprendedoresIds->isEmpty()) {
+            return response()->json([
+                'message' => 'Este usuario no tiene emprendimientos asociados.',
+                'content' => [],
+            ], 404);
         }
 
-        // Filtro de búsqueda en 'code' o 'name'
+        // Buscar servicios/productos solo de esos emprendimientos
+        $query = EmprendedorService::whereIn('emprendedor_id', $emprendedoresIds);
+
+        // Filtro opcional por búsqueda
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('code', 'like', "%$search%")
@@ -35,7 +45,7 @@ class EmprendedorServiceController extends Controller
             });
         }
 
-        // Carga relaciones para mostrar info asociada
+        // Cargar relaciones
         $query->with(['emprendedor', 'service', 'imgEmprendedorServices']);
 
         $results = $query->paginate($size);
@@ -47,6 +57,10 @@ class EmprendedorServiceController extends Controller
             'totalPages' => $results->lastPage(),
         ]);
     }
+
+
+
+
 
 
 
@@ -65,22 +79,33 @@ class EmprendedorServiceController extends Controller
             'description' => ['required', 'string'],
             'costo' => ['required', 'numeric', 'min:0'],
             'costo_unidad' => ['nullable', 'numeric', 'min:0'],
-            'imagenes' => 'array',  // Validación para las imágenes
+            'imagenes' => 'array',
             'imagenes.*.url_image' => 'required|string|max:255',
             'imagenes.*.description' => 'nullable|string',
             'imagenes.*.estado' => 'required|boolean',
             'imagenes.*.code' => 'nullable|string',
         ]);
 
-        // Iniciar transacción
+        // Verificar que el emprendedor_id pertenezca al usuario autenticado
+        $user = Auth::user();
+
+        $esPropietario = DB::table('emprendedor_user')
+            ->where('user_id', $user->id)
+            ->where('emprendedor_id', $validated['emprendedor_id'])
+            ->exists();
+
+        if (!$esPropietario) {
+            return response()->json([
+                'message' => 'No tienes permisos para registrar servicios en este emprendimiento.'
+            ], 403);
+        }
+
         DB::beginTransaction();
         try {
             $emprendedorService = EmprendedorService::create($validated);
 
-            // Guardar imágenes si existen en el request
             if (!empty($validated['imagenes'])) {
                 foreach ($validated['imagenes'] as $img) {
-                    // Asociar las imágenes al 'EmprendedorService' recién creado
                     $emprendedorService->imgEmprendedorServices()->create($img);
                 }
             }

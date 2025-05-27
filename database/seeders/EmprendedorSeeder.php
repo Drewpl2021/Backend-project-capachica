@@ -32,7 +32,7 @@ class EmprendedorSeeder extends Seeder
 
         foreach ($asociaciones as $asociacion) {
             // Seleccionar 1 a 3 usuarios aleatorios para este emprendedor
-            $selectedUsers = $users->random(rand(1, 3));
+            $selectedUser = $users->random(); // NO usas colección
 
             $emprendedorData = [
                 'id' => (string) Str::uuid(),
@@ -50,10 +50,10 @@ class EmprendedorSeeder extends Seeder
 
             $emprendedor = Emprendedor::create($emprendedorData);
 
-            foreach ($selectedUsers as $user) {
+            foreach ($selectedUser as $user) {
                 DB::table('emprendedor_user')->updateOrInsert(
                     [
-                        'user_id' => $user->id,
+                        'user_id' => $selectedUser->id,
                         'emprendedor_id' => $emprendedor->id,
                     ],
                     [
