@@ -246,6 +246,8 @@ class EmprendedorController extends Controller
                     'id' => $service->id,
                     'name_service' => $service->name ?? null,
                     'description_service' => $service->description ?? null,
+
+
                     'code' => $service->pivot->code ?? null,
                     'status' => isset($service->pivot->status) ? (bool)$service->pivot->status : null,
                     'cantidad' => $service->pivot->cantidad ?? null,
