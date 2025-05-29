@@ -14,10 +14,8 @@ class ImgService extends Seeder
      */
     public function run()
     {
-        // Obtener todos los servicios existentes
         $services = Service::all();
 
-        // Por cada servicio, crear 2 imágenes de ejemplo
         foreach ($services as $service) {
             for ($i = 1; $i <= 2; $i++) {
                 ModelsImgService::create([

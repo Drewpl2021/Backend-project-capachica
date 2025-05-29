@@ -14,11 +14,9 @@ class ImgAsociacionSeeder extends Seeder
      */
     public function run()
     {
-        // Obtener todas las asociaciones existentes
-        $asociaciones = Asociacion::all(); // Obtener todas las asociaciones
+        $asociaciones = Asociacion::all();
 
         foreach ($asociaciones as $asociacion) {
-            // Crear algunas imágenes de asociación para cada asociación
             Img_Asociacion::create([
                 'asociacion_id' => $asociacion->id,
                 'url_image' => 'https://consultasenlinea.mincetur.gob.pe/fichaInventario/foto.aspx?cod=471157',

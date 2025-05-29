@@ -14,10 +14,7 @@ class ImgEmprendedor extends Seeder
 {
     public function run()
     {
-        // Obtener todos los emprendedores (familias)
         $emprendedores = Emprendedor::all();
-
-        // URLs de imágenes bonitas para familias (ejemplos de Unsplash)
         $imagenes = [
             'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
             'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=800&q=80',
@@ -26,7 +23,7 @@ class ImgEmprendedor extends Seeder
 
         foreach ($emprendedores as $emprendedor) {
             foreach ($imagenes as $index => $url) {
-                $numeroImagen = $index + 1;  // Aquí haces la suma fuera del array
+                $numeroImagen = $index + 1;
                 ModelsImgEmprendedor::create([
                     'emprendedor_id' => $emprendedor->id,
                     'url_image' => $url,

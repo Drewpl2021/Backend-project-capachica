@@ -13,7 +13,6 @@ use Faker\Factory as Faker;
 
 class EmprendedorSeeder extends Seeder
 {
-    //sadasdasdasasdasdasd
     public function run()
     {
         $faker = Faker::create();
@@ -31,9 +30,7 @@ class EmprendedorSeeder extends Seeder
         }
 
         foreach ($asociaciones as $asociacion) {
-            // Seleccionar 1 a 3 usuarios aleatorios para este emprendedor
-            $selectedUser = $users->random(); // NO usas colección
-
+            $selectedUser = $users->random();
             $emprendedorData = [
                 'id' => (string) Str::uuid(),
                 'asociacion_id' => $asociacion->id,

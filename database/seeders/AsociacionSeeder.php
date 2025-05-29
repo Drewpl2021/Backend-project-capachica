@@ -13,8 +13,6 @@ class AsociacionSeeder extends Seeder
      */
     public function run()
     {
-        //COPIAR ssssasdasdasdasd
-        // Obtener la primera municipalidad existente
         $municipalidad = Municipalidad::first();
 
         if (!$municipalidad) {

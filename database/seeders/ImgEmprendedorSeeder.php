@@ -14,10 +14,8 @@ class ImgEmprendedorSeeder extends Seeder
      */
     public function run(): void
     {
-        // Obtener todos los emprendedores
         $emprendedores = EmprendedorService::all();
 
-        // Arreglo con las imágenes a crear por cada emprendedor
         $imagenes = [
             [
                 'url_image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRYzzAWe4X_PjGyaWOwV5AJoMbyCnN-43PsA&s',
@@ -40,7 +38,7 @@ class ImgEmprendedorSeeder extends Seeder
                     'url_image' => $img['url_image'],
                     'description' => "Imagen para el emprendedor {$emprendedor->name_family}",
                     'estado' => true,
-                    'code' => $img['code'] . '-' . $emprendedor->id, // para código único combinando id
+                    'code' => $img['code'] . '-' . $emprendedor->id,
                 ]);
             }
         }

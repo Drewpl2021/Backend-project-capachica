@@ -7,9 +7,8 @@ use App\Models\Service;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Faker\Factory as Faker;
 
-class EmprendimientoServiceSedeer extends Seeder
+class EmprendimientoServiceSeeder extends Seeder
 {
     public function run()
     {
@@ -21,15 +20,10 @@ class EmprendimientoServiceSedeer extends Seeder
             return;
         }
 
-        $totalEmprendedores = $emprendedores->count();
-        $totalServicios = $services->count();
-
-        foreach ($emprendedores as $indexE => $emprendedor) {
-            // Seleccionar 1 a 3 servicios, evitando que el nombre sea repetitivo
+        foreach ($emprendedores as $emprendedor) {
             $selectedServices = $services->shuffle()->take(rand(1, 3));
 
-            foreach ($selectedServices as $indexS => $service) {
-                // Validar duplicados
+            foreach ($selectedServices as $service) {
                 $exists = DB::table('emprendedor_service')
                     ->where('service_id', $service->id)
                     ->where('emprendedor_id', $emprendedor->id)
@@ -40,7 +34,6 @@ class EmprendimientoServiceSedeer extends Seeder
                     continue;
                 }
 
-                // Generar valores personalizados únicos
                 $randomSuffix = strtoupper(Str::random(3));
                 $costoBase = rand(50, 200);
 
