@@ -14,11 +14,9 @@ class ImgAsociacionController extends Controller
      */
     public function index()
     {
-        $images = Img_Asociacion::paginate(10); // Paginación de 10 imágenes por página
-
-        // Transformar los valores de 'estado' de 1/0 a true/false en los items de la página
+        $images = Img_Asociacion::paginate(10);
         $images->getCollection()->transform(function ($image) {
-            $image->estado = (bool) $image->estado; // Convertir a booleano
+            $image->estado = (bool) $image->estado;
             return $image;
         });
 

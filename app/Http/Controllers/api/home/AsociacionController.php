@@ -7,11 +7,10 @@ use App\Models\asociacion;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class AsociacionController extends Controller
 {
-    use SoftDeletes;  // Esto activa soft deletes
+    use SoftDeletes;
 
     /**
      * Display a listing of the resource.

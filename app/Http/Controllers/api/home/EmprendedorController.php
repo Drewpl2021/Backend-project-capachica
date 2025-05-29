@@ -8,13 +8,11 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\emprendedor;
 use App\Models\EmprendedorService;
-use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class EmprendedorController extends Controller
 {
-    use ApiResponseTrait;
     /**
      * Display a listing of the resource.
      */
