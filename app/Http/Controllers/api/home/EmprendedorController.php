@@ -244,8 +244,8 @@ class EmprendedorController extends Controller
             'services' => $emprendedor->services->map(function ($service) {
                 return [
                     'id' => $service->id,
-                    'name' => $service->name ?? null,
-                    'description' => $service->description ?? null,
+                    'name_service' => $service->name ?? null,
+                    'description_service' => $service->description ?? null,
                     'code' => $service->pivot->code ?? null,
                     'status' => isset($service->pivot->status) ? (bool)$service->pivot->status : null,
                     'cantidad' => $service->pivot->cantidad ?? null,
