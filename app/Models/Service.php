@@ -50,6 +50,6 @@ class Service extends Model
 
     public function imgservices()
     {
-        return $this->hasMany(Imgservice::class, 'service_id');
+        return $this->hasMany(ImgService::class, 'service_id');
     }
 }
