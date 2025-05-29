@@ -23,7 +23,7 @@ class ImgAsociacionSeeder extends Seeder
                 'estado' => true,
                 'codigo' => 101
             ]);
-            img_asociacion::create([
+            Img_asociacion::create([
                 'asociacion_id' => $asociacion->id,
                 'url_image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYpsgH3y4Sc4KtA_O9XOL9M2f1kHvPCXM9Dg&s',
                 'estado' => true,
