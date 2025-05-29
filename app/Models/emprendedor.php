@@ -62,9 +62,19 @@ class Emprendedor extends Model
     public function services()
     {
         return $this->belongsToMany(Service::class, 'emprendedor_service', 'emprendedor_id', 'service_id')
-            ->withPivot(['id', 'code', 'cantidad', 'status', 'costo', 'costo_unidad'])
+            ->withPivot([
+                'id',
+                'code',
+                'status',
+                'cantidad',
+                'costo',
+                'costo_unidad',
+                'name',
+                'description',
+            ])
             ->withTimestamps();
     }
+
 
     public function emprendedorServices()
     {
