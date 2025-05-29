@@ -56,7 +56,7 @@ Route::get('/municipalidad', [MunicipalidadController::class, 'index']);
 Route::get('/municipalidad/descripcion', [MunicipalidadDescripcionController::class, 'index']);
 Route::get('/asociaciones', [AsociacionController::class, 'index']); // Obtener todas las asociaciones
 Route::get('/img-asociacionesTotal', [ImgAsociacionController::class, 'index']); // Obtener todas las imágenes
-
+Route::get('emprendedors-services/by-service', [EmprendedorServiceController::class, 'getByService']);
 
 Route::get('/parent-module/test', [ParentModuleController::class, 'listPaginate']);  // Listar con paginación
 Route::post('/parent-module/test', [ParentModuleController::class, 'store']);  // Crear nuevo módulo padre
@@ -269,7 +269,7 @@ Route::middleware('auth:api')->group(function () {
 Route::middleware(['auth:api'])->group(function () {
     Route::prefix('emprendedor-service')->group(function () {
 
-        Route::get('/by-service', [EmprendedorServiceController::class, 'getByService']); // PRIMERO esta ruta
+        // PRIMERO esta ruta
         Route::get('/', [EmprendedorServiceController::class, 'index']);
         Route::post('/', [EmprendedorServiceController::class, 'store']);
         Route::get('/restore/{id}', [EmprendedorServiceController::class, 'restore']); // antes de los de id
