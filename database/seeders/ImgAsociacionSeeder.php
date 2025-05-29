@@ -17,7 +17,7 @@ class ImgAsociacionSeeder extends Seeder
         $asociaciones = Asociacion::all();
 
         foreach ($asociaciones as $asociacion) {
-            Img_Asociacion::create([
+            Img_asociacion::create([
                 'asociacion_id' => $asociacion->id,
                 'url_image' => 'https://consultasenlinea.mincetur.gob.pe/fichaInventario/foto.aspx?cod=471157',
                 'estado' => true,
