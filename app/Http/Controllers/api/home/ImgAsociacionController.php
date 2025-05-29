@@ -4,7 +4,6 @@ namespace App\Http\Controllers\API\home;
 
 use App\Http\Controllers\Controller;
 use App\Models\Img_Asociacion;
-use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 
 class ImgAsociacionController extends Controller

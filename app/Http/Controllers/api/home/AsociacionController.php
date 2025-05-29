@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API\home;
 
 use App\Http\Controllers\Controller;
-use App\Models\asociacion;
+use App\Models\Asociacion;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
