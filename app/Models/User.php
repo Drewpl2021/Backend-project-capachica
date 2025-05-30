@@ -91,7 +91,7 @@ class User extends Authenticatable implements JWTSubject
             'emprendedor_user',
             'user_id',
             'emprendedor_id'
-        )->withTimestamps(); // esto es opcional si tienes timestamps en la tabla pivote
+        )->withTimestamps(); // esto es opcional si tienes timestamps en la tabla pivotes
     }
 
 
