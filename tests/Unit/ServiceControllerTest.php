@@ -16,7 +16,7 @@ class ServiceControllerTest extends TestCase
         // Crear un servicio base para usar en las pruebas
         Service::create([
             'name' => 'Servicio Base',
-            'code' => 'SVC001',
+            'code' => fake()->unique()->regexify('SVC[0-9]{3}'),
             'description' => 'Descripción del servicio base',
             'category' => 'Categoria A',
             'status' => true,
@@ -28,7 +28,7 @@ class ServiceControllerTest extends TestCase
     {
         $response = $this->postJson('/service/test', [
             'name' => 'Nuevo Servicio',
-            'code' => 'SVC002',
+            'code' => fake()->unique()->regexify('SVC[0-9]{3}'),
             'description' => 'Descripción del nuevo servicio',
             'category' => 'Categoria B',
             'status' => true,

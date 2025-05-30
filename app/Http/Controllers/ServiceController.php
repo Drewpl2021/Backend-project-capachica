@@ -65,7 +65,7 @@ class ServiceController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'code' => ['required', 'string', 'max:255', Rule::unique('services')],
+            'code' => ['required', 'string', 'max:255'],
             'description' => 'nullable|string',
             'category' => 'nullable|string|max:100',
             'status' => 'nullable|boolean',
