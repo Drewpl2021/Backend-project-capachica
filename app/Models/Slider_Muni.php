@@ -9,11 +9,13 @@ use Illuminate\Support\Str;
 
 class Slider_Muni extends Model
 {
-    use HasFactory;
-    public $incrementing = false;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
+    public $incrementing = false;
     protected $keyType = 'string';
+    protected $dates = ['deleted_at'];
+
+
     protected static function boot()
     {
         parent::boot();
@@ -22,12 +24,17 @@ class Slider_Muni extends Model
             $model->id = (string) Str::uuid();
         });
     }
-    // Campos que pueden ser asignados masivamente
-    protected $fillable = ['municipalidad_id', 'titulo', 'descripcion'];
 
+    // ✅ Campos que pueden ser asignados masivamente
+    protected $fillable = [
+        'municipalidad_id',
+        'titulo',
+        'descripcion',
+        'url_images'
+    ];
 
-    // Relación pertenece a una Municipalidad
-    public function Municipalidad()
+    // ✅ Relación correcta con Municipalidad
+    public function municipalidad()
     {
         return $this->belongsTo(Municipalidad::class, 'municipalidad_id');
     }
