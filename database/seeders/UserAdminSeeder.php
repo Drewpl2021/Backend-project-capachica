@@ -6,12 +6,31 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class UserAdminSeeder extends Seeder
 {
     public function run()
     {
-        // Crear usuario ADMIN si no existe
+        // Crear permisos con guard "api"
+        $permisoVerAsociacion = Permission::firstOrCreate(
+            ['name' => 'view asociacion', 'guard_name' => 'api']
+        );
+
+        // Crear roles con guard "api"
+        $adminRole = Role::firstOrCreate(
+            ['name' => 'admin', 'guard_name' => 'api']
+        );
+
+        $usuarioRole = Role::firstOrCreate(
+            ['name' => 'usuario', 'guard_name' => 'api']
+        );
+
+        $adminFamiliaRole = Role::firstOrCreate(
+            ['name' => 'admin_familia', 'guard_name' => 'api']
+        );
+
+        // Crear usuario ADMIN
         $admin = User::firstOrCreate(
             ['email' => 'admin@example.com'],
             [
@@ -24,13 +43,11 @@ class UserAdminSeeder extends Seeder
             ]
         );
 
-        // Asignar rol admin
-        $adminRole = Role::where('name', 'admin')->first();
-        if ($adminRole && !$admin->hasRole('admin')) {
-            $admin->assignRole($adminRole);
-        }
+        // Asignar rol y permisos al admin
+        $admin->assignRole($adminRole);
+        $admin->givePermissionTo($permisoVerAsociacion);
 
-        // Crear usuario Andres Montes si no existe
+        // Crear usuario Andres Montes
         $andres = User::firstOrCreate(
             ['email' => 'andres.montes@example.com'],
             [
@@ -43,13 +60,11 @@ class UserAdminSeeder extends Seeder
             ]
         );
 
-        // Asignar rol user
-        $andresRole = Role::where('name', 'admin')->first();
-        if ($andresRole && !$andres->hasRole('admin')) {
-            $andres->assignRole($andresRole);
-        }
+        // Asignar rol y permisos a Andres Montes
+        $andres->assignRole($adminRole);
+        $andres->givePermissionTo($permisoVerAsociacion);
 
-        //Rol user
+        // Crear usuario Marleny Torres
         $usuario = User::firstOrCreate(
             ['email' => 'usuario@example.com'],
             [
@@ -62,11 +77,8 @@ class UserAdminSeeder extends Seeder
             ]
         );
 
-        // Asignar rol admin_familia
-        $usuarios = Role::where('name', 'usuario')->first();
-        if ($usuarios && !$usuario->hasRole('usuario')) {
-            $usuario->assignRole($usuarios);
-        }
+        // Asignar rol a Marleny Torres
+        $usuario->assignRole($usuarioRole);
 
         // Crear usuario con rol admin_familia
         $familiaUsuario = User::firstOrCreate(
@@ -81,10 +93,7 @@ class UserAdminSeeder extends Seeder
             ]
         );
 
-        // Asignar rol admin_familia
-        $adminFamiliaRole = Role::where('name', 'admin_familia')->first();
-        if ($adminFamiliaRole && !$familiaUsuario->hasRole('admin_familia')) {
-            $familiaUsuario->assignRole($adminFamiliaRole);
-        }
+        // Asignar rol a Nuevo Familia
+        $familiaUsuario->assignRole($adminFamiliaRole);
     }
 }

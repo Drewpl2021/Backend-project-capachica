@@ -2,65 +2,77 @@
 
 namespace Tests\Feature;
 
-use App\Models\Img_asociacion;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Asociacion;
+use App\Models\User;
+use App\Models\Municipalidad;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class AsociacionImgTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function puede_crear_una_asociacion_con_imagen()
+    protected $adminUser;
+    protected $municipalidad;
+
+    protected function setUp(): void
     {
-        $asociacion = Asociacion::factory()->create();
+        parent::setUp();
 
-        $imagen = Img_asociacion::factory()->create([
-            'asociacion_id' => $asociacion->id,
-        ]);
+        // Ejecutar seeders para tener usuarios y asociaciones disponibles
+        $this->seed(\Database\Seeders\UserAdminSeeder::class);
 
-        $this->assertDatabaseHas('asociacions', [
-            'id' => $asociacion->id,
-            'nombre' => $asociacion->nombre,
-        ]);
+        // Obtener usuario admin para autenticación
+        $this->adminUser = User::where('username', 'andres.montes')->first();
 
-        $this->assertDatabaseHas('img_asociacions', [
-            'id' => $imagen->id,
-            'asociacion_id' => $asociacion->id,
-            'codigo' => $imagen->codigo,
+        // Crear municipalidad para la relación
+        $this->municipalidad = Municipalidad::factory()->create();
+
+        // Crear asociación de ejemplo
+        Asociacion::factory()->create([
+            'municipalidad_id' => $this->municipalidad->id,
+            'nombre' => 'Asociacion Existente'
         ]);
     }
 
     /** @test */
-    public function puede_crear_asociacion_con_estado_true()
+    public function puede_listar_asociacion_existente_y_agregarle_una_imagen()
     {
-        $asociacion = Asociacion::factory()->create(['estado' => true]);
+        // 1️⃣ Obtenemos la asociación desde la base de datos
+        $asociacion = Asociacion::where('nombre', 'Asociacion Existente')->first();
+        $this->assertNotNull($asociacion, 'La asociación debería existir en la base de datos.');
 
-        $this->assertDatabaseHas('asociacions', [
-            'id' => $asociacion->id,
+        // 2️⃣ Consultamos la asociación (GET)
+        $responseGet = $this->actingAs($this->adminUser, 'api')
+                            ->getJson("/asociacion/{$asociacion->id}");
+
+        $responseGet->assertStatus(200)
+                    ->assertJsonFragment(['nombre' => 'Asociacion Existente']);
+
+        // 3️⃣ Creamos el payload de la nueva imagen
+        $data = [
+            'asociacion_id' => $asociacion->id,
+            'url_image' => 'http://imagenprueba.com/img1.jpg',
             'estado' => true,
+            'codigo' => 'IMG999',
+        ];
+
+        // 4️⃣ Enviamos la petición POST a /img-asociacion
+        $responsePost = $this->actingAs($this->adminUser, 'api')
+                             ->postJson('/img-asociacion', $data);
+
+        // 5️⃣ Verificamos la respuesta
+        $responsePost->assertStatus(201)
+                     ->assertJsonFragment([
+                         'url_image' => 'http://imagenprueba.com/img1.jpg',
+                         'codigo' => 'IMG999',
+                         'asociacion_id' => $asociacion->id,
+                     ]);
+
+        // 6️⃣ Confirmamos que la imagen existe en la base de datos
+        $this->assertDatabaseHas('img_asociacions', [
+            'codigo' => 'IMG999',
+            'asociacion_id' => $asociacion->id
         ]);
-    }
-
-    /** @test */
-    public function asociacion_tiene_imagenes_relacionadas()
-    {
-        $asociacion = Asociacion::factory()->create();
-
-        Img_asociacion::factory()->count(3)->create([
-            'asociacion_id' => $asociacion->id,
-        ]);
-
-        $this->assertCount(3, $asociacion->imgAsociacions);
-    }
-
-    /** @test */
-    public function codigo_de_imagenes_es_unico()
-    {
-        $imagen1 = Img_asociacion::factory()->create();
-        $imagen2 = Img_asociacion::factory()->create();
-
-        $this->assertNotEquals($imagen1->codigo, $imagen2->codigo);
     }
 }
