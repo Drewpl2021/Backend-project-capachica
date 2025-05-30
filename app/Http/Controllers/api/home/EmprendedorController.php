@@ -6,15 +6,13 @@ use App\Models\Sale;
 use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\Controller;
-use App\Models\emprendedor;
+use App\Models\Emprendedor;
 use App\Models\EmprendedorService;
-use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class EmprendedorController extends Controller
 {
-    use ApiResponseTrait;
     /**
      * Display a listing of the resource.
      */
@@ -214,22 +212,19 @@ class EmprendedorController extends Controller
 
     public function getByUserId($userId)
     {
-        // Buscar el emprendedor_id en la tabla emprendedor_user por user_id
         $emprendedorUser = DB::table('emprendedor_user')->where('user_id', $userId)->first();
 
         if (!$emprendedorUser) {
-            return $this->errorResponse('No se encontró emprendedor asociado a este usuario', 404);
+            return response()->json(['error' => 'No se encontró emprendedor asociado a este usuario'], 404);
         }
 
-        // Buscar el emprendedor con relaciones
         $emprendedor = Emprendedor::with(['asociacion', 'services', 'imgEmprendedores'])
             ->find($emprendedorUser->emprendedor_id);
 
         if (!$emprendedor) {
-            return $this->errorResponse('Emprendedor no encontrado', 404);
+            return response()->json(['error' => 'Emprendedor no encontrado'], 404);
         }
 
-        // Preparar la respuesta como en index()
         $response = [
             'id' => $emprendedor->id,
             'razonSocial' => $emprendedor->razon_social,
@@ -249,16 +244,25 @@ class EmprendedorController extends Controller
             'services' => $emprendedor->services->map(function ($service) {
                 return [
                     'id' => $service->id,
-                    'name' => $service->name ?? null,
-                    'description' => $service->description ?? null,
+                    'name_service' => $service->name ?? null,
+                    'description_service' => $service->description ?? null,
+
+
                     'code' => $service->pivot->code ?? null,
-                    'status' => $service->pivot->status ?? null,
+                    'status' => isset($service->pivot->status) ? (bool)$service->pivot->status : null,
+                    'cantidad' => $service->pivot->cantidad ?? null,
+                    'costo' => $service->pivot->costo ?? null,
+                    'costo_unidad' => $service->pivot->costo_unidad ?? null,
+                    'name_service_empredimiento' => $service->pivot->name ?? null,          // Si quieres enviar el "name" del pivote
+                    'description_service_empredimiento' => $service->pivot->description ?? null, // Si quieres enviar la "description" del pivote
                 ];
             }),
         ];
 
         return response()->json($response);
     }
+
+
 
     public function reporteVentas($emprendedorId, Request $request)
     {

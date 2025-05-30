@@ -1,0 +1,1241 @@
+<?xml version="1.0"?>
+<phpunit xmlns="https://schema.phpunit.de/coverage/1.0">
+  <file name="MunicipalidadDescripcionController.php" path="\Http\Controllers\API\home">
+    <totals>
+      <lines total="147" comments="24" code="123" executable="75" executed="59" percent="78.67"/>
+      <methods count="5" tested="1" percent="20.00"/>
+      <functions count="0" tested="0" percent="0"/>
+      <classes count="1" tested="0" percent="0.00"/>
+      <traits count="0" tested="0" percent="0"/>
+    </totals>
+    <class name="App\Http\Controllers\API\home\MunicipalidadDescripcionController" start="10" executable="75" executed="59" crap="9.79">
+      <namespace name="App\Http\Controllers\API\home"/>
+      <method name="index" signature="index(Illuminate\Http\Request $request)" start="15" end="27" crap="1" executable="9" executed="9" coverage="100"/>
+      <method name="store" signature="store(Illuminate\Http\Request $request, $municipalidadId)" start="32" end="65" crap="2.02" executable="22" executed="18" coverage="81.818181818182"/>
+      <method name="show" signature="show($id)" start="70" end="86" crap="2.19" executable="11" executed="7" coverage="63.636363636364"/>
+      <method name="update" signature="update(Illuminate\Http\Request $request, $id)" start="91" end="122" crap="2.02" executable="22" executed="18" coverage="81.818181818182"/>
+      <method name="destroy" signature="destroy($id)" start="127" end="145" crap="2.19" executable="11" executed="7" coverage="63.636363636364"/>
+    </class>
+    <coverage>
+      <line nr="17">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_index_retorna_paginacion_y_datos"/>
+      </line>
+      <line nr="18">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_index_retorna_paginacion_y_datos"/>
+      </line>
+      <line nr="20">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_index_retorna_paginacion_y_datos"/>
+      </line>
+      <line nr="21">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_index_retorna_paginacion_y_datos"/>
+      </line>
+      <line nr="22">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_index_retorna_paginacion_y_datos"/>
+      </line>
+      <line nr="23">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_index_retorna_paginacion_y_datos"/>
+      </line>
+      <line nr="24">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_index_retorna_paginacion_y_datos"/>
+      </line>
+      <line nr="25">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_index_retorna_paginacion_y_datos"/>
+      </line>
+      <line nr="35">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_store_crea_descripcion_con_municipalidad_id"/>
+      </line>
+      <line nr="36">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_store_crea_descripcion_con_municipalidad_id"/>
+      </line>
+      <line nr="44">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_store_crea_descripcion_con_municipalidad_id"/>
+      </line>
+      <line nr="45">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_store_crea_descripcion_con_municipalidad_id"/>
+      </line>
+      <line nr="55">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_store_crea_descripcion_con_municipalidad_id"/>
+      </line>
+      <line nr="58">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_store_crea_descripcion_con_municipalidad_id"/>
+      </line>
+      <line nr="60">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_store_crea_descripcion_con_municipalidad_id"/>
+      </line>
+      <line nr="61">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_store_crea_descripcion_con_municipalidad_id"/>
+      </line>
+      <line nr="62">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_store_crea_descripcion_con_municipalidad_id"/>
+      </line>
+      <line nr="63">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_store_crea_descripcion_con_municipalidad_id"/>
+      </line>
+      <line nr="64">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_store_crea_descripcion_con_municipalidad_id"/>
+      </line>
+      <line nr="72">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_show_retorna_descripcion_por_id"/>
+      </line>
+      <line nr="74">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_show_retorna_descripcion_por_id"/>
+      </line>
+      <line nr="81">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_show_retorna_descripcion_por_id"/>
+      </line>
+      <line nr="82">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_show_retorna_descripcion_por_id"/>
+      </line>
+      <line nr="83">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_show_retorna_descripcion_por_id"/>
+      </line>
+      <line nr="84">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_show_retorna_descripcion_por_id"/>
+      </line>
+      <line nr="93">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_update_modifica_descripcion_por_id"/>
+      </line>
+      <line nr="95">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_update_modifica_descripcion_por_id"/>
+      </line>
+      <line nr="103">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_update_modifica_descripcion_por_id"/>
+      </line>
+      <line nr="104">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_update_modifica_descripcion_por_id"/>
+      </line>
+      <line nr="115">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_update_modifica_descripcion_por_id"/>
+      </line>
+      <line nr="117">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_update_modifica_descripcion_por_id"/>
+      </line>
+      <line nr="118">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_update_modifica_descripcion_por_id"/>
+      </line>
+      <line nr="119">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_update_modifica_descripcion_por_id"/>
+      </line>
+      <line nr="120">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_update_modifica_descripcion_por_id"/>
+      </line>
+      <line nr="129">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_destroy_elimina_descripcion_por_id"/>
+      </line>
+      <line nr="131">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_destroy_elimina_descripcion_por_id"/>
+      </line>
+      <line nr="139">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_destroy_elimina_descripcion_por_id"/>
+      </line>
+      <line nr="141">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_destroy_elimina_descripcion_por_id"/>
+      </line>
+      <line nr="142">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_destroy_elimina_descripcion_por_id"/>
+      </line>
+      <line nr="26">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_index_retorna_paginacion_y_datos"/>
+      </line>
+      <line nr="46">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_store_crea_descripcion_con_municipalidad_id"/>
+      </line>
+      <line nr="47">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_store_crea_descripcion_con_municipalidad_id"/>
+      </line>
+      <line nr="48">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_store_crea_descripcion_con_municipalidad_id"/>
+      </line>
+      <line nr="49">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_store_crea_descripcion_con_municipalidad_id"/>
+      </line>
+      <line nr="50">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_store_crea_descripcion_con_municipalidad_id"/>
+      </line>
+      <line nr="51">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_store_crea_descripcion_con_municipalidad_id"/>
+      </line>
+      <line nr="52">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_store_crea_descripcion_con_municipalidad_id"/>
+      </line>
+      <line nr="85">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_show_retorna_descripcion_por_id"/>
+      </line>
+      <line nr="105">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_update_modifica_descripcion_por_id"/>
+      </line>
+      <line nr="106">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_update_modifica_descripcion_por_id"/>
+      </line>
+      <line nr="107">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_update_modifica_descripcion_por_id"/>
+      </line>
+      <line nr="108">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_update_modifica_descripcion_por_id"/>
+      </line>
+      <line nr="109">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_update_modifica_descripcion_por_id"/>
+      </line>
+      <line nr="110">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_update_modifica_descripcion_por_id"/>
+      </line>
+      <line nr="111">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_update_modifica_descripcion_por_id"/>
+      </line>
+      <line nr="112">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_update_modifica_descripcion_por_id"/>
+      </line>
+      <line nr="121">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_update_modifica_descripcion_por_id"/>
+      </line>
+      <line nr="143">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_destroy_elimina_descripcion_por_id"/>
+      </line>
+      <line nr="144">
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_destroy_elimina_descripcion_por_id"/>
+      </line>
+    </coverage>
+    <source>
+      <line no="1">
+        <token name="T_OPEN_TAG">&lt;?php</token>
+      </line>
+      <line no="2"/>
+      <line no="3">
+        <token name="T_NAMESPACE">namespace</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_NAME_QUALIFIED">App\Http\Controllers\API\home</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="4"/>
+      <line no="5">
+        <token name="T_USE">use</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_NAME_QUALIFIED">App\Http\Controllers\Controller</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="6">
+        <token name="T_USE">use</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_NAME_QUALIFIED">App\Models\Municipalidad_Descripcion</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="7">
+        <token name="T_USE">use</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_NAME_QUALIFIED">App\Traits\ApiResponseTrait</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="8">
+        <token name="T_USE">use</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_NAME_QUALIFIED">Illuminate\Http\Request</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="9"/>
+      <line no="10">
+        <token name="T_CLASS">class</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">MunicipalidadDescripcionController</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EXTENDS">extends</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">Controller</token>
+      </line>
+      <line no="11">
+        <token name="T_OPEN_CURLY">{</token>
+      </line>
+      <line no="12">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_DOC_COMMENT">/**</token>
+      </line>
+      <line no="13">
+        <token name="T_DOC_COMMENT">     * Display a listing of the resource with pagination.</token>
+      </line>
+      <line no="14">
+        <token name="T_DOC_COMMENT">     */</token>
+      </line>
+      <line no="15">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_PUBLIC">public</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_FUNCTION">function</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">index</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_STRING">Request</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$request</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+      </line>
+      <line no="16">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_OPEN_CURLY">{</token>
+      </line>
+      <line no="17">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_VARIABLE">$size</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$request</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">input</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'size'</token>
+        <token name="T_COMMA">,</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_LNUMBER">10</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+        <token name="T_WHITESPACE">  </token>
+        <token name="T_COMMENT">// Tama&#xF1;o de la p&#xE1;gina</token>
+      </line>
+      <line no="18">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_VARIABLE">$descripciones</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">Municipalidad_Descripcion</token>
+        <token name="T_DOUBLE_COLON">::</token>
+        <token name="T_STRING">paginate</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_VARIABLE">$size</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="19"/>
+      <line no="20">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_RETURN">return</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">response</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">json</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_OPEN_SQUARE">[</token>
+      </line>
+      <line no="21">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'content'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$descripciones</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">items</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="22">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'totalElements'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$descripciones</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">total</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="23">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'currentPage'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$descripciones</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">currentPage</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="24">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'totalPages'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$descripciones</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">lastPage</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="25">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'perPage'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$descripciones</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">perPage</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="26">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_CLOSE_SQUARE">]</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="27">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_CLOSE_CURLY">}</token>
+      </line>
+      <line no="28"/>
+      <line no="29">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_DOC_COMMENT">/**</token>
+      </line>
+      <line no="30">
+        <token name="T_DOC_COMMENT">     * Store a newly created resource in storage.</token>
+      </line>
+      <line no="31">
+        <token name="T_DOC_COMMENT">     */</token>
+      </line>
+      <line no="32">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_PUBLIC">public</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_FUNCTION">function</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">store</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_STRING">Request</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$request</token>
+        <token name="T_COMMA">,</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$municipalidadId</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+      </line>
+      <line no="33">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_OPEN_CURLY">{</token>
+      </line>
+      <line no="34">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_COMMENT">// Verificar si ya existe una descripci&#xF3;n para esa municipalidad</token>
+      </line>
+      <line no="35">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_VARIABLE">$descripcion</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">Municipalidad_Descripcion</token>
+        <token name="T_DOUBLE_COLON">::</token>
+        <token name="T_STRING">where</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'municipalidad_id'</token>
+        <token name="T_COMMA">,</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$municipalidadId</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">first</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="36">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_IF">if</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_VARIABLE">$descripcion</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_OPEN_CURLY">{</token>
+      </line>
+      <line no="37">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_RETURN">return</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">response</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">json</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_OPEN_SQUARE">[</token>
+      </line>
+      <line no="38">
+        <token name="T_WHITESPACE">                </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'status'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">false</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="39">
+        <token name="T_WHITESPACE">                </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'message'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'Ya existe una descripci&#xF3;n para esta municipalidad.'</token>
+      </line>
+      <line no="40">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CLOSE_SQUARE">]</token>
+        <token name="T_COMMA">,</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_LNUMBER">400</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="41">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_CLOSE_CURLY">}</token>
+      </line>
+      <line no="42"/>
+      <line no="43">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_COMMENT">// Validaci&#xF3;n de los datos</token>
+      </line>
+      <line no="44">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_VARIABLE">$validated</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$request</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">validate</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_OPEN_SQUARE">[</token>
+      </line>
+      <line no="45">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'logo'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'required|string|max:255'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="46">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'direccion'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'required|string|max:255'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="47">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'descripcion'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'required|string'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="48">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'ruc'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'required|string|max:255'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="49">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'correo'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'required|string|email|max:255'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="50">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'nombre_alcalde'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'required|string|max:255'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="51">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'anio_gestion'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'required|string|max:4'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="52">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_CLOSE_SQUARE">]</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="53"/>
+      <line no="54">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_COMMENT">// Asignar el ID de la municipalidad</token>
+      </line>
+      <line no="55">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_VARIABLE">$validated</token>
+        <token name="T_OPEN_SQUARE">[</token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'municipalidad_id'</token>
+        <token name="T_CLOSE_SQUARE">]</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$municipalidadId</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="56"/>
+      <line no="57">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_COMMENT">// Crear la nueva descripci&#xF3;n</token>
+      </line>
+      <line no="58">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_VARIABLE">$newDescripcion</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">Municipalidad_Descripcion</token>
+        <token name="T_DOUBLE_COLON">::</token>
+        <token name="T_STRING">create</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_VARIABLE">$validated</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="59"/>
+      <line no="60">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_RETURN">return</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">response</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">json</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_OPEN_SQUARE">[</token>
+      </line>
+      <line no="61">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'status'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">true</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="62">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'message'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'Descripci&#xF3;n de municipalidad creada exitosamente'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="63">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'data'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$newDescripcion</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="64">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_CLOSE_SQUARE">]</token>
+        <token name="T_COMMA">,</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_LNUMBER">201</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="65">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_CLOSE_CURLY">}</token>
+      </line>
+      <line no="66"/>
+      <line no="67">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_DOC_COMMENT">/**</token>
+      </line>
+      <line no="68">
+        <token name="T_DOC_COMMENT">     * Display the specified resource.</token>
+      </line>
+      <line no="69">
+        <token name="T_DOC_COMMENT">     */</token>
+      </line>
+      <line no="70">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_PUBLIC">public</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_FUNCTION">function</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">show</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_VARIABLE">$id</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+      </line>
+      <line no="71">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_OPEN_CURLY">{</token>
+      </line>
+      <line no="72">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_VARIABLE">$descripcion</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">Municipalidad_Descripcion</token>
+        <token name="T_DOUBLE_COLON">::</token>
+        <token name="T_STRING">find</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_VARIABLE">$id</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="73"/>
+      <line no="74">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_IF">if</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_EXCLAMATION_MARK">!</token>
+        <token name="T_VARIABLE">$descripcion</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_OPEN_CURLY">{</token>
+      </line>
+      <line no="75">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_RETURN">return</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">response</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">json</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_OPEN_SQUARE">[</token>
+      </line>
+      <line no="76">
+        <token name="T_WHITESPACE">                </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'status'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">false</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="77">
+        <token name="T_WHITESPACE">                </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'message'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'Descripci&#xF3;n de municipio no encontrada'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="78">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CLOSE_SQUARE">]</token>
+        <token name="T_COMMA">,</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_LNUMBER">404</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="79">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_CLOSE_CURLY">}</token>
+      </line>
+      <line no="80"/>
+      <line no="81">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_RETURN">return</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">response</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">json</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_OPEN_SQUARE">[</token>
+      </line>
+      <line no="82">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'status'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">true</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="83">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'message'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'Descripci&#xF3;n de municipio encontrada'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="84">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'data'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$descripcion</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="85">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_CLOSE_SQUARE">]</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="86">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_CLOSE_CURLY">}</token>
+      </line>
+      <line no="87"/>
+      <line no="88">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_DOC_COMMENT">/**</token>
+      </line>
+      <line no="89">
+        <token name="T_DOC_COMMENT">     * Update the specified resource in storage.</token>
+      </line>
+      <line no="90">
+        <token name="T_DOC_COMMENT">     */</token>
+      </line>
+      <line no="91">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_PUBLIC">public</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_FUNCTION">function</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">update</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_STRING">Request</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$request</token>
+        <token name="T_COMMA">,</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$id</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+      </line>
+      <line no="92">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_OPEN_CURLY">{</token>
+      </line>
+      <line no="93">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_VARIABLE">$descripcion</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">Municipalidad_Descripcion</token>
+        <token name="T_DOUBLE_COLON">::</token>
+        <token name="T_STRING">find</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_VARIABLE">$id</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="94"/>
+      <line no="95">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_IF">if</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_EXCLAMATION_MARK">!</token>
+        <token name="T_VARIABLE">$descripcion</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_OPEN_CURLY">{</token>
+      </line>
+      <line no="96">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_RETURN">return</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">response</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">json</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_OPEN_SQUARE">[</token>
+      </line>
+      <line no="97">
+        <token name="T_WHITESPACE">                </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'status'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">false</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="98">
+        <token name="T_WHITESPACE">                </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'message'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'Descripci&#xF3;n de municipio no encontrada'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="99">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CLOSE_SQUARE">]</token>
+        <token name="T_COMMA">,</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_LNUMBER">404</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="100">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_CLOSE_CURLY">}</token>
+      </line>
+      <line no="101"/>
+      <line no="102">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_COMMENT">// Validaci&#xF3;n de los datos</token>
+      </line>
+      <line no="103">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_VARIABLE">$validated</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$request</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">validate</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_OPEN_SQUARE">[</token>
+      </line>
+      <line no="104">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'municipalidad_id'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'required|uuid|exists:municipalidads,id'</token>
+        <token name="T_COMMA">,</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_COMMENT">// Asegurarse que la municipalidad existe</token>
+      </line>
+      <line no="105">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'logo'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'required|string|max:255'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="106">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'direccion'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'required|string|max:255'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="107">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'descripcion'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'required|string'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="108">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'ruc'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'required|string|max:255'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="109">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'correo'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'required|string|email|max:255'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="110">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'nombre_alcalde'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'required|string|max:255'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="111">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'anio_gestion'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'required|string|max:4'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="112">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_CLOSE_SQUARE">]</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="113"/>
+      <line no="114">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_COMMENT">// Actualizar la descripci&#xF3;n</token>
+      </line>
+      <line no="115">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_VARIABLE">$descripcion</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">update</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_VARIABLE">$validated</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="116"/>
+      <line no="117">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_RETURN">return</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">response</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">json</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_OPEN_SQUARE">[</token>
+      </line>
+      <line no="118">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'status'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">true</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="119">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'message'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'Descripci&#xF3;n de municipio actualizada exitosamente'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="120">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'data'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$descripcion</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="121">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_CLOSE_SQUARE">]</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="122">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_CLOSE_CURLY">}</token>
+      </line>
+      <line no="123"/>
+      <line no="124">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_DOC_COMMENT">/**</token>
+      </line>
+      <line no="125">
+        <token name="T_DOC_COMMENT">     * Remove the specified resource from storage.</token>
+      </line>
+      <line no="126">
+        <token name="T_DOC_COMMENT">     */</token>
+      </line>
+      <line no="127">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_PUBLIC">public</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_FUNCTION">function</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">destroy</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_VARIABLE">$id</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+      </line>
+      <line no="128">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_OPEN_CURLY">{</token>
+      </line>
+      <line no="129">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_VARIABLE">$descripcion</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">Municipalidad_Descripcion</token>
+        <token name="T_DOUBLE_COLON">::</token>
+        <token name="T_STRING">find</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_VARIABLE">$id</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="130"/>
+      <line no="131">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_IF">if</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_EXCLAMATION_MARK">!</token>
+        <token name="T_VARIABLE">$descripcion</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_OPEN_CURLY">{</token>
+      </line>
+      <line no="132">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_RETURN">return</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">response</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">json</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_OPEN_SQUARE">[</token>
+      </line>
+      <line no="133">
+        <token name="T_WHITESPACE">                </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'status'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">false</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="134">
+        <token name="T_WHITESPACE">                </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'message'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'Descripci&#xF3;n de municipio no encontrada'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="135">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CLOSE_SQUARE">]</token>
+        <token name="T_COMMA">,</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_LNUMBER">404</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="136">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_CLOSE_CURLY">}</token>
+      </line>
+      <line no="137"/>
+      <line no="138">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_COMMENT">// Eliminar la descripci&#xF3;n</token>
+      </line>
+      <line no="139">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_VARIABLE">$descripcion</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">delete</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="140"/>
+      <line no="141">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_RETURN">return</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">response</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">json</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_OPEN_SQUARE">[</token>
+      </line>
+      <line no="142">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'status'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">true</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="143">
+        <token name="T_WHITESPACE">            </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'message'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOUBLE_ARROW">=&gt;</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'Descripci&#xF3;n de municipio eliminada exitosamente'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="144">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_CLOSE_SQUARE">]</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="145">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_CLOSE_CURLY">}</token>
+      </line>
+      <line no="146">
+        <token name="T_CLOSE_CURLY">}</token>
+      </line>
+      <line no="147"/>
+    </source>
+  </file>
+</phpunit>

@@ -8,7 +8,6 @@ use Tests\TestCase;
 
 class ParentModuleControllerTest extends TestCase
 {
-    use RefreshDatabase;
 
     // Crear un módulo padre para usar en las pruebas
     public function setUp(): void
@@ -45,7 +44,15 @@ class ParentModuleControllerTest extends TestCase
         // Verificar que el código de estado sea 200
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'id', 'title', 'subtitle', 'type', 'code', 'icon', 'status', 'moduleOrder', 'link'
+                'id',
+                'title',
+                'subtitle',
+                'type',
+                'code',
+                'icon',
+                'status',
+                'moduleOrder',
+                'link'
             ]);
     }
 
@@ -128,6 +135,4 @@ class ParentModuleControllerTest extends TestCase
             'id' => $parentModule->id
         ]);
     }
-
-
 }

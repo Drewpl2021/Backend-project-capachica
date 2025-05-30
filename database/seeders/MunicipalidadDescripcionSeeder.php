@@ -13,10 +13,8 @@ class MunicipalidadDescripcionSeeder extends Seeder
      */
     public function run()
     {
-        // Obtener la primera municipalidad existente (con UUID)
-        $municipalidad = Municipalidad::first(); // Obtener el primer registro con UUID
+        $municipalidad = Municipalidad::first();
 
-        // Verificar que la municipalidad existe
         if (!$municipalidad) {
             return; // Si no hay ninguna municipalidad, termina el seeding
         }

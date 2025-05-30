@@ -1,40 +1,35 @@
-# Usa una imagen oficial de PHP como base
-FROM php:8.1-fpm
+FROM jenkins/jenkins:lts
 
-# Crear un nuevo usuario (sin privilegios de root)
-RUN useradd -ms /bin/bash laraveluser
-
-# Cambiar a root para poder instalar dependencias
 USER root
 
-# Instalar las dependencias necesarias
-RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev zip git && \
-    docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install gd pdo pdo_mysql
+# Instalar dependencias base
+RUN apt update && apt install -y \
+    apt-transport-https lsb-release ca-certificates wget gnupg \
+    curl unzip git zip software-properties-common
 
-# Cambiar de nuevo a laraveluser después de la instalación
-USER laraveluser
+# Repositorio de PHP 8.2 (requerido para Laravel 10)
+RUN wget -qO - https://packages.sury.org/php/apt.gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/php.gpg && \
+    echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list
 
-# Configurar el directorio de trabajo dentro del contenedor
-WORKDIR /var/www
+# Instalar PHP 8.2 y extensiones necesarias
+RUN apt update && apt install -y \
+    php8.2 php8.2-cli php8.2-mbstring php8.2-xml php8.2-curl \
+    php8.2-bcmath php8.2-mysql php8.2-zip php8.2-sqlite3
 
-# Copiar el archivo composer.json y composer.lock para instalar las dependencias de Laravel
-COPY composer.json composer.lock /var/www/
-
-# Instalar Composer (el gestor de dependencias PHP)
+# Instalar Composer globalmente
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Instalar las dependencias de Laravel
-RUN composer install
+# Instalar Node.js (opcional, para frontend)
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt install -y nodejs
 
-# Copiar todo el código del proyecto dentro del contenedor
-COPY . /var/www
+# SonarScanner (opcional)
+RUN curl -o /tmp/sonar.zip -L https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip && \
+    unzip /tmp/sonar.zip -d /opt && \
+    ln -s /opt/sonar-scanner-*/bin/sonar-scanner /usr/local/bin/sonar-scanner && \
+    rm /tmp/sonar.zip
 
-# Configurar permisos para los archivos de Laravel (como almacenamiento y caché)
-RUN chown -R laraveluser:laraveluser /var/www/storage /var/www/bootstrap/cache
+# Permisos para Jenkins
+RUN chown -R jenkins:jenkins /var/jenkins_home
 
-# Exponer el puerto que usará Laravel (8080 en este caso)
-EXPOSE 8080
-
-# Comando para iniciar el servidor de Laravel dentro del contenedor
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
+USER jenkins

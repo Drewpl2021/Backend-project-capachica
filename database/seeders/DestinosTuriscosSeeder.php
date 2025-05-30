@@ -13,11 +13,9 @@ class DestinosTuriscosSeeder extends Seeder
      */
     public function run()
     {
-        // Obtener todos los emprendedores de la base de datos
-        $emprendedores = Emprendedor::all(); // Asegúrate de que haya al menos un emprendedor
+        $emprendedores = Emprendedor::all();
 
         foreach ($emprendedores as $emprendedor) {
-            // Crear algunos destinos turísticos asociados a cada emprendedor
             DestinosTuriscos::create([
                 'nombre' => 'Isla de los Uros',
                 'descripcion' => 'Un grupo de islas flotantes ubicadas en el lago Titicaca.',

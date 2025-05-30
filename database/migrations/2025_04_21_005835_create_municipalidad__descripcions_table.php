@@ -16,7 +16,7 @@ return new class extends Migration
             $table->uuid('municipalidad_id');
             $table->string('logo');
             $table->string('direccion');
-            $table->string('descripcion');
+            $table->text('descripcion');
             $table->string('ruc');
             $table->string('correo');
             $table->string('nombre_alcalde');

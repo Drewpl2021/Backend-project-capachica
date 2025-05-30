@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Imgservice;
+use App\Models\ImgService;
 use Illuminate\Http\Request;
 
 class ImgServiceController extends Controller
@@ -15,7 +15,7 @@ class ImgServiceController extends Controller
     {
         $size = $request->input('size', 10);
 
-        $images = Imgservice::paginate($size);
+        $images = ImgService::paginate($size);
 
         $images->getCollection()->transform(function ($image) {
             $image->estado = (bool) $image->estado;
@@ -42,7 +42,7 @@ class ImgServiceController extends Controller
             'code' => 'required|string|unique:imgservices,code',
         ]);
 
-        $image = Imgservice::create($validated);
+        $image = ImgService::create($validated);
         $image->estado = (bool) $image->estado;
 
         return response()->json([
@@ -56,7 +56,7 @@ class ImgServiceController extends Controller
      */
     public function show($id)
     {
-        $image = Imgservice::find($id);
+        $image = ImgService::find($id);
 
         if (!$image) {
             return response()->json([
@@ -77,7 +77,7 @@ class ImgServiceController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $image = Imgservice::find($id);
+        $image = ImgService::find($id);
 
         if (!$image) {
             return response()->json([
@@ -106,7 +106,7 @@ class ImgServiceController extends Controller
      */
     public function destroy($id)
     {
-        $image = Imgservice::find($id);
+        $image = ImgService::find($id);
 
         if (!$image) {
             return response()->json([
@@ -128,7 +128,7 @@ class ImgServiceController extends Controller
     {
         $size = $request->input('size', 10);
 
-        $images = Imgservice::where('service_id', $serviceId)->paginate($size);
+        $images = ImgService::where('service_id', $serviceId)->paginate($size);
 
         if ($images->isEmpty()) {
             return response()->json([

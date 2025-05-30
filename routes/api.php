@@ -56,7 +56,7 @@ Route::get('/municipalidad', [MunicipalidadController::class, 'index']);
 Route::get('/municipalidad/descripcion', [MunicipalidadDescripcionController::class, 'index']);
 Route::get('/asociaciones', [AsociacionController::class, 'index']); // Obtener todas las asociaciones
 Route::get('/img-asociacionesTotal', [ImgAsociacionController::class, 'index']); // Obtener todas las imágenes
-
+Route::get('emprendedors-services/by-service', [EmprendedorServiceController::class, 'getByService']);
 
 Route::get('/parent-module/test', [ParentModuleController::class, 'listPaginate']);  // Listar con paginación
 Route::post('/parent-module/test', [ParentModuleController::class, 'store']);  // Crear nuevo módulo padre
@@ -269,7 +269,7 @@ Route::middleware('auth:api')->group(function () {
 Route::middleware(['auth:api'])->group(function () {
     Route::prefix('emprendedor-service')->group(function () {
 
-        Route::get('/by-service', [EmprendedorServiceController::class, 'getByService']); // PRIMERO esta ruta
+        // PRIMERO esta ruta
         Route::get('/', [EmprendedorServiceController::class, 'index']);
         Route::post('/', [EmprendedorServiceController::class, 'store']);
         Route::get('/restore/{id}', [EmprendedorServiceController::class, 'restore']); // antes de los de id
@@ -299,10 +299,14 @@ Route::prefix('service')->group(function () {
     Route::get('/{id}', [ServiceController::class, 'show']);  // Ver servicio específico
     Route::put('/{id}', [ServiceController::class, 'update']);  // Actualizar servicio
     Route::delete('/{id}', [ServiceController::class, 'destroy']); // Eliminar servicio (Soft Delete)
-    Route::get('/category/emprendedores', [ServiceController::class, 'emprendedoresPorServicio']);
+    Route::get('/category/emprendedores_service', [ServiceController::class, 'emprendedoresPorServicio']);
 });
 
-
+Route::get('service/test', [ServiceController::class, 'index']);  // Ruta para paginación de servicios
+Route::post('service/test', [ServiceController::class, 'store']);  // Crear nuevo servicio
+Route::get('service/test/{id}', [ServiceController::class, 'show']);  // Ver servicio específico
+Route::put('service/test/{id}', [ServiceController::class, 'update']);  // Actualizar servicio
+Route::delete('service/test/{id}', [ServiceController::class, 'destroy']); // Eliminar servicio (Soft Delete)
 
 
 
