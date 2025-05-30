@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SONARQUBE_ENV = 'sonarqube' // Nombre exacto configurado en Jenkins
+        SONARQUBE_ENV = 'sonarqube'
         PROJECT_DIR = 'Backend-project-capachica'
     }
 
@@ -10,7 +10,7 @@ pipeline {
         stage('Clonar repositorio') {
             steps {
                 git branch: 'main',
-                    credentialsId: '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',
+                    credentialsId: 'github-token', // <-- CORREGIDO
                     url: 'https://github.com/Drewpl2021/Backend-project-capachica.git'
             }
         }
@@ -18,6 +18,14 @@ pipeline {
         stage('Preparar entorno Laravel') {
             steps {
                 dir("${PROJECT_DIR}") {
+                    echo '📦 Verificando Composer'
+                    sh '''
+                    which composer || (
+                        curl -sS https://getcomposer.org/installer | php
+                        mv composer.phar /usr/local/bin/composer
+                    )
+                    '''
+
                     echo '📦 Instalando dependencias'
                     sh 'composer install --no-interaction --prefer-dist'
 
@@ -37,7 +45,7 @@ pipeline {
         stage('Migraciones y seeders') {
             steps {
                 dir("${PROJECT_DIR}") {
-                    echo '🔄 Ejecutando migraciones y seeders en entorno CI'
+                    echo '🔄 Ejecutando migraciones y seeders'
                     sh 'yes | php artisan migrate'
                     sh 'php artisan migrate:fresh --seed'
                 }
@@ -47,7 +55,7 @@ pipeline {
         stage('Ejecutar pruebas con cobertura') {
             steps {
                 dir("${PROJECT_DIR}") {
-                    echo '🧪 Ejecutando pruebas Feature con cobertura Clover + JUnit'
+                    echo '🧪 Ejecutando pruebas Feature con cobertura'
                     sh 'php artisan test --testsuite=Feature --log-junit storage/test-results.xml --coverage-clover storage/coverage/clover.xml'
                 }
             }
@@ -56,6 +64,9 @@ pipeline {
         stage('Análisis SonarQube') {
             steps {
                 dir("${PROJECT_DIR}") {
+                    echo '📊 Verificando sonar-scanner'
+                    sh 'which sonar-scanner || echo "⚠️ sonar-scanner no está instalado o en el PATH"'
+
                     echo '📊 Ejecutando análisis de calidad de código'
                     withSonarQubeEnv("${SONARQUBE_ENV}") {
                         sh 'sonar-scanner'
