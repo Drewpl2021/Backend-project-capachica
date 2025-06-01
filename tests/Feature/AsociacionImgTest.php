@@ -44,12 +44,12 @@ class AsociacionImgTest extends TestCase
 
         // 2️⃣ Consultamos la asociación (GET)
         $responseGet = $this->actingAs($this->adminUser, 'api')
-                            ->getJson("/asociacion/{$asociacion->id}");
+            ->getJson("/asociacion/{$asociacion->id}");
 
         $responseGet->assertStatus(200)
-                    ->assertJsonFragment(['nombre' => 'Asociacion Existente']);
+            ->assertJsonFragment(['nombre' => 'Asociacion Existente']);
 
-        // 3️⃣ Creamos el payload de la nueva imagen
+        // Creamos el payload de la nueva imagen
         $data = [
             'asociacion_id' => $asociacion->id,
             'url_image' => 'http://imagenprueba.com/img1.jpg',
@@ -57,19 +57,19 @@ class AsociacionImgTest extends TestCase
             'codigo' => 'IMG999',
         ];
 
-        // 4️⃣ Enviamos la petición POST a /img-asociacion
+        // Enviamos la petición POST a /img-asociacion
         $responsePost = $this->actingAs($this->adminUser, 'api')
-                             ->postJson('/img-asociacion', $data);
+            ->postJson('/img-asociacion', $data);
 
-        // 5️⃣ Verificamos la respuesta
+        // Verificamos la respuesta
         $responsePost->assertStatus(201)
-                     ->assertJsonFragment([
-                         'url_image' => 'http://imagenprueba.com/img1.jpg',
-                         'codigo' => 'IMG999',
-                         'asociacion_id' => $asociacion->id,
-                     ]);
+            ->assertJsonFragment([
+                'url_image' => 'http://imagenprueba.com/img1.jpg',
+                'codigo' => 'IMG999',
+                'asociacion_id' => $asociacion->id,
+            ]);
 
-        // 6️⃣ Confirmamos que la imagen existe en la base de datos
+        // Confirmamos que la imagen existe en la base de datos
         $this->assertDatabaseHas('img_asociacions', [
             'codigo' => 'IMG999',
             'asociacion_id' => $asociacion->id

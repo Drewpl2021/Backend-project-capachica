@@ -52,7 +52,7 @@ class SliderMuniIntegrationTest extends TestCase
         $response = $this->getJson('/slider', $this->headers());
 
         $response->assertStatus(200)
-                 ->assertJsonCount(3, 'data');
+            ->assertJsonCount(3, 'data');
     }
 
     /** @test */
@@ -68,7 +68,7 @@ class SliderMuniIntegrationTest extends TestCase
         $response = $this->postJson('/slider', $data, $this->headers());
 
         $response->assertStatus(201)
-                 ->assertJsonFragment(['titulo' => 'Slider de prueba']);
+            ->assertJsonFragment(['titulo' => 'Slider de prueba']);
 
         $this->assertDatabaseHas('slider__munis', ['titulo' => 'Slider de prueba']);
     }
@@ -84,7 +84,7 @@ class SliderMuniIntegrationTest extends TestCase
         $response = $this->getJson("/slider/{$slider->id}", $this->headers());
 
         $response->assertStatus(200)
-                 ->assertJsonFragment(['id' => $slider->id]);
+            ->assertJsonFragment(['id' => $slider->id]);
     }
 
     /** @test */
@@ -105,24 +105,23 @@ class SliderMuniIntegrationTest extends TestCase
         $response = $this->putJson("/slider/{$slider->id}", $data, $this->headers());
 
         $response->assertStatus(200)
-                 ->assertJsonFragment(['message' => 'Slider actualizado exitosamente'])
-                 ->assertJsonFragment(['status' => true]);
+            ->assertJsonFragment(['message' => 'Slider actualizado exitosamente'])
+            ->assertJsonFragment(['status' => true]);
 
         $this->assertDatabaseHas('slider__munis', ['titulo' => 'Slider actualizado']);
     }
 
     /** @test */
-    /** @test */
-public function puede_eliminar_un_slider()
-{
-    $slider = Slider_Muni::factory()->create();
+    public function puede_eliminar_un_slider()
+    {
+        $slider = Slider_Muni::factory()->create();
 
-    $response = $this->deleteJson("/slider/{$slider->id}", [], $this->headers());
+        $response = $this->deleteJson("/slider/{$slider->id}", [], $this->headers());
 
-    $response->assertStatus(200)
-             ->assertJsonFragment(['message' => 'Slider eliminado exitosamente'])
-             ->assertJsonFragment(['status' => true]);
+        $response->assertStatus(200)
+            ->assertJsonFragment(['message' => 'Slider eliminado exitosamente'])
+            ->assertJsonFragment(['status' => true]);
 
-    $this->assertDatabaseMissing('slider__munis', ['id' => $slider->id]);
-}
+        $this->assertDatabaseMissing('slider__munis', ['id' => $slider->id]);
+    }
 }
