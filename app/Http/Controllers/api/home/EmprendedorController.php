@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Emprendedor;
 use App\Models\EmprendedorService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -72,64 +73,106 @@ class EmprendedorController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'asociacion_id' => 'required|uuid|exists:asociacions,id', // Relación con la asociación
+            'asociacion_id' => 'required|uuid|exists:asociacions,id',
             'razon_social' => 'required|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'code' => 'nullable|string|max:255',
+            'ruc' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'lugar' => 'nullable|string|max:255',
+            'img_logo' => 'nullable|string|max:255',
+            'name_family' => 'nullable|string|max:255',
+            'status' => 'nullable|boolean',
         ]);
 
         $emprendedor = Emprendedor::create($validated);
-        return $this->successResponse($emprendedor, 'Emprendedor creado exitosamente', 201);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Emprendedor creado exitosamente',
+            'data' => $emprendedor
+        ], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show($id): JsonResponse
     {
         $emprendedor = Emprendedor::find($id);
 
         if (!$emprendedor) {
-            return $this->errorResponse('Emprendedor no encontrado', 404);
+            return response()->json([
+                'success' => false,
+                'message' => 'Emprendedor no encontrado'
+            ], 404);
         }
 
-        return response()->json($emprendedor);
+        return response()->json([
+            'success' => true,
+            'data' => $emprendedor
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): JsonResponse
     {
         $emprendedor = Emprendedor::find($id);
 
         if (!$emprendedor) {
-            return $this->errorResponse('Emprendedor no encontrado', 404);
+            return response()->json([
+                'success' => false,
+                'message' => 'Emprendedor no encontrado'
+            ], 404);
         }
 
         $validated = $request->validate([
             'asociacion_id' => 'required|uuid|exists:asociacions,id',
             'razon_social' => 'required|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'code' => 'nullable|string|max:255',
+            'ruc' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'lugar' => 'nullable|string|max:255',
+            'img_logo' => 'nullable|string|max:255',
+            'name_family' => 'nullable|string|max:255',
+            'status' => 'nullable|boolean',
         ]);
 
         $emprendedor->update($validated);
-        return $this->successResponse($emprendedor, 'Emprendedor actualizado exitosamente');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Emprendedor actualizado exitosamente',
+            'data' => $emprendedor
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
         $emprendedor = Emprendedor::find($id);
 
         if (!$emprendedor) {
-            return $this->errorResponse('Emprendedor no encontrado', 404);
+            return response()->json([
+                'success' => false,
+                'message' => 'Emprendedor no encontrado'
+            ], 404);
         }
 
         $emprendedor->delete();
-        return $this->successResponse([], 'Emprendedor eliminado exitosamente');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Emprendedor eliminado exitosamente'
+        ]);
     }
 
 

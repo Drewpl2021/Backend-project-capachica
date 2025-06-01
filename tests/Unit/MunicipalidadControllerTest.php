@@ -6,75 +6,67 @@ use App\Models\Municipalidad;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Mockery;
-use Ramsey\Uuid\Guid\Guid;
+use Illuminate\Support\Str;
 
 class MunicipalidadControllerTest extends TestCase
 {
+    use RefreshDatabase;
 
     /**
      * Test the index method without hitting the real database or routes.
      */
 
-    /*
     public function testIndexReturnsPaginationData()
     {
-        // Crear un UUID simulado
-        $uuid = Guid::uuid4()->toString();
+        // Crear un mock parcial de Municipalidad para evitar errores con with()
+        $municipalidadMock = Mockery::mock('overload:' . Municipalidad::class);
 
-        // Crear un mock para el modelo Municipalidad
-        $municipalidadMock = Mockery::mock('alias:' . Municipalidad::class);
+        // Crear objetos falsos para simular los resultados
+        $fakeMunicipalidad = new \stdClass();
+        $fakeMunicipalidad->id = 'uuid-prueba';
+        $fakeMunicipalidad->distrito = 'Lima';
+        $fakeMunicipalidad->provincia = 'Lima';
+        $fakeMunicipalidad->region = 'Lima';
+        $fakeMunicipalidad->codigo = '12345';
+        $fakeMunicipalidad->created_at = now();
+        $fakeMunicipalidad->updated_at = now();
+        $fakeMunicipalidad->deleted_at = null;
+        $fakeMunicipalidad->sliderMunis = collect(); // <- evita error en el mapeo
 
-        // Simular la consulta y la paginación
-        $municipalidadMock->shouldReceive('query')->once()->andReturnSelf();
-        $municipalidadMock->shouldReceive('paginate')->once()->with(10)->andReturnSelf();
+        $paginatorMock = Mockery::mock('Illuminate\Pagination\LengthAwarePaginator');
+        $paginatorMock->shouldReceive('items')->andReturn([$fakeMunicipalidad]);
+        $paginatorMock->shouldReceive('total')->andReturn(1);
+        $paginatorMock->shouldReceive('currentPage')->andReturn(1);
+        $paginatorMock->shouldReceive('lastPage')->andReturn(1);
+        $paginatorMock->shouldReceive('perPage')->andReturn(10);
 
-        // Simular los métodos de paginación
-        $municipalidadMock->shouldReceive('items')->once()->andReturn([
-            (object)[
-                'id' => $uuid, // Usamos el UUID generado
-                'distrito' => 'Lima',
-                'provincia' => 'Lima',
-                'region' => 'Lima',
-                'codigo' => '12345',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'deleted_at' => null
-            ]
-        ]);
+        // Mock del query builder
+        $queryMock = Mockery::mock();
+        $queryMock->shouldReceive('with')->with('sliderMunis')->andReturnSelf();
+        $queryMock->shouldReceive('paginate')->with(10)->andReturn($paginatorMock);
 
-        $municipalidadMock->shouldReceive('total')->once()->andReturn(100);
-        $municipalidadMock->shouldReceive('currentPage')->once()->andReturn(1);
-        $municipalidadMock->shouldReceive('lastPage')->once()->andReturn(10);
-        $municipalidadMock->shouldReceive('perPage')->once()->andReturn(10);
+        // Reemplazar el método query
+        $municipalidadMock->shouldReceive('query')->andReturn($queryMock);
 
-        // Crear un mock para el objeto Request
+        // Mock del Request
         $request = Mockery::mock('Illuminate\Http\Request');
-        $request->shouldReceive('input')->with('size', 10)->andReturn(10); // Simular el valor para 'size'
-        $request->shouldReceive('input')->with('name')->andReturn(null); // Simular que 'name' no está presente
+        $request->shouldReceive('input')->with('size', 10)->andReturn(10);
+        $request->shouldReceive('input')->with('name')->andReturn(null);
 
-        // Crear el controlador y llamar al método index directamente
         $controller = new \App\Http\Controllers\API\home\MunicipalidadController();
         $response = $controller->index($request);
+        $data = $response->getData(true);
 
-        // Convertir la respuesta JsonResponse en un array
-        $responseData = $response->getData(true);
+        $this->assertEquals('Lima', $data['content'][0]['distrito']);
+        $this->assertEquals(1, $data['totalElements']);
+    }
 
-        // Verificar que la respuesta contiene la estructura esperada
-        $this->assertIsArray($responseData['content']);
-        $this->assertEquals(1, count($responseData['content']));
-        $this->assertEquals('Lima', $responseData['content'][0]['distrito']);
-        $this->assertEquals($uuid, $responseData['content'][0]['id']); // Verificar que el ID es el UUID esperado
-        $this->assertEquals(100, $responseData['totalElements']); // Verificar que el total de elementos sea correcto
-        $this->assertEquals(1, $responseData['currentPage']); // Verificar la página actual
-        $this->assertEquals(10, $responseData['totalPages']); // Verificar el total de páginas
-        $this->assertEquals(10, $responseData['perPage']); // Verificar los elementos por página
-    }*/
 
     /**
      * Test the store method without hitting the real database or routes.
      */
 
-    /*
+
     public function testStoreCreatesMunicipalidad()
     {
         // Crear un mock del modelo Municipalidad
@@ -106,14 +98,14 @@ class MunicipalidadControllerTest extends TestCase
         $this->assertEquals('Lima', $responseData['provincia']);
         $this->assertEquals('Lima', $responseData['region']);
         $this->assertEquals('12345', $responseData['codigo']);
-    }*/
+    }
 
 
     /**
      * Test the show method without hitting the real database or routes.
      */
 
-    /*
+
     public function testShowReturnsMunicipalidad()
     {
         // Crear un UUID simulado
@@ -141,72 +133,73 @@ class MunicipalidadControllerTest extends TestCase
         // Verificar que la respuesta contiene los datos correctos
         $this->assertEquals($uuid, $responseData['id']); // Verificamos que el UUID es correcto
         $this->assertEquals('Lima', $responseData['distrito']);
-    }*/
+    }
 
 
-    /*public function testUpdateUpdatesMunicipalidad()
+    public function testUpdateUpdatesMunicipalidad()
     {
-        // Crear un mock del modelo Municipalidad
+        $uuid = (string) Str::uuid(); // Usamos UUID real como string
+
+        // Crear mock estático del modelo
         $municipalidadMock = Mockery::mock('alias:' . Municipalidad::class);
 
-        // Simulamos que el método `find()` devuelve el mismo objeto `municipalidadMock`
-        $municipalidadMock->shouldReceive('find')->once()->with(1)->andReturn($municipalidadMock);
-
-        // Simulamos las propiedades del modelo Eloquent
-        $municipalidadMock->id = 1;
-        $municipalidadMock->distrito = 'Lima'; // Valor inicial
-        $municipalidadMock->provincia = 'Lima';
-        $municipalidadMock->region = 'Lima';
-        $municipalidadMock->codigo = '12345';
-
-        // Simulamos el método `update()` para que actualice el valor de 'distrito'
-        $municipalidadMock->shouldReceive('update')->once()->with([
+        // Crear mock de instancia que representa un registro encontrado
+        $modelMock = Mockery::mock();
+        $modelMock->shouldReceive('update')->once()->with([
             'distrito' => 'Cusco',
             'provincia' => 'Cusco',
             'region' => 'Cusco',
             'codigo' => '67890'
         ])->andReturn(true);
 
-        // Crear el controlador y la solicitud mockeada
+        // Asignamos el UUID como ID
+        $modelMock->id = $uuid;
+        $modelMock->distrito = 'Cusco';
+        $modelMock->provincia = 'Cusco';
+        $modelMock->region = 'Cusco';
+        $modelMock->codigo = '67890';
+
+        // Simular find() para que devuelva este objeto completo
+        $municipalidadMock->shouldReceive('find')->once()->with($uuid)->andReturn($modelMock);
+
         $controller = new \App\Http\Controllers\API\home\MunicipalidadController();
         $request = Mockery::mock('Illuminate\Http\Request');
         $request->shouldReceive('validate')->once()->andReturn([
-            'distrito' => 'Cusco', // Simulamos que el valor de distrito es Cusco
+            'distrito' => 'Cusco',
             'provincia' => 'Cusco',
             'region' => 'Cusco',
             'codigo' => '67890'
         ]);
 
-        // Llamar al método update
-        $response = $controller->update($request, 1);
-
-        // Convertir la respuesta JsonResponse en un array
+        $response = $controller->update($request, $uuid);
         $responseData = $response->getData(true);
 
-        // Verificar que la respuesta contiene los datos correctos después de la actualización
-        $this->assertEquals('Cusco', $responseData['distrito']);  // Ahora debe ser 'Cusco'
+        // Verificaciones con UUID
+        $this->assertEquals($uuid, $responseData['id']);
+        $this->assertEquals('Cusco', $responseData['distrito']);
         $this->assertEquals('Cusco', $responseData['provincia']);
         $this->assertEquals('Cusco', $responseData['region']);
         $this->assertEquals('67890', $responseData['codigo']);
     }
 
 
+
     public function testDestroyDeletesMunicipalidad()
     {
-        // Crear un mock del modelo Municipalidad (modelo real, no stdClass)
         $municipalidadMock = Mockery::mock('alias:' . Municipalidad::class);
 
-        // Simulamos que el método `find()` devuelve el mismo objeto `municipalidadMock`
-        $municipalidadMock->shouldReceive('find')->once()->with(1)->andReturn($municipalidadMock);
+        // Crear un objeto con id y método delete simulados
+        $modelMock = Mockery::mock();
+        $modelMock->shouldReceive('delete')->once()->andReturn(true);
+        $modelMock->id = 1;
 
-        // Simulamos el método `delete()` para que devuelva true (simulando una eliminación exitosa)
-        $municipalidadMock->shouldReceive('delete')->once()->andReturn(true);
+        // Simular find
+        $municipalidadMock->shouldReceive('find')->once()->with(1)->andReturn($modelMock);
 
-        // Crear el controlador y la solicitud mockeada
         $controller = new \App\Http\Controllers\API\home\MunicipalidadController();
         $response = $controller->destroy(1);
 
-        // Verificar que la respuesta contiene el ID esperado
-        $this->assertEquals(1, $response->id);
-    }*/
+        $data = $response->getData(true);
+        $this->assertEquals(1, $data['id']);
+    }
 }

@@ -18,9 +18,9 @@ class MunicipalidadFactory extends Factory
     {
         return [
             'distrito'  => $this->faker->city(),
-            'provincia' => $this->faker->state,
-            'region' => $this->faker->state,
-            'codigo' => $this->faker->unique()->postcode,
+            'provincia' => $this->faker->state(),
+            'region' => $this->faker->state(),
+            'codigo' => $this->faker->unique()->postcode(),
         ];
     }
 }

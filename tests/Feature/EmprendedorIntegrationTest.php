@@ -7,7 +7,7 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\Emprendedor;
 use App\Models\Service;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 
 class EmprendedorIntegrationTest extends TestCase
 {
@@ -55,29 +55,27 @@ class EmprendedorIntegrationTest extends TestCase
         $this->assertCount(10, $response->json('content'));
     }
 
-    /*public function test_store_crea_emprendedor()
+    public function testStoreEmprendedor()
     {
-        $asociacion = \App\Models\Asociacion::factory()->create();
-
         $data = [
-            'razon_social' => 'Emprendedor Test',
+            'razon_social' => 'Turismo Andino S.A.C.',
+            'asociacion_id' => $this->asociacion->id,
             'address' => 'Calle Falsa 123',
-            'code' => 'EMP123',
-            'ruc' => '12345678901',
-            'name_family' => 'Familia Test',
+            'code' => 'EMP-TEST',
+            'ruc' => '20231234567',
+            'description' => 'Una empresa de turismo.',
+            'lugar' => 'Capachica',
+            'img_logo' => 'ruta/logo.png',
+            'name_family' => 'Familia Quispe',
             'status' => true,
-            'asociacion_id' => $asociacion->id,
         ];
 
         $response = $this->postJson('/emprendedor', $data, $this->headers());
-        error_log($response->getContent());
 
         $response->assertStatus(201)
-            ->assertJsonFragment(['razon_social' => $data['razon_social']]);
-
-        $this->assertDatabaseHas('emprendedors', ['razon_social' => $data['razon_social']]);
-    }*/
-
+            ->assertJsonPath('data.razon_social', 'Turismo Andino S.A.C.')
+            ->assertJson(['success' => true]);
+    }
 
     public function test_show_emprendedor()
     {
@@ -86,24 +84,25 @@ class EmprendedorIntegrationTest extends TestCase
         $response = $this->getJson("/emprendedor/{$emprendedor->id}", $this->headers());
 
         $response->assertStatus(200)
-            ->assertJsonFragment(['id' => $emprendedor->id]);
+            ->assertJsonPath('data.id', $emprendedor->id)
+            ->assertJson(['success' => true]);
     }
 
     public function test_update_emprendedor()
     {
         $emprendedor = Emprendedor::factory()->create();
 
-        $asociacion = \App\Models\Asociacion::factory()->create();
-
         $data = [
-            'asociacion_id' => $asociacion->id,
+            'asociacion_id' => $this->asociacion->id,
             'razon_social' => 'Empresa Actualizada S.A.',
-            'new_column' => 42,
+            'address' => 'Nueva dirección',
         ];
 
         $response = $this->putJson("/emprendedor/{$emprendedor->id}", $data, $this->headers());
 
-        $response->assertStatus(200)->assertJsonFragment(['razon_social' => $data['razon_social']]);
+        $response->assertStatus(200)
+            ->assertJsonPath('data.razon_social', $data['razon_social'])
+            ->assertJson(['success' => true]);
 
         $this->assertDatabaseHas('emprendedors', ['razon_social' => $data['razon_social']]);
     }
@@ -114,7 +113,8 @@ class EmprendedorIntegrationTest extends TestCase
 
         $response = $this->deleteJson("/emprendedor/{$emprendedor->id}", [], $this->headers());
 
-        $response->assertStatus(200);
+        $response->assertStatus(200)
+            ->assertJson(['success' => true]);
 
         $this->assertSoftDeleted('emprendedors', ['id' => $emprendedor->id]);
     }

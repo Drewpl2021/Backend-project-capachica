@@ -16,11 +16,12 @@ class EmprendedorFactory extends Factory
         return [
             'id' => (string) Str::uuid(), // Si usas UUID como llave primaria
             'asociacion_id' => Asociacion::factory(), // Crear una asociación automáticamente
-            'razon_social' => $this->faker->company,
-            'name_family' => $this->faker->lastName,
-            'address' => $this->faker->address,
+            'razon_social' => $this->faker->company(),
+            'name_family' => $this->faker->lastName(),
+            'address' => $this->faker->address(),
             'code' => strtoupper(Str::random(8)),
-            'ruc' => $this->faker->numerify('###########'), // 11 dígitos típico RUC peruano
+            'description' => $this->faker->sentence(10),
+            'ruc' => $this->faker->unique()->numerify('20#########'),
             'lugar' => $this->faker->city(),
             'img_logo' => $this->faker->imageUrl(200, 200, 'business'),
             'status' => $this->faker->boolean(80), // 80% chance true

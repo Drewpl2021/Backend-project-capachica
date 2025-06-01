@@ -25,7 +25,6 @@ class Slider_Muni extends Model
         });
     }
 
-    // ✅ Campos que pueden ser asignados masivamente
     protected $fillable = [
         'municipalidad_id',
         'titulo',
@@ -33,9 +32,8 @@ class Slider_Muni extends Model
         'url_images'
     ];
 
-    // ✅ Relación correcta con Municipalidad
     public function municipalidad()
     {
-        return $this->belongsTo(Municipalidad::class, 'municipalidad_id');
+        return $this->belongsTo(Municipalidad::class);
     }
 }
