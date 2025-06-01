@@ -19,14 +19,12 @@ class AsociacionIntegrationTest extends TestCase
     {
         parent::setUp();
 
-        // Seeder para crear usuario admin con rol
         $this->seed(\Database\Seeders\UserAdminSeeder::class);
 
         $this->adminUser = User::where('username', 'andres.montes')->first();
 
         $this->token = auth('api')->login($this->adminUser);
 
-        // Crear municipalidad para relación
         $this->municipalidad = Municipalidad::factory()->create();
     }
 
