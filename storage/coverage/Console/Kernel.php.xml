@@ -1,0 +1,212 @@
+<?xml version="1.0"?>
+<phpunit xmlns="https://schema.phpunit.de/coverage/1.0">
+  <file name="Kernel.php" path="\Console">
+    <totals>
+      <lines total="28" comments="7" code="21" executable="3" executed="2" percent="66.67"/>
+      <methods count="2" tested="1" percent="50.00"/>
+      <functions count="0" tested="0" percent="0"/>
+      <classes count="1" tested="0" percent="0.00"/>
+      <traits count="0" tested="0" percent="0"/>
+    </totals>
+    <class name="App\Console\Kernel" start="8" executable="3" executed="2" crap="2.15">
+      <namespace name="App\Console"/>
+      <method name="schedule" signature="schedule(Illuminate\Console\Scheduling\Schedule $schedule): void" start="13" end="16" crap="2" executable="1" executed="0" coverage="0"/>
+      <method name="commands" signature="commands(): void" start="21" end="26" crap="1" executable="2" executed="2" coverage="100"/>
+    </class>
+    <coverage>
+      <line nr="23">
+        <covered by="Tests\Feature\AsociacionIntegrationTest::test_index_retorna_paginacion_y_datos"/>
+        <covered by="Tests\Feature\AsociacionIntegrationTest::test_store_crea_asociacion_con_imagenes"/>
+        <covered by="Tests\Feature\AsociacionIntegrationTest::test_show_retorna_asociacion_con_imagenes"/>
+        <covered by="Tests\Feature\AsociacionIntegrationTest::test_update_modifica_asociacion_e_imagenes"/>
+        <covered by="Tests\Feature\AsociacionIntegrationTest::test_destroy_elimina_asociacion"/>
+        <covered by="Tests\Feature\AsociacionIntegrationTest::test_showWithEmprendedoresYServicios_retorna_info"/>
+        <covered by="Tests\Feature\EmprendedorIntegrationTest::test_index_emprendedores"/>
+        <covered by="Tests\Feature\EmprendedorIntegrationTest::test_show_emprendedor"/>
+        <covered by="Tests\Feature\EmprendedorIntegrationTest::test_update_emprendedor"/>
+        <covered by="Tests\Feature\EmprendedorIntegrationTest::test_destroy_emprendedor"/>
+        <covered by="Tests\Feature\EmprendedorIntegrationTest::test_asignar_servicios_emprendedor"/>
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_index_retorna_paginacion_y_datos"/>
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_store_crea_descripcion_con_municipalidad_id"/>
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_show_retorna_descripcion_por_id"/>
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_update_modifica_descripcion_por_id"/>
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_destroy_elimina_descripcion_por_id"/>
+        <covered by="Tests\Feature\MunicipalidadIntegrationTest::test_index_retorna_paginacion_y_datos"/>
+        <covered by="Tests\Feature\MunicipalidadIntegrationTest::test_store_crea_municipalidad_en_bd"/>
+        <covered by="Tests\Feature\MunicipalidadIntegrationTest::test_show_retorna_municipalidad_por_id"/>
+        <covered by="Tests\Feature\MunicipalidadIntegrationTest::test_update_modifica_municipalidad_en_bd"/>
+        <covered by="Tests\Feature\MunicipalidadIntegrationTest::test_destroy_elimina_municipalidad"/>
+        <covered by="Tests\Feature\ParentModuleControllerTest::it_can_create_a_parent_module"/>
+        <covered by="Tests\Feature\ParentModuleControllerTest::it_can_get_single_parent_module"/>
+        <covered by="Tests\Feature\ParentModuleControllerTest::it_can_update_parent_module"/>
+        <covered by="Tests\Feature\ParentModuleControllerTest::it_can_force_delete_parent_module"/>
+      </line>
+      <line nr="25">
+        <covered by="Tests\Feature\AsociacionIntegrationTest::test_index_retorna_paginacion_y_datos"/>
+        <covered by="Tests\Feature\AsociacionIntegrationTest::test_store_crea_asociacion_con_imagenes"/>
+        <covered by="Tests\Feature\AsociacionIntegrationTest::test_show_retorna_asociacion_con_imagenes"/>
+        <covered by="Tests\Feature\AsociacionIntegrationTest::test_update_modifica_asociacion_e_imagenes"/>
+        <covered by="Tests\Feature\AsociacionIntegrationTest::test_destroy_elimina_asociacion"/>
+        <covered by="Tests\Feature\AsociacionIntegrationTest::test_showWithEmprendedoresYServicios_retorna_info"/>
+        <covered by="Tests\Feature\EmprendedorIntegrationTest::test_index_emprendedores"/>
+        <covered by="Tests\Feature\EmprendedorIntegrationTest::test_show_emprendedor"/>
+        <covered by="Tests\Feature\EmprendedorIntegrationTest::test_update_emprendedor"/>
+        <covered by="Tests\Feature\EmprendedorIntegrationTest::test_destroy_emprendedor"/>
+        <covered by="Tests\Feature\EmprendedorIntegrationTest::test_asignar_servicios_emprendedor"/>
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_index_retorna_paginacion_y_datos"/>
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_store_crea_descripcion_con_municipalidad_id"/>
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_show_retorna_descripcion_por_id"/>
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_update_modifica_descripcion_por_id"/>
+        <covered by="Tests\Feature\MunicipalidadDescripcionIntegrationTest::test_destroy_elimina_descripcion_por_id"/>
+        <covered by="Tests\Feature\MunicipalidadIntegrationTest::test_index_retorna_paginacion_y_datos"/>
+        <covered by="Tests\Feature\MunicipalidadIntegrationTest::test_store_crea_municipalidad_en_bd"/>
+        <covered by="Tests\Feature\MunicipalidadIntegrationTest::test_show_retorna_municipalidad_por_id"/>
+        <covered by="Tests\Feature\MunicipalidadIntegrationTest::test_update_modifica_municipalidad_en_bd"/>
+        <covered by="Tests\Feature\MunicipalidadIntegrationTest::test_destroy_elimina_municipalidad"/>
+        <covered by="Tests\Feature\ParentModuleControllerTest::it_can_create_a_parent_module"/>
+        <covered by="Tests\Feature\ParentModuleControllerTest::it_can_get_single_parent_module"/>
+        <covered by="Tests\Feature\ParentModuleControllerTest::it_can_update_parent_module"/>
+        <covered by="Tests\Feature\ParentModuleControllerTest::it_can_force_delete_parent_module"/>
+      </line>
+    </coverage>
+    <source>
+      <line no="1">
+        <token name="T_OPEN_TAG">&lt;?php</token>
+      </line>
+      <line no="2"/>
+      <line no="3">
+        <token name="T_NAMESPACE">namespace</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_NAME_QUALIFIED">App\Console</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="4"/>
+      <line no="5">
+        <token name="T_USE">use</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_NAME_QUALIFIED">Illuminate\Console\Scheduling\Schedule</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="6">
+        <token name="T_USE">use</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_NAME_QUALIFIED">Illuminate\Foundation\Console\Kernel</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_AS">as</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">ConsoleKernel</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="7"/>
+      <line no="8">
+        <token name="T_CLASS">class</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">Kernel</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EXTENDS">extends</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">ConsoleKernel</token>
+      </line>
+      <line no="9">
+        <token name="T_OPEN_CURLY">{</token>
+      </line>
+      <line no="10">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_DOC_COMMENT">/**</token>
+      </line>
+      <line no="11">
+        <token name="T_DOC_COMMENT">     * Define the application's command schedule.</token>
+      </line>
+      <line no="12">
+        <token name="T_DOC_COMMENT">     */</token>
+      </line>
+      <line no="13">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_PROTECTED">protected</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_FUNCTION">function</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">schedule</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_STRING">Schedule</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$schedule</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_COLON">:</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">void</token>
+      </line>
+      <line no="14">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_OPEN_CURLY">{</token>
+      </line>
+      <line no="15">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_COMMENT">// $schedule-&gt;command('inspire')-&gt;hourly();</token>
+      </line>
+      <line no="16">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_CLOSE_CURLY">}</token>
+      </line>
+      <line no="17"/>
+      <line no="18">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_DOC_COMMENT">/**</token>
+      </line>
+      <line no="19">
+        <token name="T_DOC_COMMENT">     * Register the commands for the application.</token>
+      </line>
+      <line no="20">
+        <token name="T_DOC_COMMENT">     */</token>
+      </line>
+      <line no="21">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_PROTECTED">protected</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_FUNCTION">function</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">commands</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_COLON">:</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">void</token>
+      </line>
+      <line no="22">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_OPEN_CURLY">{</token>
+      </line>
+      <line no="23">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_VARIABLE">$this</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">load</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_DIR">__DIR__</token>
+        <token name="T_DOT">.</token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'/Commands'</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="24"/>
+      <line no="25">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_REQUIRE">require</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">base_path</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'routes/console.php'</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="26">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_CLOSE_CURLY">}</token>
+      </line>
+      <line no="27">
+        <token name="T_CLOSE_CURLY">}</token>
+      </line>
+      <line no="28"/>
+    </source>
+  </file>
+</phpunit>

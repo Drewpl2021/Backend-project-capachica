@@ -17,10 +17,10 @@ class MunicipalidadFactory extends Factory
     public function definition(): array
     {
         return [
-            'distrito' => $this->faker->city,
-            'provincia' => $this->faker->state,
-            'region' => $this->faker->state,
-            'codigo' => $this->faker->unique()->postcode,
+            'distrito'  => $this->faker->city(),
+            'provincia' => $this->faker->state(),
+            'region' => $this->faker->state(),
+            'codigo' => $this->faker->unique()->postcode(),
         ];
     }
 }

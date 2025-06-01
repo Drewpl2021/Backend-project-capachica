@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 
 class Service extends Model
 {
+    use HasFactory;
     protected $guarded = ['id'];
     public $incrementing = false;
     use SoftDeletes;
@@ -49,6 +50,6 @@ class Service extends Model
 
     public function imgservices()
     {
-        return $this->hasMany(Imgservice::class, 'service_id');
+        return $this->hasMany(ImgService::class, 'service_id');
     }
 }

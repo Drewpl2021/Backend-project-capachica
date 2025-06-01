@@ -4,19 +4,22 @@ namespace App\Http\Controllers\API\home;
 
 use App\Http\Controllers\Controller;
 use App\Models\Slider_Muni;
-use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 
 class SliderMuniController extends Controller
 {
-    use ApiResponseTrait;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $sliders = Slider_Muni::all();  // Obtener todos los sliders
-        return $this->successResponse($sliders, 'Sliders obtenidos exitosamente');
+        $sliders = Slider_Muni::all();
+
+        return response()->json([
+            'data' => $sliders,
+            'message' => 'Sliders obtenidos exitosamente',
+            'status' => true
+        ], 200);
     }
 
     /**
@@ -24,53 +27,69 @@ class SliderMuniController extends Controller
      */
     public function store(Request $request)
     {
-        // Validación de los datos
         $validated = $request->validate([
-            'municipio_descrip_id' => 'required|uuid|exists:municipio_descrips,id', // Clave foránea
+            'municipalidad_id' => 'required|uuid|exists:municipalidads,id',
             'titulo' => 'required|string|max:255',
             'descripcion' => 'required|string',
+            'url_images' => 'required|string|max:255',
         ]);
 
-        // Crear un nuevo slider
         $slider = Slider_Muni::create($validated);
 
-        return $this->successResponse($slider, 'Slider creado exitosamente', 201);
+        return response()->json([
+            'data' => $slider->toArray(),
+            'message' => 'Slider creado exitosamente',
+            'status' => true
+        ], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Slider_Muni $sliderMuni)
-    {
-        return $this->successResponse($sliderMuni, 'Slider encontrado');
-    }
-
+   public function show($id)
+{
+    $slider = Slider_Muni::findOrFail($id); // Asegura que el slider exista
+    return response()->json([
+        'data' => $slider, // Incluye el slider en la respuesta
+        'message' => 'Slider encontrado',
+        'status' => true
+    ]);
+}
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Slider_Muni $sliderMuni)
-    {
-        // Validación de los datos
-        $validated = $request->validate([
-            'municipio_descrip_id' => 'required|uuid|exists:municipio_descrips,id',
-            'titulo' => 'required|string|max:255',
-            'descripcion' => 'required|string',
-        ]);
+    // En el controlador:
+public function update(Request $request, $id) // Cambia a $id para mayor claridad
+{
+    $slider = Slider_Muni::findOrFail($id); // Busca manualmente
 
-        // Actualizar el slider con los nuevos datos
-        $sliderMuni->update($validated);
+    $validated = $request->validate([
+        'titulo' => 'required|string|max:255',
+        // ... otros campos
+    ]);
 
-        return $this->successResponse($sliderMuni, 'Slider actualizado exitosamente');
-    }
+    $slider->update($validated);
+
+    return response()->json([
+        'data' => $slider->fresh(), // Devuelve los datos actualizados
+        'message' => 'Slider actualizado exitosamente',
+        'status' => true
+    ], 200);
+}
+
+
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Slider_Muni $sliderMuni)
+    public function destroy($id)
     {
-        // Eliminar el slider
-        $sliderMuni->delete();
+        $slider = Slider_Muni::withTrashed()->findOrFail($id);
+        $slider->forceDelete();
 
-        return $this->successResponse([], 'Slider eliminado exitosamente');
+        return response()->json([
+            'message' => 'Slider eliminado exitosamente',
+            'status' => true
+        ], 200);
     }
 }

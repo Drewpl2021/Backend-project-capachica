@@ -5,16 +5,17 @@ use App\Http\Controllers\API\home\EmprendedorController;
 use App\Http\Controllers\API\home\ImgAsociacionController;
 use App\Http\Controllers\API\home\MunicipalidadController;
 use App\Http\Controllers\API\home\MunicipalidadDescripcionController;
-use App\Http\Controllers\API\home\SliderMuniController;
 use App\Http\Controllers\API\home\SectionController;
 use App\Http\Controllers\API\home\SectionDetailController;
 use App\Http\Controllers\API\home\SectionDetailEndController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\Login\AuthController;
-use App\Http\Controllers\API\Login\RoleController;
-use App\Http\Controllers\API\Login\UserController;
+use App\Http\Controllers\API\home\SliderMuniController;
+use App\Http\Controllers\API\login\AuthController;
+use App\Http\Controllers\API\login\RoleController;
+use App\Http\Controllers\API\login\UserController;
 use App\Http\Controllers\API\Modules\ModuleController;
 use App\Http\Controllers\API\Modules\ParentModuleController;
+use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\EmprendedorServiceController;
 use App\Http\Controllers\ImgServiceController;
 use App\Http\Controllers\ImgEmprendedorController;
@@ -55,7 +56,7 @@ Route::get('/municipalidad', [MunicipalidadController::class, 'index']);
 Route::get('/municipalidad/descripcion', [MunicipalidadDescripcionController::class, 'index']);
 Route::get('/asociaciones', [AsociacionController::class, 'index']); // Obtener todas las asociaciones
 Route::get('/img-asociacionesTotal', [ImgAsociacionController::class, 'index']); // Obtener todas las imágenes
-
+Route::get('emprendedors-services/by-service', [EmprendedorServiceController::class, 'getByService']);
 
 Route::get('/parent-module/test', [ParentModuleController::class, 'listPaginate']);  // Listar con paginación
 Route::post('/parent-module/test', [ParentModuleController::class, 'store']);  // Crear nuevo módulo padre
@@ -126,22 +127,22 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
 Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(function () {
     // Prefijo 'municipalidad'
     Route::prefix('municipalidad')->group(function () {
+
         // Rutas para la municipalidad
-        Route::middleware('permission:editar_municipalidad')->post('/crear', [MunicipalidadController::class, 'store']);
-        Route::middleware('permission:editar_municipalidad')->put('/{id}', [MunicipalidadController::class, 'update']);
-        Route::middleware('permission:editar_municipalidad')->delete('/{id}', [MunicipalidadController::class, 'destroy']);
+        Route::post('/crear', [MunicipalidadController::class, 'store']);
+        Route::put('/{id}', [MunicipalidadController::class, 'update']);
+        Route::delete('/{id}', [MunicipalidadController::class, 'destroy']);
         Route::get('/{id}', [MunicipalidadController::class, 'show']);
         Route::get('/code/{codigo}', [MunicipalidadController::class, 'searchByCode']);
         //BUSCAR MUNICIPALIDAD CON SUS ASOCIACIONES
         Route::get('/asociaciones/{id}', [MunicipalidadController::class, 'asociacionesByMunicipalidad']);
-
-
         // Rutas para descripciones de la municipalidad
         Route::post('/descripcion/{municipalidadId}', [MunicipalidadDescripcionController::class, 'store']);
         Route::get('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'show']);
         Route::put('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'update']);
         Route::delete('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'destroy']);
     });
+
 
     // Rutas para las asociaciones
     Route::prefix('asociacion')->group(function () {
@@ -151,7 +152,6 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
         Route::delete('/{id}', [AsociacionController::class, 'destroy']); // Eliminar asociación
         Route::get('/emprendedores/{id}', [AsociacionController::class, 'emprendedoresByAsociacion']);
         Route::get('/emprendedores-servicios/{id}', [AsociacionController::class, 'showWithEmprendedoresYServicios']);
-
     });
 
     // Rutas para los emprendedores
@@ -163,7 +163,8 @@ Route::middleware(['auth:api', 'role:admin|admin_familia|usuario'])->group(funct
         Route::delete('/{id}', [EmprendedorController::class, 'destroy']); // Eliminar emprendedor
         Route::post('/services/{id}', [EmprendedorController::class, 'asignarServicios']);
         Route::get('/ventas/{emprendedorId}', [EmprendedorController::class, 'reporteVentas']);
-
+        Route::get('/reservas/{emprendedorId}', [EmprendedorController::class, 'reservasPorEmprendedor']);
+        Route::get('/user/{userId}', [EmprendedorController::class, 'getByUserId']);
     });
 
 
@@ -258,37 +259,35 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/{id}', [SaleDetailController::class, 'update']);
         Route::delete('/{id}', [SaleDetailController::class, 'destroy']);
     });
-
 });
 
 
 
 
 
-Route::get('/emprendedor/user/{userId}', [EmprendedorController::class, 'getByUserId']);
 
-Route::prefix('emprendedor-service')->group(function () {
+Route::middleware(['auth:api'])->group(function () {
+    Route::prefix('emprendedor-service')->group(function () {
 
-    Route::get('/by-service', [EmprendedorServiceController::class, 'getByService']); // PRIMERO esta ruta
-    Route::get('/', [EmprendedorServiceController::class, 'index']);
-    Route::post('/', [EmprendedorServiceController::class, 'store']);
-    Route::get('/restore/{id}', [EmprendedorServiceController::class, 'restore']); // antes de los de id
-    Route::get('/{id}', [EmprendedorServiceController::class, 'show']); // LUEGO la ruta con parámetro
-    Route::put('/{id}', [EmprendedorServiceController::class, 'update']);
-    Route::delete('/{id}', [EmprendedorServiceController::class, 'destroy']);
+        // PRIMERO esta ruta
+        Route::get('/', [EmprendedorServiceController::class, 'index']);
+        Route::post('/', [EmprendedorServiceController::class, 'store']);
+        Route::get('/restore/{id}', [EmprendedorServiceController::class, 'restore']); // antes de los de id
+        Route::get('/{id}', [EmprendedorServiceController::class, 'show']); // LUEGO la ruta con parámetro
+        Route::put('/{id}', [EmprendedorServiceController::class, 'update']);
+        Route::delete('/{id}', [EmprendedorServiceController::class, 'destroy']);
 
 
-    // Subgrupo para manejo de imágenes relacionadas a EmprendedorService
-    Route::prefix('images')->group(function () {
-        Route::get('/', [ImgEmprendedorServiceController::class, 'index'])->name('emprendedor-service.images.index');        // Listar imágenes con paginación
-        Route::post('/', [ImgEmprendedorServiceController::class, 'store'])->name('emprendedor-service.images.store');       // Crear imagen
-        Route::get('/{id}', [ImgEmprendedorServiceController::class, 'show'])->name('emprendedor-service.images.show');      // Mostrar imagen específica
-        Route::put('/{id}', [ImgEmprendedorServiceController::class, 'update'])->name('emprendedor-service.images.update');  // Actualizar imagen
-        Route::delete('/{id}', [ImgEmprendedorServiceController::class, 'destroy'])->name('emprendedor-service.images.destroy'); // Eliminar imagen (soft delete)
+        // Subgrupo para manejo de imágenes relacionadas a EmprendedorService
+        Route::prefix('images')->group(function () {
+            Route::get('/', [ImgEmprendedorServiceController::class, 'index'])->name('emprendedor-service.images.index');        // Listar imágenes con paginación
+            Route::post('/', [ImgEmprendedorServiceController::class, 'store'])->name('emprendedor-service.images.store');       // Crear imagen
+            Route::get('/{id}', [ImgEmprendedorServiceController::class, 'show'])->name('emprendedor-service.images.show');      // Mostrar imagen específica
+            Route::put('/{id}', [ImgEmprendedorServiceController::class, 'update'])->name('emprendedor-service.images.update');  // Actualizar imagen
+            Route::delete('/{id}', [ImgEmprendedorServiceController::class, 'destroy'])->name('emprendedor-service.images.destroy'); // Eliminar imagen (soft delete)
+        });
     });
 });
-
-
 
 
 
@@ -300,10 +299,14 @@ Route::prefix('service')->group(function () {
     Route::get('/{id}', [ServiceController::class, 'show']);  // Ver servicio específico
     Route::put('/{id}', [ServiceController::class, 'update']);  // Actualizar servicio
     Route::delete('/{id}', [ServiceController::class, 'destroy']); // Eliminar servicio (Soft Delete)
-    Route::get('/category/emprendedores', [ServiceController::class, 'emprendedoresPorServicio']);
+    Route::get('/category/emprendedores_service', [ServiceController::class, 'emprendedoresPorServicio']);
 });
 
-
+Route::get('service/test', [ServiceController::class, 'index']);  // Ruta para paginación de servicios
+Route::post('service/test', [ServiceController::class, 'store']);  // Crear nuevo servicio
+Route::get('service/test/{id}', [ServiceController::class, 'show']);  // Ver servicio específico
+Route::put('service/test/{id}', [ServiceController::class, 'update']);  // Actualizar servicio
+Route::delete('service/test/{id}', [ServiceController::class, 'destroy']); // Eliminar servicio (Soft Delete)
 
 
 

@@ -12,9 +12,15 @@ class ServiceController extends Controller
     public function index(Request $request)
     {
         $size = $request->get('size', 10);
+        $category = $request->get('category');
 
-        $services = Service::with(['emprendedorServices.emprendedor', 'imgservices'])
-            ->paginate($size);
+        $query = Service::with(['emprendedorServices.emprendedor', 'imgservices']);
+
+        if ($category) {
+            $query->where('category', $category);
+        }
+
+        $services = $query->paginate($size);
 
         // Transformar usando collect y map para tener control total
         $response = collect($services->items())->map(function ($service) {
@@ -53,12 +59,13 @@ class ServiceController extends Controller
 
 
 
+
     // Crear nuevo servicio
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'code' => ['required', 'string', 'max:255', Rule::unique('services')],
+            'code' => ['required', 'string', 'max:255'],
             'description' => 'nullable|string',
             'category' => 'nullable|string|max:100',
             'status' => 'nullable|boolean',

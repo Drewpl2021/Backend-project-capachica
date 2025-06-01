@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -12,7 +11,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
         $this->call([
             RolesAndPermissionsSeeder::class,
             UserAdminSeeder::class,
@@ -36,7 +34,7 @@ class DatabaseSeeder extends Seeder
             EmprendedorSeeder::class,
             DestinosTuriscosSeeder::class,
             ServiceSedeer::class,
-            EmprendimientoServiceSedeer::class,
+            EmprendimientoServiceSeeder::class,
             ReservaSeeder::class,
             ReservaDetailSeeder::class,
             PaymentSeeder::class,
@@ -47,11 +45,5 @@ class DatabaseSeeder extends Seeder
             ImgEmprendedorSeeder::class,
             ModuleRoleSeeder::class
         ]);
-
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
     }
 }

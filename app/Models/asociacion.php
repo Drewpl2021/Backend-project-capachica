@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 
-class asociacion extends Model
+class Asociacion extends Model
 {
     use HasFactory;
     use SoftDeletes;
@@ -32,7 +32,7 @@ class asociacion extends Model
     // Relación: Una asociación tiene muchas imágenes asociadas
     public function imgAsociacions()
     {
-        return $this->hasMany(Img_Asociacion::class, 'asociacion_id');
+        return $this->hasMany(Img_asociacion::class, 'asociacion_id');
     }
 
     protected static function boot()

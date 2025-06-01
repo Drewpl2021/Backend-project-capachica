@@ -13,6 +13,7 @@ class ImgService extends Seeder
      * Run the database seeds.
      */
     public function run()
+<<<<<<< HEAD
         {
             $services = Service::all();
 
@@ -66,6 +67,20 @@ class ImgService extends Seeder
                         'code' => strtoupper($service->code) . "_IMG" . $numeroImagen,
                     ]);
                 }
+=======
+    {
+        $services = Service::all();
+
+        foreach ($services as $service) {
+            for ($i = 1; $i <= 2; $i++) {
+                ModelsImgService::create([
+                    'id' => Str::uuid(),
+                    'service_id' => $service->id,
+                    'imagen_url' => "https://example.com/images/{$service->code}_img{$i}.jpg",
+                    'description' => "Imagen {$i} para el servicio {$service->name}",
+                    'code' => strtoupper($service->code) . "_IMG{$i}", // Código único y legible
+                ]);
+>>>>>>> 55ea28b19b7b3429fd087cdd866f5312eb39435e
             }
         }
 }

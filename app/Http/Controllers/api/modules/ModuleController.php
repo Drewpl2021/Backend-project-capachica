@@ -8,9 +8,6 @@ use App\Models\ParentModule;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ModuleController extends Controller
@@ -107,11 +104,11 @@ class ModuleController extends Controller
             $modules = ParentModule::whereHas('modules.roles', function ($query) use ($userRoleIds) {
                 $query->whereIn('roles.id', $userRoleIds);
             })
-            ->with(['modules' => function ($query) use ($userRoleIds) {
-                $query->whereHas('roles', function ($q) use ($userRoleIds) {
-                    $q->whereIn('roles.id', $userRoleIds);
-                });
-            }])->get();
+                ->with(['modules' => function ($query) use ($userRoleIds) {
+                    $query->whereHas('roles', function ($q) use ($userRoleIds) {
+                        $q->whereIn('roles.id', $userRoleIds);
+                    });
+                }])->get();
 
             Log::info("Módulos obtenidos:", ['count' => $modules->count()]);
         } catch (\Exception $e) {

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('municipalidad_id');
             $table->string('nombre');
-            $table->string('descripcion');
+            $table->string('descripcion', 1000); // antes podía ser 255
             $table->string('url');
             $table->string('lugar');
             $table->boolean('estado');

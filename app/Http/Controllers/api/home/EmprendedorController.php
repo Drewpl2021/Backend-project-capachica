@@ -1,19 +1,19 @@
 <?php
 
 namespace App\Http\Controllers\API\home;
+
 use App\Models\Sale;
 use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\Controller;
-use App\Models\emprendedor;
+use App\Models\Emprendedor;
 use App\Models\EmprendedorService;
-use App\Traits\ApiResponseTrait;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class EmprendedorController extends Controller
 {
-    use ApiResponseTrait;
     /**
      * Display a listing of the resource.
      */
@@ -73,65 +73,106 @@ class EmprendedorController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'asociacion_id' => 'required|uuid|exists:asociacions,id', // Relación con la asociación
+            'asociacion_id' => 'required|uuid|exists:asociacions,id',
             'razon_social' => 'required|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'code' => 'nullable|string|max:255',
+            'ruc' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'lugar' => 'nullable|string|max:255',
+            'img_logo' => 'nullable|string|max:255',
+            'name_family' => 'nullable|string|max:255',
+            'status' => 'nullable|boolean',
         ]);
 
         $emprendedor = Emprendedor::create($validated);
-        return $this->successResponse($emprendedor, 'Emprendedor creado exitosamente', 201);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Emprendedor creado exitosamente',
+            'data' => $emprendedor
+        ], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show($id): JsonResponse
     {
         $emprendedor = Emprendedor::find($id);
 
         if (!$emprendedor) {
-            return $this->errorResponse('Emprendedor no encontrado', 404);
+            return response()->json([
+                'success' => false,
+                'message' => 'Emprendedor no encontrado'
+            ], 404);
         }
 
-        return response()->json($emprendedor);
+        return response()->json([
+            'success' => true,
+            'data' => $emprendedor
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): JsonResponse
     {
         $emprendedor = Emprendedor::find($id);
 
         if (!$emprendedor) {
-            return $this->errorResponse('Emprendedor no encontrado', 404);
+            return response()->json([
+                'success' => false,
+                'message' => 'Emprendedor no encontrado'
+            ], 404);
         }
 
         $validated = $request->validate([
             'asociacion_id' => 'required|uuid|exists:asociacions,id',
             'razon_social' => 'required|string|max:255',
-            'new_column' => 'nullable|integer',
+            'address' => 'nullable|string|max:255',
+            'code' => 'nullable|string|max:255',
+            'ruc' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'lugar' => 'nullable|string|max:255',
+            'img_logo' => 'nullable|string|max:255',
+            'name_family' => 'nullable|string|max:255',
+            'status' => 'nullable|boolean',
         ]);
 
         $emprendedor->update($validated);
-        return $this->successResponse($emprendedor, 'Emprendedor actualizado exitosamente');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Emprendedor actualizado exitosamente',
+            'data' => $emprendedor
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
         $emprendedor = Emprendedor::find($id);
 
         if (!$emprendedor) {
-            return $this->errorResponse('Emprendedor no encontrado', 404);
+            return response()->json([
+                'success' => false,
+                'message' => 'Emprendedor no encontrado'
+            ], 404);
         }
 
         $emprendedor->delete();
-        return $this->successResponse([], 'Emprendedor eliminado exitosamente');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Emprendedor eliminado exitosamente'
+        ]);
     }
 
 
@@ -214,22 +255,19 @@ class EmprendedorController extends Controller
 
     public function getByUserId($userId)
     {
-        // Buscar el emprendedor_id en la tabla emprendedor_user por user_id
         $emprendedorUser = DB::table('emprendedor_user')->where('user_id', $userId)->first();
 
         if (!$emprendedorUser) {
-            return $this->errorResponse('No se encontró emprendedor asociado a este usuario', 404);
+            return response()->json(['error' => 'No se encontró emprendedor asociado a este usuario'], 404);
         }
 
-        // Buscar el emprendedor con relaciones
         $emprendedor = Emprendedor::with(['asociacion', 'services', 'imgEmprendedores'])
             ->find($emprendedorUser->emprendedor_id);
 
         if (!$emprendedor) {
-            return $this->errorResponse('Emprendedor no encontrado', 404);
+            return response()->json(['error' => 'Emprendedor no encontrado'], 404);
         }
 
-        // Preparar la respuesta como en index()
         $response = [
             'id' => $emprendedor->id,
             'razonSocial' => $emprendedor->razon_social,
@@ -249,16 +287,25 @@ class EmprendedorController extends Controller
             'services' => $emprendedor->services->map(function ($service) {
                 return [
                     'id' => $service->id,
-                    'name' => $service->name ?? null,
-                    'description' => $service->description ?? null,
+                    'name_service' => $service->name ?? null,
+                    'description_service' => $service->description ?? null,
+
+
                     'code' => $service->pivot->code ?? null,
-                    'status' => $service->pivot->status ?? null,
+                    'status' => isset($service->pivot->status) ? (bool)$service->pivot->status : null,
+                    'cantidad' => $service->pivot->cantidad ?? null,
+                    'costo' => $service->pivot->costo ?? null,
+                    'costo_unidad' => $service->pivot->costo_unidad ?? null,
+                    'name_service_empredimiento' => $service->pivot->name ?? null,          // Si quieres enviar el "name" del pivote
+                    'description_service_empredimiento' => $service->pivot->description ?? null, // Si quieres enviar la "description" del pivote
                 ];
             }),
         ];
 
         return response()->json($response);
     }
+
+
 
     public function reporteVentas($emprendedorId, Request $request)
     {
@@ -328,5 +375,54 @@ class EmprendedorController extends Controller
         ]);
     }
 
+    public function reservasPorEmprendedor($emprendedorId)
+    {
+        $emprendedor = Emprendedor::find($emprendedorId);
+        if (!$emprendedor) {
+            return response()->json(['message' => 'Emprendedor no encontrado'], 404);
+        }
 
+        // IDs de servicios del emprendedor
+        $emprendedorServiceIds = $emprendedor->emprendedorServices()->pluck('id');
+
+        // Obtener todos los detalles relacionados a esos emprendedor_service_id con su reserva y servicio
+        $reserveDetails = \App\Models\ReserveDetail::with(['reserva', 'emprendimientoService'])
+            ->whereIn('emprendedor_service_id', $emprendedorServiceIds)
+            ->get();
+
+        // Agrupar por emprendimiento_service_id para la estructura deseada
+        $agrupado = $reserveDetails->groupBy('emprendedor_service_id')->map(function ($detalles, $serviceId) {
+            $primerDetalle = $detalles->first();
+            $servicio = $primerDetalle->emprendimientoService;
+
+            return [
+                'emprendimiento_service' => [
+                    'id' => $servicio->id,
+                    'name' => $servicio->name,
+                    'code' => $servicio->code,
+                    'costo' => $servicio->costo,
+                ],
+                'emprendimiento_service_detalle' => $detalles->map(function ($detalle) {
+                    return [
+                        'id' => $detalle->id,
+                        'cantidad' => $detalle->cantidad,
+                        'lugar' => $detalle->lugar,
+                        'description' => $detalle->description,
+                        'reserva' => [
+                            'id' => $detalle->reserva->id ?? null,
+                            'code' => $detalle->reserva->code ?? null,
+                            'status' => $detalle->reserva->status ?? null,
+                            'total' => $detalle->reserva->total ?? null,
+                        ],
+                    ];
+                }),
+            ];
+        })->values();
+
+        return response()->json([
+            'emprendedor_id' => $emprendedor->id,
+            'razon_social' => $emprendedor->razon_social,
+            'reservas' => $agrupado,
+        ]);
+    }
 }

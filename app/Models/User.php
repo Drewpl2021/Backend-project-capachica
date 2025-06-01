@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-use Illuminate\Database\Eloquent\Concerns\HasEvents;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
-use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany roles()
+ */
 class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
@@ -79,14 +79,22 @@ class User extends Authenticatable implements JWTSubject
             'name' => $this->name, // Agregar 'username' al token
             'last_name' => $this->last_name, // Agregar 'username' al token
             'username' => $this->username, // Agregar 'username' al token
-            'email' => $this->email,       // Agregar 'email' al token
+            'email' => $this->email,
+            // Agregar 'email' al token
         ];
     }
     // Relación muchos a muchos con Emprendedor
     public function emprendedores()
     {
-        return $this->belongsToMany(Emprendedor::class, 'emprendedor_user', 'user_id', 'emprendedor_id');
+        return $this->belongsToMany(
+            Emprendedor::class,
+            'emprendedor_user',
+            'user_id',
+            'emprendedor_id'
+        )->withTimestamps(); // esto es opcional si tienes timestamps en la tabla pivotes
     }
+
+
     public function reservas()
     {
         return $this->hasMany(Reserva::class, 'user_id');  // Aquí indicamos que un usuario puede tener muchas reservas

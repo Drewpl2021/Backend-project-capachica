@@ -90,6 +90,17 @@ class SectionsDetailSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
                 'deleted_at' => null
+            ],
+                        [
+                'id' => Str::uuid(),
+                'status' => true,
+                'code' => '08',
+                'title' => 'Haga que su recorrido sea memorable y seguro con nosotros',
+                'description' => 'Somos una agencia de viajes local con sede en Capachica, Puno, un lugar mágico a orillas del lago Titicaca. Nuestra misión es conectar a los viajeros con la rica cultura andina, la paz de sus paisajes y la calidez de nuestras comunidades. Ya sea que esté buscando aventuras de senderismo, auténticas casas de familia o relajación junto al lago, nuestro equipo garantiza una experiencia segura e inolvidable en cada paso del camino.',
+                'section_id' => Section::where('code', '01')->first()->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+                'deleted_at' => null
             ]
             // Agrega más detalles si es necesario
         ];

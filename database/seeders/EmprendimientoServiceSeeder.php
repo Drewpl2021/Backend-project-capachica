@@ -7,9 +7,8 @@ use App\Models\Service;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Faker\Factory as Faker;
 
-class EmprendimientoServiceSedeer extends Seeder
+class EmprendimientoServiceSeeder extends Seeder
 {
     public function run()
         {
@@ -29,6 +28,7 @@ class EmprendimientoServiceSedeer extends Seeder
                 // agrega más categorías si quieres
             ];
 
+<<<<<<< HEAD:database/seeders/EmprendimientoServiceSedeer.php
             // Opcional: imágenes genéricas si no hay categoría o no quieres filtrar
             $imagenesGenericas = [
                 'https://images.unsplash.com/photo-1526772662000-3f88f10405ff?auto=format&fit=crop&w=800&q=80',
@@ -42,12 +42,23 @@ class EmprendimientoServiceSedeer extends Seeder
                 $categoria = $eservice->category ?? null;
 
                 $imagenes = $imagenesGenericas;
+=======
+        foreach ($emprendedores as $emprendedor) {
+            $selectedServices = $services->shuffle()->take(rand(1, 3));
+
+            foreach ($selectedServices as $service) {
+                $exists = DB::table('emprendedor_service')
+                    ->where('service_id', $service->id)
+                    ->where('emprendedor_id', $emprendedor->id)
+                    ->exists();
+>>>>>>> 55ea28b19b7b3429fd087cdd866f5312eb39435e:database/seeders/EmprendimientoServiceSeeder.php
 
                 // Si hay categoría y imágenes definidas, las usamos
                 if ($categoria && isset($imagenesPorCategoria[$categoria])) {
                     $imagenes = $imagenesPorCategoria[$categoria];
                 }
 
+<<<<<<< HEAD:database/seeders/EmprendimientoServiceSedeer.php
                 foreach ($imagenes as $index => $url) {
                     ImgEmprendedorService::create([
                         'id' => Str::uuid(),
@@ -58,6 +69,28 @@ class EmprendimientoServiceSedeer extends Seeder
                         'code' => 'IMG-' . strtoupper(Str::random(4)) . '-' . substr($eservice->code ?? 'XXX', 0, 3),
                     ]);
                 }
+=======
+                $randomSuffix = strtoupper(Str::random(3));
+                $costoBase = rand(50, 200);
+
+                $name = "{$service->name} Exclusivo {$randomSuffix} de {$emprendedor->razon_social}";
+                $description = "Servicio {$service->name} personalizado para {$emprendedor->razon_social} - Código {$randomSuffix}";
+
+                DB::table('emprendedor_service')->insert([
+                    'id' => (string) Str::uuid(),
+                    'service_id' => $service->id,
+                    'emprendedor_id' => $emprendedor->id,
+                    'code' => 'CODE-' . $randomSuffix,
+                    'status' => true,
+                    'costo' => $costoBase,
+                    'cantidad' => rand(1, 30),
+                    'costo_unidad' => round($costoBase / rand(1, 5), 2),
+                    'name' => $name,
+                    'description' => $description,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+>>>>>>> 55ea28b19b7b3429fd087cdd866f5312eb39435e:database/seeders/EmprendimientoServiceSeeder.php
             }
         }
 }

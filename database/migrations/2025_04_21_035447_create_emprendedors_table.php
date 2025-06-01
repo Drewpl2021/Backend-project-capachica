@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('emprendedors', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('razon_social');
-            $table->string('address');
-            $table->string('code');
-            $table->string('ruc');
+            $table->string('razon_social')->nullable();
+            $table->string('address')->nullable();
+            $table->string('code')->nullable();
+            $table->string('ruc')->nullable();
             $table->text('description')->nullable();
             $table->string('lugar')->nullable();
             $table->string('img_logo')->nullable();
-            $table->string('name_family');
+            $table->string('name_family')->nullable();
             $table->boolean('status')->default(true); // Estado activo/inactivo para control
             $table->uuid('asociacion_id');  // Relación con la tabla 'asociacions'
             $table->timestamps();
@@ -35,6 +35,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('emprendedors');
+        Schema::table('emprendedors', function (Blueprint $table) {
+            $table->dropColumn('address');
+        });
     }
 };

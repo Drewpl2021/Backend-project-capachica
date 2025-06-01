@@ -4,7 +4,6 @@ namespace App\Http\Controllers\API\home;
 
 use App\Http\Controllers\Controller;
 use App\Models\Municipalidad_Descripcion;
-use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 
 class MunicipalidadDescripcionController extends Controller

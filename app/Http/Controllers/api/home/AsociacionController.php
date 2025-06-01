@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\API\home;
 
 use App\Http\Controllers\Controller;
-use App\Models\asociacion;
+use App\Models\Asociacion;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class AsociacionController extends Controller
 {
-    use SoftDeletes;  // Esto activa soft deletes
+    use SoftDeletes;
 
     /**
      * Display a listing of the resource.
@@ -415,6 +414,4 @@ class AsociacionController extends Controller
             'totalPages' => $emprendedores->lastPage(),
         ]);
     }
-
-
 }

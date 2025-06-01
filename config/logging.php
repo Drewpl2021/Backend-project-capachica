@@ -32,8 +32,9 @@ return [
     */
 
     'deprecations' => [
-        'channel' => env('LOG_DEPRECATIONS_CHANNEL', 'null'),
-        'trace' => false,
+        'driver' => 'single',
+        'path' => storage_path('logs/laravel-deprecations.log'),
+        'level' => 'warning',
     ],
 
     /*
