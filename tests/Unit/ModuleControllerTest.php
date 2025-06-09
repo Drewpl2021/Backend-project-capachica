@@ -134,48 +134,52 @@ class ModuleControllerTest extends TestCase
 
     public function test_update_modifies_module()
     {
-        $request = Request::create('/api/module/uuid-1', 'PUT', [
+        // ✅ 1. Crear un Request REAL
+        $request = \Illuminate\Http\Request::create('/api/module/uuid-1', 'PUT', [
             'title' => 'Updated Title',
             'subtitle' => 'Updated Subtitle',
             'type' => 'Updated Type',
-            'code' => 'X1',
-            'icon' => 'icon',
+            'code' => 'MODX',
+            'icon' => 'icon-x',
             'status' => true,
-            'moduleOrder' => 1,
-            'link' => '/route',
-            'parentModuleId' => 'uuid-parent',
+            'moduleOrder' => 5,
+            'link' => '/link-x',
+            'parentModuleId' => 'uuid-parent'
         ]);
 
-        // Mock del request->validate()
-        $request = Mockery::mock(Request::class)->makePartial();
+        // ✅ 2. Mockear el Request de forma parcial
+        $request = Mockery::mock($request)->makePartial();
         $request->shouldReceive('input')->with('parentModuleId')->andReturn('uuid-parent');
-        $request->shouldReceive('merge')->andReturnNull();
-        $request->shouldReceive('validate')->andReturn([
+        $request->shouldReceive('merge')->once();
+        $request->shouldReceive('validate')->once()->andReturn([
             'title' => 'Updated Title',
             'subtitle' => 'Updated Subtitle',
             'type' => 'Updated Type',
-            'code' => 'X1',
-            'icon' => 'icon',
+            'code' => 'MODX',
+            'icon' => 'icon-x',
             'status' => true,
-            'moduleOrder' => 1,
-            'link' => '/route',
-            'parent_module_id' => 'uuid-parent',
+            'moduleOrder' => 5,
+            'link' => '/link-x',
+            'parent_module_id' => 'uuid-parent'
         ]);
 
-        // Mock del modelo que será actualizado
-        $moduleMock = Mockery::mock();
-        $moduleMock->shouldReceive('update')->once();
+        // ✅ 3. Mock del modelo
+        $module = Mockery::mock();
+        $module->shouldReceive('update')->once()->andReturnTrue();
 
-        // Mock estático de Module::findOrFail()
         $moduleModel = Mockery::mock('alias:App\Models\Module');
-        $moduleModel->shouldReceive('findOrFail')->with('uuid-1')->andReturn($moduleMock);
+        $moduleModel->shouldReceive('findOrFail')->once()->with('uuid-1')->andReturn($module);
 
-        // Ejecutar controlador
-        $controller = new ModuleController();
+        // ✅ 4. Ejecutar controlador
+        $controller = new \App\Http\Controllers\API\Modules\ModuleController();
         $response = $controller->update($request, 'uuid-1');
 
+        // ✅ 5. Verificar
         $this->assertEquals(200, $response->getStatusCode());
     }
+
+
+
 
 
     public function test_destroy_deletes_module()
