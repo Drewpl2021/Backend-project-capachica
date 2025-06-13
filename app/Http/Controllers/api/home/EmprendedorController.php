@@ -22,8 +22,8 @@ class EmprendedorController extends Controller
         $size = $request->input('size', 10);
         $name = $request->input('name');
 
-        // Cargamos relación asociacion, servicios y imágenes
-        $query = Emprendedor::with(['asociacion', 'services', 'imgEmprendedores']);
+        // Cargar relaciones
+        $query = Emprendedor::with(['asociacion', 'imgEmprendedores', 'services']);
 
         if ($name) {
             $query->where('razon_social', 'like', "%$name%");
@@ -35,26 +35,51 @@ class EmprendedorController extends Controller
             return [
                 'id' => $emprendedor->id,
                 'razonSocial' => $emprendedor->razon_social,
+                'address' => $emprendedor->address,
+                'code' => $emprendedor->code,
+                'ruc' => $emprendedor->ruc,
+                'description' => $emprendedor->description,
+                'lugar' => $emprendedor->lugar,
+                'img_logo' => $emprendedor->img_logo,
+                'name_family' => $emprendedor->name_family,
+                'status' => $emprendedor->status,
                 'asociacionId' => $emprendedor->asociacion_id,
                 'nombre_asociacion' => $emprendedor->asociacion->nombre ?? null,
                 'createdAt' => $emprendedor->created_at,
                 'updatedAt' => $emprendedor->updated_at,
                 'deletedAt' => $emprendedor->deleted_at,
+
                 'imagenes' => $emprendedor->imgEmprendedores->map(function ($img) {
                     return [
                         'id' => $img->id,
-                        'url_image' => $img->url_image, // Incluyendo la URL de la imagen
-                        'estado' => (bool) $img->estado, // Convertir a booleano
-                        'code' => $img->code, // Código asociado (si existe)
+                        'url_image' => $img->url_image,
+                        'estado' => (bool) $img->estado,
+                        'code' => $img->code,
                     ];
                 }),
-                'services' => $emprendedor->services->map(function ($service) {
+
+                // Aquí devolvemos los productos (emprendedor_service)
+                'products' => $emprendedor->services->map(function ($service) {
                     return [
-                        'id' => $service->id,
-                        'name' => $service->name ?? null,
-                        'description' => $service->description ?? null,
-                        'code' => $service->pivot->code ?? null,
-                        'status' => $service->pivot->status ?? null,
+
+                        'service_id' => $service->id, // ID del catálogo service
+                        'service_name' => $service->name,
+                        'service_description' => $service->description,
+                        'service_code' => $service->code,
+                        'service_category' => $service->category,
+                        'service_status' => $service->status,
+
+                        // Campos propios del producto (pivot)
+                        'id_service_emprendedor' => $service->pivot->id, // ID de emprendedor_service
+                        'productCode' => $service->pivot->code,
+                        'productStatus' => $service->pivot->status,
+                        'cantidad' => $service->pivot->cantidad,
+                        'name' => $service->pivot->name,
+                        'description' => $service->pivot->description,
+                        'costo' => $service->pivot->costo,
+                        'costoUnidad' => $service->pivot->costo_unidad,
+                        'createdAt' => $service->pivot->created_at,
+                        'updatedAt' => $service->pivot->updated_at,
                     ];
                 }),
             ];
@@ -63,11 +88,11 @@ class EmprendedorController extends Controller
         return response()->json([
             'content' => $response,
             'totalElements' => $emprendedores->total(),
-            'currentPage' => $emprendedores->currentPage(), // sin restar 1
+            'currentPage' => $emprendedores->currentPage(),
             'totalPages' => $emprendedores->lastPage(),
-            'perPage' => $emprendedores->perPage(),
         ]);
     }
+
 
 
     /**
@@ -102,7 +127,7 @@ class EmprendedorController extends Controller
      */
     public function show($id): JsonResponse
     {
-        $emprendedor = Emprendedor::find($id);
+        $emprendedor = Emprendedor::with(['asociacion', 'imgEmprendedores', 'services'])->find($id);
 
         if (!$emprendedor) {
             return response()->json([
@@ -111,11 +136,63 @@ class EmprendedorController extends Controller
             ], 404);
         }
 
+        $data = [
+            'id' => $emprendedor->id,
+            'razonSocial' => $emprendedor->razon_social,
+            'address' => $emprendedor->address,
+            'code' => $emprendedor->code,
+            'ruc' => $emprendedor->ruc,
+            'description' => $emprendedor->description,
+            'lugar' => $emprendedor->lugar,
+            'img_logo' => $emprendedor->img_logo,
+            'name_family' => $emprendedor->name_family,
+            'status' => $emprendedor->status,
+            'asociacionId' => $emprendedor->asociacion_id,
+            'nombre_asociacion' => $emprendedor->asociacion->nombre ?? null,
+            'createdAt' => $emprendedor->created_at,
+            'updatedAt' => $emprendedor->updated_at,
+            'deletedAt' => $emprendedor->deleted_at,
+
+            'imagenes' => $emprendedor->imgEmprendedores->map(function ($img) {
+                return [
+                    'id' => $img->id,
+                    'url_image' => $img->url_image,
+                    'estado' => (bool) $img->estado,
+                    'code' => $img->code,
+                ];
+            }),
+
+            // Aquí devolvemos los productos (emprendedor_service)
+            'products' => $emprendedor->services->map(function ($service) {
+                return [
+
+                    'service_id' => $service->id, // ID del catálogo service
+                    'service_name' => $service->name,
+                    'service_description' => $service->description,
+                    'service_code' => $service->code,
+                    'service_category' => $service->category,
+                    'service_status' => $service->status,
+
+                    // Campos propios del producto (pivot)
+                    'id_service_emprendedor' => $service->pivot->id, // ID de emprendedor_service
+                    'productCode' => $service->pivot->code,
+                    'productStatus' => $service->pivot->status,
+                    'cantidad' => $service->pivot->cantidad,
+                    'name' => $service->pivot->name,
+                    'description' => $service->pivot->description,
+                    'costo' => $service->pivot->costo,
+                    'costoUnidad' => $service->pivot->costo_unidad,
+                    'createdAt' => $service->pivot->created_at,
+                    'updatedAt' => $service->pivot->updated_at,
+                ];
+            }),
+        ];
+
         return response()->json([
-            'success' => true,
-            'data' => $emprendedor
+            'content' => $data
         ]);
     }
+
 
     /**
      * Update the specified resource in storage.

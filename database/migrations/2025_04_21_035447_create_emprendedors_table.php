@@ -21,11 +21,10 @@ return new class extends Migration
             $table->string('lugar')->nullable();
             $table->string('img_logo')->nullable();
             $table->string('name_family')->nullable();
-            $table->boolean('status')->default(true); // Estado activo/inactivo para control
-            $table->uuid('asociacion_id');  // Relación con la tabla 'asociacions'
+            $table->boolean('status')->default(true);
+            $table->uuid('asociacion_id');
             $table->timestamps();
             $table->softDeletes();
-            // Relación con la tabla 'asociacions'
             $table->foreign('asociacion_id')->references('id')->on('asociacions')->onDelete('cascade');
         });
     }
