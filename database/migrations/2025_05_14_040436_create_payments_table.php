@@ -14,11 +14,12 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->uuid('id')->primary();  // ID de tipo UUID
             $table->string('code');  // Código del pago
-            $table->decimal('total');  // Total de pago
-            $table->decimal('bi');  // Base imponible
-            $table->decimal('igv');  // Impuesto general a las ventas
-            $table->timestamps();
-            $table->softDeletes();
+            $table->string('codigo_pago_yape')->nullable();  // Nuevo campo para almacenar el código de pago de Yape
+            $table->decimal('total', 10, 2);  // Total de pago
+            $table->decimal('bi', 10, 2);  // Base imponible
+            $table->decimal('igv', 10, 2);  // Impuesto general a las ventas
+            $table->timestamps();  // Timestamps: created_at y updated_at
+            $table->softDeletes();  // Soft delete: para eliminar lógicamente el registro
         });
     }
 

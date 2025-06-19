@@ -207,14 +207,10 @@ class EmprendedorServiceController extends Controller
     /**
      * Obtener todos los registros de emprendedor_service filtrados por service_id.
      */
-
     public function getByService(Request $request)
     {
         $serviceId = $request->input('service_id');
         $size = $request->input('size', 10);
-
-        // Log para mostrar el parámetro recibido
-        Log::debug("service_id recibido: $serviceId");
 
         if (!$serviceId) {
             Log::error("El parámetro service_id es requerido.");
@@ -290,5 +286,40 @@ class EmprendedorServiceController extends Controller
             'totalPages' => $results->lastPage(),
             'perPage' => $results->perPage(),
         ]);
+    }
+
+    /**
+     * Eliminar un registro de EmprendedorService (Soft Delete).
+     */
+    public function destroy($id)
+    {
+        $record = EmprendedorService::find($id);
+
+        if (!$record) {
+            return response()->json(['message' => 'Registro no encontrado'], 404);
+        }
+
+        // Verificar que el usuario autenticado sea dueño del emprendimiento
+        $user = Auth::user();
+        $esPropietario = DB::table('emprendedor_user')
+            ->where('user_id', $user->id)
+            ->where('emprendedor_id', $record->emprendedor_id)
+            ->exists();
+
+        if (!$esPropietario) {
+            return response()->json([
+                'message' => 'No tienes permisos para eliminar este servicio.'
+            ], 403);
+        }
+
+        try {
+            $record->delete();
+            return response()->json(['message' => 'Servicio eliminado correctamente.'], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al eliminar el servicio.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

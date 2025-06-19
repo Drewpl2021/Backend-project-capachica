@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('emprendedor_service', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
-            $table->boolean('status')->default(true);
             $table->foreignUuid('service_id')->constrained('services')->onDelete('cascade');
             $table->foreignUuid('emprendedor_id')->constrained('emprendedors')->onDelete('cascade');
 
@@ -24,6 +23,7 @@ return new class extends Migration
             $table->decimal('costo', 10, 2);
             $table->decimal('costo_unidad', 10, 2)->nullable();
             $table->string('code')->unique();
+            $table->boolean('status')->default(true);
 
             $table->timestamps();
             $table->softDeletes();

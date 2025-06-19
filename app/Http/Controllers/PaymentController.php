@@ -114,10 +114,10 @@ class PaymentController extends Controller
     {
         $userId = Auth::id();
 
-        // Validar entrada mínima
+        // Validar la entrada
         $request->validate([
-            'monto' => 'required|numeric|min:0',
-            'codigo_pago_yape' => 'required|string', // algún identificador o código QR que uses
+            'monto' => 'required|numeric|min:0',                // Monto del pago
+            'codigo_pago_yape' => 'required|string',            // Código de pago (referencia de Yape o QR)
         ]);
 
         // Buscar la venta y verificar que pertenece al usuario
@@ -134,22 +134,23 @@ class PaymentController extends Controller
         DB::beginTransaction();
 
         try {
-            // Crear o actualizar payment
+            // Crear el pago con Yape
             $payment = Payment::create([
-                'code' => $request->codigo_pago_yape,
-                'total' => $request->monto,
-                'bi' => $sale->BI,
-                'igv' => $sale->IGV,
+                'code' => $request->codigo_pago_yape,       // Código de pago de Yape
+                'total' => $request->monto,                 // Monto del pago
+                'bi' => $sale->BI,                          // Base imponible de la venta
+                'igv' => $sale->IGV,                        // IGV de la venta
+                'codigo_pago_yape' => $request->codigo_pago_yape, // Guardamos el código de pago de Yape
             ]);
 
             // Actualizar la venta con el payment_id
             $sale->update([
-                'payment_id' => $payment->id,
+                'payment_id' => $payment->id,               // Vinculamos el pago con la venta
             ]);
 
             // Actualizar el estado de la reserva y venta
             $sale->reserva->update(['status' => 'pagada']);
-            $sale->update(['status' => 'pagada']); // Añade campo 'status' a Sale si quieres controlar estado
+            $sale->update(['status' => 'pagada']); // Cambiar estado de la venta
 
             DB::commit();
 
@@ -158,11 +159,9 @@ class PaymentController extends Controller
                 'payment' => $payment,
                 'sale' => $sale,
             ], 201);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => 'Error registrando pago: ' . $e->getMessage()], 500);
         }
     }
-
 }

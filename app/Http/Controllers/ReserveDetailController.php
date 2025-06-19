@@ -5,9 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\ReserveDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Reserva;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class ReserveDetailController extends Controller
 {
@@ -22,7 +19,13 @@ class ReserveDetailController extends Controller
         // Obtener detalles solo de reservas que pertenecen al usuario
         $query = ReserveDetail::whereHas('reserva', function ($q) use ($userId) {
             $q->where('user_id', $userId);
-        })->with(['emprendimientoService.service', 'reserva']);
+        })->with(['emprendimientoService.service', 'reserva']);  // Relacionar con servicio y reserva
+
+        // Filtros adicionales
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where('description', 'like', "%$search%");
+        }
 
         $details = $query->paginate($size);
 
@@ -41,6 +44,7 @@ class ReserveDetailController extends Controller
     {
         $userId = Auth::id();
 
+        // Buscar el detalle de la reserva con la validación de usuario propietario
         $detail = ReserveDetail::with(['emprendimientoService.service', 'reserva'])
             ->where('id', $id)
             ->whereHas('reserva', function ($q) use ($userId) {
@@ -48,8 +52,9 @@ class ReserveDetailController extends Controller
             })
             ->first();
 
+        // Si no se encuentra el detalle, retornar error 404
         if (!$detail) {
-            return response()->json(['message' => 'Detalle de reserva no encontrado'], 404);
+            return response()->json(['message' => 'Detalle de reserva no encontrado o no autorizado'], 404);
         }
 
         return response()->json($detail);
@@ -62,15 +67,18 @@ class ReserveDetailController extends Controller
     {
         $userId = Auth::id();
 
+        // Buscar el detalle de la reserva con la validación de usuario propietario
         $detail = ReserveDetail::where('id', $id)
             ->whereHas('reserva', function ($q) use ($userId) {
                 $q->where('user_id', $userId);
             })->first();
 
+        // Si no se encuentra el detalle, retornar error 404
         if (!$detail) {
-            return response()->json(['message' => 'Detalle de reserva no encontrado'], 404);
+            return response()->json(['message' => 'Detalle de reserva no encontrado o no autorizado'], 404);
         }
 
+        // Validaciones de los campos
         $validated = $request->validate([
             'description' => 'nullable|string|max:500',
             'cantidad' => 'nullable|numeric|min:1',
@@ -81,27 +89,35 @@ class ReserveDetailController extends Controller
             'lugar' => 'nullable|string|max:255',
         ]);
 
+        // Actualizar los datos del detalle
         $detail->update($validated);
 
-        return response()->json($detail);
+        return response()->json([
+            'message' => 'Detalle de reserva actualizado correctamente',
+            'detail' => $detail,
+        ]);
     }
 
     /**
-     * Eliminar un detalle de reserva.
+     * Eliminar un detalle de reserva (Soft Delete).
      */
     public function destroy($id)
     {
         $userId = Auth::id();
 
+        // Buscar el detalle de la reserva con la validación de usuario propietario
         $detail = ReserveDetail::where('id', $id)
             ->whereHas('reserva', function ($q) use ($userId) {
                 $q->where('user_id', $userId);
-            })->first();
+            })
+            ->first();
 
+        // Si no se encuentra el detalle, retornar error 404
         if (!$detail) {
-            return response()->json(['message' => 'Detalle de reserva no encontrado'], 404);
+            return response()->json(['message' => 'Detalle de reserva no encontrado o no autorizado'], 404);
         }
 
+        // Eliminar el detalle (Soft Delete)
         $detail->delete();
 
         return response()->json(['message' => 'Detalle de reserva eliminado correctamente']);

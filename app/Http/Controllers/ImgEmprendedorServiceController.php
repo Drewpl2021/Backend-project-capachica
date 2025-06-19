@@ -29,20 +29,20 @@ class ImgEmprendedorServiceController extends Controller
         ]);
     }
 
-    /**
-     * Crear una imagen de servicio
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'emprendedor_service_id' => 'required|uuid|exists:services,id',
-            'imagen_url' => 'required|string|max:255',
+            'emprendedor_service_id' => 'required|uuid|exists:emprendedor_service,id',
+            'url_image' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'code' => 'required|string|unique:imgservices,code',
+            'code' => 'required|string|unique:img_emprenpedor_service,code', // Corregir el nombre de la tabla
         ]);
 
+        // Asignar valor por defecto a 'estado' si no se proporciona
+        $validated['estado'] = isset($validated['estado']) ? (bool) $validated['estado'] : true;  // Estado por defecto: true
+
+        // Crear la imagen
         $image = ImgEmprendedorService::create($validated);
-        $image->estado = (bool) $image->estado;
 
         return response()->json([
             'content' => $image,
@@ -67,7 +67,6 @@ class ImgEmprendedorServiceController extends Controller
 
         return response()->json([
             'content' => $image,
-            'message' => 'Imagen de servicio encontrada'
         ]);
     }
 
@@ -84,21 +83,26 @@ class ImgEmprendedorServiceController extends Controller
             ], 404);
         }
 
+        // Validación de datos
         $validated = $request->validate([
-            'emprendedor_service_id' => 'required|uuid|exists:services,id',
-            'imagen_url' => 'required|string|max:255',
+            'emprendedor_service_id' => 'required|uuid|exists:emprendedor_service,id',
+            'url_image' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'code' => 'required|string|unique:imgservices,code,' . $id,
+            'code' => 'required|string|unique:img_emprenpedor_service,code,' . $id, // Excluir el código actual
         ]);
 
+        // Asignar valor por defecto a 'estado' si no se proporciona
+        $validated['estado'] = isset($validated['estado']) ? (bool) $validated['estado'] : true;
+
+        // Actualizar imagen
         $image->update($validated);
-        $image->estado = (bool) $image->estado;
 
         return response()->json([
             'content' => $image,
             'message' => 'Imagen de servicio actualizada exitosamente'
         ]);
     }
+
 
     /**
      * Eliminar imagen (soft delete)

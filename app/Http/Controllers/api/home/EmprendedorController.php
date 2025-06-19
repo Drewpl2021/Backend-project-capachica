@@ -21,12 +21,25 @@ class EmprendedorController extends Controller
     {
         $size = $request->input('size', 10);
         $name = $request->input('name');
+        $category = $request->input('category');
 
-        // Cargar relaciones
         $query = Emprendedor::with(['asociacion', 'imgEmprendedores', 'services']);
 
+        // Filtro por nombre, razón social, RUC, etc.
         if ($name) {
-            $query->where('razon_social', 'like', "%$name%");
+            $query->where(function ($q) use ($name) {
+                $q->where('name_family', 'like', "%$name%")
+                    ->orWhere('razon_social', 'like', "%$name%")
+                    ->orWhere('ruc', 'like', "%$name%")
+                    ->orWhere('code', 'like', "%$name%");
+            });
+        }
+
+        // ✅ Filtro por categoría del servicio
+        if ($category && $category !== 'Todos') {
+            $query->whereHas('services', function ($q) use ($category) {
+                $q->where('category', $category);
+            });
         }
 
         $emprendedores = $query->paginate($size);
@@ -34,7 +47,7 @@ class EmprendedorController extends Controller
         $response = collect($emprendedores->items())->map(function ($emprendedor) {
             return [
                 'id' => $emprendedor->id,
-                'razonSocial' => $emprendedor->razon_social,
+                'razon_social' => $emprendedor->razon_social,
                 'address' => $emprendedor->address,
                 'code' => $emprendedor->code,
                 'ruc' => $emprendedor->ruc,
@@ -43,7 +56,7 @@ class EmprendedorController extends Controller
                 'img_logo' => $emprendedor->img_logo,
                 'name_family' => $emprendedor->name_family,
                 'status' => $emprendedor->status,
-                'asociacionId' => $emprendedor->asociacion_id,
+                'asociacion_id' => $emprendedor->asociacion_id,
                 'nombre_asociacion' => $emprendedor->asociacion->nombre ?? null,
                 'createdAt' => $emprendedor->created_at,
                 'updatedAt' => $emprendedor->updated_at,
@@ -58,19 +71,16 @@ class EmprendedorController extends Controller
                     ];
                 }),
 
-                // Aquí devolvemos los productos (emprendedor_service)
                 'products' => $emprendedor->services->map(function ($service) {
                     return [
-
-                        'service_id' => $service->id, // ID del catálogo service
+                        'service_id' => $service->id,
                         'service_name' => $service->name,
                         'service_description' => $service->description,
                         'service_code' => $service->code,
                         'service_category' => $service->category,
                         'service_status' => $service->status,
 
-                        // Campos propios del producto (pivot)
-                        'id_service_emprendedor' => $service->pivot->id, // ID de emprendedor_service
+                        'id_service_emprendedor' => $service->pivot->id,
                         'productCode' => $service->pivot->code,
                         'productStatus' => $service->pivot->status,
                         'cantidad' => $service->pivot->cantidad,
@@ -92,6 +102,7 @@ class EmprendedorController extends Controller
             'totalPages' => $emprendedores->lastPage(),
         ]);
     }
+
 
 
 
