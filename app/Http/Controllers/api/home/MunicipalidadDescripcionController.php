@@ -107,16 +107,14 @@ class MunicipalidadDescripcionController extends Controller
             'ruc' => 'required|string|max:255',
             'correo' => 'required|string|email|max:255',
             'nombre_alcalde' => 'required|string|max:255',
-            'anio_gestion' => 'required|string|max:4',
+            'anio_gestion' => 'required|string|max:20',
         ]);
 
         // Actualizar la descripción
         $descripcion->update($validated);
 
         return response()->json([
-            'status' => true,
-            'message' => 'Descripción de municipio actualizada exitosamente',
-            'data' => $descripcion,
+            'content' => $descripcion,
         ]);
     }
 

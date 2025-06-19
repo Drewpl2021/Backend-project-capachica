@@ -11,18 +11,30 @@ class ServiceController extends Controller
 {
     public function index(Request $request)
     {
-        $size = $request->get('size', 10);
-        $category = $request->get('category');
+        $size = $request->get('size', 10); // Tamaño de la paginación
+        $category = $request->get('category'); // Filtro por categoría
+        $search = $request->get('search'); // Filtro por búsqueda
 
         $query = Service::with(['emprendedorServices.emprendedor', 'imgservices']);
 
+        // Si se pasa el parámetro category, agregar condición
         if ($category) {
             $query->where('category', $category);
         }
 
+        // Si se pasa el parámetro search, agregar condición de búsqueda
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%')
+                    ->orWhere('code', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Obtener los servicios paginados
         $services = $query->paginate($size);
 
-        // Transformar usando collect y map para tener control total
+        // Transformar la respuesta
         $response = collect($services->items())->map(function ($service) {
             return [
                 'id' => $service->id,
@@ -31,6 +43,8 @@ class ServiceController extends Controller
                 'code' => $service->code,
                 'category' => $service->category,
                 'status' => $service->status,
+                'created_at' => $service->created_at,
+                'updated_at' => $service->updated_at,
                 'emprendedores' => $service->emprendedorServices->map(function ($es) {
                     return [
                         'id' => $es->emprendedor->id ?? null,
@@ -56,8 +70,6 @@ class ServiceController extends Controller
             'totalPages' => $services->lastPage(),
         ]);
     }
-
-
 
 
     // Crear nuevo servicio
