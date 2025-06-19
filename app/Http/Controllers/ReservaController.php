@@ -123,20 +123,17 @@ class ReservaController extends Controller
         }
     }*/
 
+
+
     public function store(Request $request)
     {
-        $userId = Auth::id();
+        $userId = Auth::id(); // ID del usuario autenticado
 
         $validated = $request->validate([
-            'total' => 'required|numeric',
-            'bi' => 'nullable|numeric',
-            'igv' => 'nullable|numeric',
             'details.*.cantidad' => 'required|numeric|min:1',
             'details' => 'required|array|min:1',
             'details.*.emprendedor_service_id' => 'required|uuid|exists:emprendedor_service,id',
-            'details.*.igv' => 'nullable|numeric|min:0',
-            'details.*.bi' => 'nullable|numeric|min:0',
-            'details.*.total' => 'nullable|numeric|min:0',
+            'details.*.lugar' => 'nullable|string|max:255',
         ]);
 
         DB::beginTransaction();
@@ -147,57 +144,65 @@ class ReservaController extends Controller
                 ->orderByDesc('created_at')
                 ->first();
 
-            // Si ya hay registros, incrementamos el código
             $nextCode = 'CO_001'; // Valor por defecto si no hay códigos previos
 
             if ($lastCode) {
-                // Obtener el último número de código y sumarle 1
                 $lastCodeNumber = (int)str_replace('CO_', '', $lastCode->code);
                 $nextCode = 'CO_' . str_pad($lastCodeNumber + 1, 3, '0', STR_PAD_LEFT);
             }
 
-            // Crear la reserva principal
-            $reserva = Reserva::create([
-                'user_id' => $userId,
-                'code' => $nextCode,  // Usamos el código generado
-                'total' => $validated['total'],
-                'bi' => $validated['bi'] ?? 0,
-                'igv' => $validated['igv'] ?? 0,
-            ]);
+            // Calcular el total, bi, y igv a partir de los detalles
+            $total = 0;
+            $bi = 0;
+            $igv = 0;
 
             // Mapeamos los detalles de la reserva
-            $detailsData = collect($validated['details'])->map(function ($detail) use ($reserva) {
-                // Buscar el servicio de emprendedor
+            $detailsData = collect($validated['details'])->map(function ($detail) use ($userId, &$total, &$bi, &$igv) {
                 $emprendedorService = \App\Models\EmprendedorService::find($detail['emprendedor_service_id']);
 
                 if (!$emprendedorService) {
                     throw new \Exception("El servicio con ID {$detail['emprendedor_service_id']} no existe.");
                 }
 
-                // Verificar si hay suficiente cantidad disponible
                 if ($emprendedorService->cantidad < $detail['cantidad']) {
                     throw new \Exception("No hay suficiente cantidad disponible para el servicio con ID {$detail['emprendedor_service_id']}.");
                 }
 
-                // Reducir la cantidad disponible en `emprendedor_service`
                 $emprendedorService->cantidad -= $detail['cantidad'];
                 $emprendedorService->save();
+
+                // Calcular el total, bi, y igv para este detalle
+                $detalleTotal = $emprendedorService->costo * $detail['cantidad'];
+                $detalleBi = $detalleTotal / (1 + (18 / 100)); // Base imponible
+                $detalleIgv = $detalleTotal - $detalleBi; // IGV
+
+                $total += $detalleTotal;
+                $bi += $detalleBi;
+                $igv += $detalleIgv;
 
                 return [
                     'id' => (string) Str::uuid(),
                     'emprendedor_service_id' => $emprendedorService->id,
-                    'reserva_id' => $reserva->id,
                     'description' => $emprendedorService->description,
                     'cantidad' => $detail['cantidad'],
                     'costo' => $emprendedorService->costo,
-                    'igv' => $detail['igv'] ?? 0,
-                    'bi' => $detail['bi'] ?? 0,
-                    'total' => $detail['total'] ?? 0,
+                    'total' => $detalleTotal,
+                    'bi' => $detalleBi,
+                    'igv' => $detalleIgv,
                     'lugar' => $detail['lugar'],
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
             })->toArray();
+
+            // Crear la reserva principal con los valores calculados
+            $reserva = Reserva::create([
+                'user_id' => $userId,
+                'code' => $nextCode,
+                'total' => $total,
+                'bi' => $bi,
+                'igv' => $igv,
+            ]);
 
             // Insertar los detalles de la reserva
             $reserva->reserveDetails()->insert($detailsData);
@@ -219,29 +224,6 @@ class ReservaController extends Controller
         }
     }
 
-
-
-
-
-
-    /**
-     * Mostrar una reserva con sus detalles, solo del usuario autenticado.
-     */
-    public function show($id)
-    {
-        $userId = Auth::id();
-
-        $reserva = Reserva::with('reserveDetails.emprendimientoService.service')
-            ->where('user_id', $userId)
-            ->find($id);
-
-        if (!$reserva) {
-            return response()->json(['message' => 'Reserva no encontrada'], 404);
-        }
-
-        return response()->json($reserva);
-    }
-
     /**
      * Actualizar datos generales de la reserva (sin detalles).
      */
@@ -249,10 +231,8 @@ class ReservaController extends Controller
     {
         $userId = Auth::id(); // ID del usuario autenticado
 
-        // Buscar la reserva que pertenece al usuario
         $reserva = Reserva::where('user_id', $userId)->find($id);
 
-        // Si no se encuentra la reserva
         if (!$reserva) {
             return response()->json(['message' => 'Reserva no encontrada'], 404);
         }
@@ -262,7 +242,6 @@ class ReservaController extends Controller
             return response()->json(['message' => 'No se puede editar una reserva que ya está pagada o cancelada'], 400);
         }
 
-        // Validar los datos generales de la reserva
         $validated = $request->validate([
             'code' => 'nullable|string',
             'total' => 'nullable|numeric',
@@ -285,7 +264,6 @@ class ReservaController extends Controller
             if (isset($validated['details'])) {
                 foreach ($validated['details'] as $detail) {
                     if (isset($detail['id'])) {
-                        // Si se proporciona un ID de detalle, actualizamos ese detalle específico
                         $reserveDetail = $reserva->reserveDetails()->find($detail['id']);
 
                         if ($reserveDetail) {
@@ -318,6 +296,24 @@ class ReservaController extends Controller
         }
     }
 
+
+    /**
+     * Mostrar una reserva con sus detalles, solo del usuario autenticado.
+     */
+    public function show($id)
+    {
+        $userId = Auth::id();
+
+        $reserva = Reserva::with('reserveDetails.emprendimientoService.service')
+            ->where('user_id', $userId)
+            ->find($id);
+
+        if (!$reserva) {
+            return response()->json(['message' => 'Reserva no encontrada'], 404);
+        }
+
+        return response()->json($reserva);
+    }
 
     /**
      * Eliminar una reserva junto con sus detalles (por cascade).
