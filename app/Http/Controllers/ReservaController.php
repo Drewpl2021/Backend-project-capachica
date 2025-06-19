@@ -123,11 +123,12 @@ class ReservaController extends Controller
         }
     }*/
 
-
-
+    /**
+     * Crear reserva + detalles (en transacción para evitar inconsistencias).
+     */
     public function store(Request $request)
     {
-        $userId = Auth::id(); // ID del usuario autenticado
+        $userId = Auth::id();
 
         $validated = $request->validate([
             'details.*.cantidad' => 'required|numeric|min:1',
@@ -144,68 +145,67 @@ class ReservaController extends Controller
                 ->orderByDesc('created_at')
                 ->first();
 
-            $nextCode = 'CO_001'; // Valor por defecto si no hay códigos previos
+            $nextCode = 'CO_001';
 
             if ($lastCode) {
                 $lastCodeNumber = (int)str_replace('CO_', '', $lastCode->code);
                 $nextCode = 'CO_' . str_pad($lastCodeNumber + 1, 3, '0', STR_PAD_LEFT);
             }
 
-            // Calcular el total, bi, y igv a partir de los detalles
-            $total = 0;
-            $bi = 0;
-            $igv = 0;
+            // Crear la reserva principal
+            $reserva = Reserva::create([
+                'user_id' => $userId,
+                'code' => $nextCode,
+                'total' => 0,  // El total se calcula después
+                'bi' => 0,     // BI inicial, lo actualizamos después
+                'igv' => 0,    // IGV inicial, lo actualizamos después
+            ]);
 
-            // Mapeamos los detalles de la reserva
-            $detailsData = collect($validated['details'])->map(function ($detail) use ($userId, &$total, &$bi, &$igv) {
+            // Calcular detalles y generar los valores automáticamente
+            $detailsData = collect($validated['details'])->map(function ($detail) use ($reserva) {
                 $emprendedorService = \App\Models\EmprendedorService::find($detail['emprendedor_service_id']);
 
                 if (!$emprendedorService) {
                     throw new \Exception("El servicio con ID {$detail['emprendedor_service_id']} no existe.");
                 }
 
+                // Calcular base imponible (BI), IGV (18%) y total
+                $bi = $emprendedorService->costo * $detail['cantidad'];
+                $igv = $bi * 0.18; // Suponiendo que el IGV es el 18%
+                $total = $bi + $igv;
+
+                // Reducir la cantidad disponible en el servicio de emprendedor
                 if ($emprendedorService->cantidad < $detail['cantidad']) {
                     throw new \Exception("No hay suficiente cantidad disponible para el servicio con ID {$detail['emprendedor_service_id']}.");
                 }
-
                 $emprendedorService->cantidad -= $detail['cantidad'];
                 $emprendedorService->save();
-
-                // Calcular el total, bi, y igv para este detalle
-                $detalleTotal = $emprendedorService->costo * $detail['cantidad'];
-                $detalleBi = $detalleTotal / (1 + (18 / 100)); // Base imponible
-                $detalleIgv = $detalleTotal - $detalleBi; // IGV
-
-                $total += $detalleTotal;
-                $bi += $detalleBi;
-                $igv += $detalleIgv;
 
                 return [
                     'id' => (string) Str::uuid(),
                     'emprendedor_service_id' => $emprendedorService->id,
+                    'reserva_id' => $reserva->id,
                     'description' => $emprendedorService->description,
                     'cantidad' => $detail['cantidad'],
                     'costo' => $emprendedorService->costo,
-                    'total' => $detalleTotal,
-                    'bi' => $detalleBi,
-                    'igv' => $detalleIgv,
+                    'bi' => $bi,
+                    'igv' => $igv,
+                    'total' => $total,
                     'lugar' => $detail['lugar'],
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
             })->toArray();
 
-            // Crear la reserva principal con los valores calculados
-            $reserva = Reserva::create([
-                'user_id' => $userId,
-                'code' => $nextCode,
-                'total' => $total,
-                'bi' => $bi,
-                'igv' => $igv,
-            ]);
-
             // Insertar los detalles de la reserva
             $reserva->reserveDetails()->insert($detailsData);
+
+            // Actualizar el total de la reserva
+            $reserva->update([
+                'total' => array_sum(array_column($detailsData, 'total')),
+                'bi' => array_sum(array_column($detailsData, 'bi')),
+                'igv' => array_sum(array_column($detailsData, 'igv')),
+            ]);
 
             DB::commit();
 
@@ -224,15 +224,16 @@ class ReservaController extends Controller
         }
     }
 
-    /**
-     * Actualizar datos generales de la reserva (sin detalles).
-     */
+
+
     public function update(Request $request, $id)
     {
         $userId = Auth::id(); // ID del usuario autenticado
 
+        // Buscar la reserva que pertenece al usuario
         $reserva = Reserva::where('user_id', $userId)->find($id);
 
+        // Si no se encuentra la reserva
         if (!$reserva) {
             return response()->json(['message' => 'Reserva no encontrada'], 404);
         }
@@ -242,6 +243,7 @@ class ReservaController extends Controller
             return response()->json(['message' => 'No se puede editar una reserva que ya está pagada o cancelada'], 400);
         }
 
+        // Validar los datos generales de la reserva
         $validated = $request->validate([
             'code' => 'nullable|string',
             'total' => 'nullable|numeric',
@@ -264,26 +266,60 @@ class ReservaController extends Controller
             if (isset($validated['details'])) {
                 foreach ($validated['details'] as $detail) {
                     if (isset($detail['id'])) {
+                        // Si se proporciona un ID de detalle, actualizamos ese detalle específico
                         $reserveDetail = $reserva->reserveDetails()->find($detail['id']);
 
                         if ($reserveDetail) {
+                            // Calcular de nuevo el costo, bi, igv, y total
+                            $emprendedorService = \App\Models\EmprendedorService::find($detail['emprendedor_service_id']);
+                            $costo = $emprendedorService->costo * $detail['cantidad'];
+                            $bi = $costo;
+                            $igv = $bi * 0.18; // Suponiendo que el IGV es 18%
+                            $total = $bi + $igv;
+
                             // Actualizar los campos del detalle
                             $reserveDetail->update([
                                 'cantidad' => $detail['cantidad'],
                                 'emprendedor_service_id' => $detail['emprendedor_service_id'],
                                 'lugar' => $detail['lugar'],
+                                'costo' => $costo,
+                                'igv' => $igv,
+                                'bi' => $bi,
+                                'total' => $total,
                             ]);
                         }
                     } else {
                         // Si no existe un ID, significa que estamos creando un nuevo detalle
+                        $emprendedorService = \App\Models\EmprendedorService::find($detail['emprendedor_service_id']);
+                        $costo = $emprendedorService->costo * $detail['cantidad'];
+                        $bi = $costo;
+                        $igv = $bi * 0.18; // Suponiendo que el IGV es 18%
+                        $total = $bi + $igv;
+
                         $reserva->reserveDetails()->create([
                             'emprendedor_service_id' => $detail['emprendedor_service_id'],
                             'cantidad' => $detail['cantidad'],
                             'lugar' => $detail['lugar'],
+                            'costo' => $costo,
+                            'igv' => $igv,
+                            'bi' => $bi,
+                            'total' => $total,
                         ]);
                     }
                 }
             }
+
+            // Recalcular el total, bi e igv de la reserva sumando todos los detalles
+            $totalReserva = $reserva->reserveDetails->sum('total');
+            $biReserva = $reserva->reserveDetails->sum('bi');
+            $igvReserva = $reserva->reserveDetails->sum('igv');
+
+            // Actualizar los campos generales de la reserva con los nuevos valores
+            $reserva->update([
+                'total' => $totalReserva,
+                'bi' => $biReserva,
+                'igv' => $igvReserva,
+            ]);
 
             DB::commit(); // Confirmar la transacción
 
@@ -295,6 +331,8 @@ class ReservaController extends Controller
             ], 500);
         }
     }
+
+
 
 
     /**

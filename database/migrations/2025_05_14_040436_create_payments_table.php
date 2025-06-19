@@ -12,14 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('payments', function (Blueprint $table) {
-            $table->uuid('id')->primary();  // ID de tipo UUID
-            $table->string('code');  // Código del pago
-            $table->string('codigo_pago_yape')->nullable();  // Nuevo campo para almacenar el código de pago de Yape
-            $table->decimal('total', 10, 2);  // Total de pago
-            $table->decimal('bi', 10, 2);  // Base imponible
-            $table->decimal('igv', 10, 2);  // Impuesto general a las ventas
-            $table->timestamps();  // Timestamps: created_at y updated_at
-            $table->softDeletes();  // Soft delete: para eliminar lógicamente el registro
+            $table->uuid('id')->primary();
+            $table->string('code');
+            $table->string('codigo_pago_yape')->nullable();
+            $table->decimal('total', 10, 2);
+            $table->decimal('bi', 10, 2);
+            $table->decimal('igv', 10, 2);
+            $table->timestamps();
+            $table->softDeletes();
+            $table->foreignUuid('reserva_id')
+                ->constrained('reservas')
+                ->onDelete('cascade');
         });
     }
 

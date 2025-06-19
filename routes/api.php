@@ -140,10 +140,14 @@ Route::middleware(['auth:api', 'role:admin|admin_familia'])->group(function () {
 
         // Rutas para descripciones de la municipalidad
         Route::post('/descripcion/{municipalidadId}', [MunicipalidadDescripcionController::class, 'store']);
+
         Route::get('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'show']);
         Route::put('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'update']);
         Route::delete('/descripcion/{id}', [MunicipalidadDescripcionController::class, 'destroy']);
     });
+
+
+
 
     // ***** ASOCIACIONES ****
     Route::prefix('asociacion')->group(function () {

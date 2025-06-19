@@ -31,9 +31,17 @@ class Payment extends Model
         'total',
         'bi',
         'igv',
+        'reserva_id', // ✅ OBLIGATORIO SI USAS create()
     ];
+
     public function sales()
     {
         return $this->hasMany(Sale::class, 'payment_id');
+    }
+
+    // Payment Model
+    public function user()
+    {
+        return $this->hasManyThrough(User::class, Sale::class, 'payment_id', 'id', 'id', 'reserva_id');
     }
 }

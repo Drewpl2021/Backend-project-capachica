@@ -100,7 +100,7 @@ class MunicipalidadDescripcionController extends Controller
 
         // Validación de los datos
         $validated = $request->validate([
-            'municipalidad_id' => 'required|uuid|exists:municipalidads,id', // Asegurarse que la municipalidad existe
+            'municipalidad_id' => 'required|uuid|exists:municipalidads,id',
             'logo' => 'required|string|max:255',
             'direccion' => 'required|string|max:255',
             'descripcion' => 'required|string',

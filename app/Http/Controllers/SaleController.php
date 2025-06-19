@@ -59,12 +59,6 @@ class SaleController extends Controller
         $validated = $request->validate([
             'reserva_id' => 'required|uuid|exists:reservas,id',
             'payment_id' => 'required|uuid|exists:payments,id',
-            'ventas' => 'required|array|min:1',
-            'ventas.*.emprendedor_id' => 'required|uuid|exists:emprendedors,id',
-            'ventas.*.code' => 'required|string|max:255',
-            'ventas.*.IGV' => 'required|numeric|min:0',
-            'ventas.*.BI' => 'required|numeric|min:0',
-            'ventas.*.total' => 'required|numeric|min:0',
         ]);
 
         $reserva = Reserva::where('id', $validated['reserva_id'])
@@ -82,63 +76,68 @@ class SaleController extends Controller
 
         $reserveDetails = $reserva->reserveDetails()->with('emprendimientoService')->get();
 
+        if ($reserveDetails->isEmpty()) {
+            return response()->json(['message' => 'La reserva no tiene detalles'], 400);
+        }
+
         DB::beginTransaction();
 
         try {
             $ventasCreadas = [];
 
-            foreach ($validated['ventas'] as $ventaData) {
-                $emprendedorId = $ventaData['emprendedor_id'];
+            // Agrupar detalles por emprendedor
+            $agrupados = $reserveDetails->groupBy(function ($detail) {
+                return $detail->emprendimientoService->emprendedor_id;
+            });
 
-                // Verificar que el emprendedor_id esté en los detalles
-                $emprendedoresEnReserva = $reserveDetails->map(function ($detail) {
-                    return $detail->emprendimientoService->emprendedor_id;
-                })->unique()->toArray();
+            foreach ($agrupados as $emprendedorId => $detallesGrupo) {
+                // Calcular totales
+                $bi = $detallesGrupo->sum('BI');
+                $igv = $detallesGrupo->sum('IGV');
+                $total = $detallesGrupo->sum('total');
 
-                if (!in_array($emprendedorId, $emprendedoresEnReserva)) {
-                    DB::rollBack();
-                    return response()->json(['message' => "El emprendedor_id {$emprendedorId} no corresponde a la reserva"], 422);
+                // Generar código de venta
+                $lastCode = Sale::orderByDesc('created_at')->first();
+                $nextCode = 'SALE_001';
+                if ($lastCode) {
+                    $lastNum = (int)str_replace('SALE_', '', $lastCode->code);
+                    $nextCode = 'SALE_' . str_pad($lastNum + 1, 3, '0', STR_PAD_LEFT);
                 }
 
-                $saleId = (string) \Illuminate\Support\Str::uuid();
-
                 $sale = Sale::create([
-                    'id' => $saleId,
+                    'id' => (string) Str::uuid(),
                     'emprendedor_id' => $emprendedorId,
                     'payment_id' => $validated['payment_id'],
                     'reserva_id' => $validated['reserva_id'],
-                    'code' => $ventaData['code'],
-                    'IGV' => $ventaData['IGV'],
-                    'BI' => $ventaData['BI'],
-                    'total' => $ventaData['total'],
+                    'code' => $nextCode,
+                    'BI' => $bi,
+                    'IGV' => $igv,
+                    'total' => $total,
                 ]);
 
-                // Crear detalles solo para ese emprendedor
-                foreach ($reserveDetails as $detail) {
-                    if ($detail->emprendimientoService->emprendedor_id === $emprendedorId) {
-                        $sale->saleDetails()->create([
-                            'id' => (string) \Illuminate\Support\Str::uuid(),
-                            'emprendedor_service_id' => $detail->emprendedor_service_id,
-                            'description' => $detail->description,
-                            'costo' => $detail->costo,
-                            'IGV' => $detail->IGV,
-                            'BI' => $detail->BI,
-                            'total' => $detail->total,
-                            'lugar' => $detail->lugar,
-                        ]);
-                    }
+                foreach ($detallesGrupo as $detail) {
+                    $sale->saleDetails()->create([
+                        'id' => (string) Str::uuid(),
+                        'emprendedor_service_id' => $detail->emprendedor_service_id,
+                        'description' => $detail->description,
+                        'costo' => $detail->costo,
+                        'BI' => $detail->BI,
+                        'IGV' => $detail->IGV,
+                        'total' => $detail->total,
+                        'lugar' => $detail->lugar,
+                    ]);
                 }
 
                 $ventasCreadas[] = $sale;
             }
 
-            // Opcional: Cambiar estado reserva a 'pagada' o 'vendida' cuando todas las ventas creadas
+            // Marcar la reserva como pagada
             $reserva->update(['status' => 'pagada']);
 
             DB::commit();
 
             return response()->json([
-                'message' => 'Ventas creadas exitosamente',
+                'message' => 'Ventas creadas automáticamente a partir de la reserva',
                 'ventas' => $ventasCreadas,
             ], 201);
         } catch (\Exception $e) {
@@ -146,6 +145,7 @@ class SaleController extends Controller
             return response()->json(['error' => 'Error creando ventas: ' . $e->getMessage()], 500);
         }
     }
+
 
 
 

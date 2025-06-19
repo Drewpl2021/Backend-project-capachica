@@ -43,4 +43,9 @@ class Reserva extends Model
     {
         return $this->hasMany(ImgService::class, 'service_id');
     }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'reserva_id');
+    }
 }

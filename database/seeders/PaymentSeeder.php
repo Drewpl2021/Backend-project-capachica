@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Payment;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Reserva;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -11,14 +11,17 @@ class PaymentSeeder extends Seeder
 {
     public function run()
     {
-        // Crear 10 pagos de ejemplo
-        for ($i = 0; $i < 10; $i++) {
+        // Obtener algunas reservas existentes (asegúrate de tener datos en 'reservas')
+        $reservas = Reserva::take(10)->get();
+
+        foreach ($reservas as $reserva) {
             Payment::create([
-                'id' => Str::uuid(),  // Generar un UUID para el pago
-                'code' => 'CODE-' . strtoupper(Str::random(5)),  // Código de pago aleatorio
-                'total' => '1000.00',  // Total de pago
-                'bi' => '850.00',  // Base imponible
-                'igv' => '150.00',  // IGV
+                'id' => Str::uuid(),
+                'code' => 'PAY_' . strtoupper(Str::random(5)),
+                'total' => $reserva->total,
+                'bi' => $reserva->bi,
+                'igv' => $reserva->igv,
+                'reserva_id' => $reserva->id,
             ]);
         }
     }
