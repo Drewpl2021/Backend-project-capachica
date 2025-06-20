@@ -48,6 +48,8 @@ class Reserva extends Model
     {
         return $this->hasMany(Payment::class, 'reserva_id');
     }
+
+    // Relación con los servicios de los emprendedores asociados a la reserva
     public function emprendedorServices()
     {
         return $this->belongsToMany(EmprendedorService::class, 'reserve_detail', 'reserva_id', 'emprendedor_service_id')

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Emprendedor;
 use App\Models\Reserva;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,29 +20,12 @@ class ReservaController extends Controller
         $userId = Auth::id();  // ID del usuario autenticado
         $search = $request->input('search');  // Parámetro de búsqueda para `code`
 
-        // Comenzamos la consulta para obtener el emprendimiento asociado al usuario
-        $emprendedor = Emprendedor::whereHas('users', function ($query) use ($userId) {
-            $query->where('user_id', $userId);
-        })->first();
-
-        // Si el usuario tiene un emprendimiento, traemos las reservas asociadas a los servicios del emprendimiento
-        if ($emprendedor) {
-            // Consultamos las reservas asociadas al emprendimiento del usuario
-            $query = Reserva::whereHas('emprendedorServices', function ($q) use ($emprendedor) {
-                $q->where('emprendedor_id', $emprendedor->id);
-            })
-                ->with([
-                    'reserveDetails.emprendimientoService.service',
-                    'user',
-                ]);
-        } else {
-            // Si no tiene un emprendimiento, solo traemos las reservas del usuario
-            $query = Reserva::where('user_id', $userId)
-                ->with([
-                    'reserveDetails.emprendimientoService.service',
-                    'user',
-                ]);
-        }
+        // Comenzamos la consulta para obtener las reservas del usuario
+        $query = Reserva::where('user_id', $userId)
+            ->with([
+                'reserveDetails.emprendimientoService.service',
+                'user'
+            ]);
 
         // Si se ha pasado el parámetro de búsqueda, filtramos por `code`
         if ($search) {

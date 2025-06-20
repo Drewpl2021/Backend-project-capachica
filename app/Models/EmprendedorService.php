@@ -75,4 +75,9 @@ class EmprendedorService extends Model
     {
         return $this->hasMany(ImgEmprendedorService::class, 'emprendedor_service_id');
     }
+
+    public function reservas()
+    {
+        return $this->belongsToMany(Reserva::class, 'reserve_detail', 'emprendedor_service_id', 'reserva_id');
+    }
 }
