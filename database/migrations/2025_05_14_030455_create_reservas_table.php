@@ -23,7 +23,7 @@ return new class extends Migration
 
             $table->decimal('bi', 12, 2)->default(0);   // Base imponible (total sin impuestos)
             $table->decimal('igv', 12, 2)->default(0);  // Impuesto general a las ventas
-            $table->decimal('total', 12, 2)->default(0);// Total final (bi + igv)
+            $table->decimal('total', 12, 2)->default(0); // Total final (bi + igv)
 
             $table->enum('status', ['pendiente', 'pagada', 'cancelada'])->default('pendiente'); // Estado de la reserva
 

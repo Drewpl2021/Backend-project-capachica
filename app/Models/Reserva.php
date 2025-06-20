@@ -48,4 +48,9 @@ class Reserva extends Model
     {
         return $this->hasMany(Payment::class, 'reserva_id');
     }
+    public function emprendedorServices()
+    {
+        return $this->belongsToMany(EmprendedorService::class, 'reserve_detail', 'reserva_id', 'emprendedor_service_id')
+            ->withPivot('cantidad', 'costo', 'costo_unidad', 'description');
+    }
 }

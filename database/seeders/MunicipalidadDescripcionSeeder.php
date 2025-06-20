@@ -26,6 +26,8 @@ class MunicipalidadDescripcionSeeder extends Seeder
             'direccion' => 'Plaza de Armas, Capachica',  // Dirección de la Municipalidad de Capachica
             'descripcion' => 'La Municipalidad Distrital de Capachica está ubicada en la provincia de Puno, al sureste del Perú. Se encarga de la gestión local, promoción del turismo y desarrollo de proyectos sociales y económicos para la población.',  // Descripción detallada
             'ruc' => '20192140448',  // RUC de la Municipalidad de Capachica
+            'hora_de_atencion' => 'Lunes a Viernes, de 8:00 AM a 5:00 PM',  // Hora de atención de la Municipalidad
+            'telefono' => '051-1234567',  // Teléfono de la Municipalidad de Capachica
             'correo' => 'municipalidad@capachica.gob.pe',  // Correo oficial de la Municipalidad de Capachica
             'nombre_alcalde' => 'Ascencion Laquise Humpire',  // Nombre del alcalde de Capachica (ejemplo)
             'anio_gestion' => '2023-2026'  // Año de gestión actual

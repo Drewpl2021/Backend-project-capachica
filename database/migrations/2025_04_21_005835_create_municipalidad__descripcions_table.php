@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('direccion');
             $table->text('descripcion');
             $table->string('ruc');
+            $table->string('hora_de_atencion');
+            $table->string('telefono');
             $table->string('correo');
             $table->string('nombre_alcalde');
             $table->string('anio_gestion');
