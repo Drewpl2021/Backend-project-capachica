@@ -69,48 +69,48 @@ class AuthController extends Controller
      * )
      */
     public function register(Request $request)
-{
-    // Validación de los datos, incluyendo el campo 'rol'
-    $validation = $this->validateRequest($request, [
-        'name'      => 'required|string|max:255|unique:users',
-        'last_name' => 'required|string|max:255|unique:users',
-        'username'  => 'required|string|max:255|unique:users',
-        'email'     => 'nullable|string|email|max:255|unique:users',
-        'password'  => 'required|string',
-        'rol'       => 'required|in:1,2', // Validamos que sea 1 o 2
-    ]);
+    {
+        // Validación de los datos, incluyendo el campo 'rol'
+        $validation = $this->validateRequest($request, [
+            'name'      => 'required|string|max:255|unique:users',
+            'last_name' => 'required|string|max:255|unique:users',
+            'username'  => 'required|string|max:255|unique:users',
+            'email'     => 'nullable|string|email|max:255|unique:users',
+            'password'  => 'required|string',
+            'rol'       => 'required|in:1,2', // Validamos que sea 1 o 2
+        ]);
 
-    if ($validation->fails()) {
-        return $this->validationErrorResponse($validation->errors());
+        if ($validation->fails()) {
+            return $this->validationErrorResponse($validation->errors());
+        }
+
+        // Crear el usuario y guardarlo en la base de datos
+        $user = User::create([
+            'name'      => $request->name,
+            'last_name' => $request->last_name,
+            'username'  => $request->username,
+            'email'     => $request->email,
+            'password'  => bcrypt($request->password),
+        ]);
+
+        // Asignar rol según el código recibido
+        if ($request->rol == '1') {
+            $rolNombre = 'usuario';
+        } elseif ($request->rol == '2') {
+            $rolNombre = 'admin_familia';
+        }
+
+        $this->assignRoleToUser($user, $rolNombre);
+
+        // Crear token con JWT
+        $token = JWTAuth::fromUser($user);
+
+        return $this->successResponse([
+            'token' => $token,
+            'user'  => $user->only(['id', 'username', 'email']),
+            'roles' => $user->getRoleNames(),
+        ], 'Usuario registrado correctamente', 201);
     }
-
-    // Crear el usuario y guardarlo en la base de datos
-    $user = User::create([
-        'name'      => $request->name,
-        'last_name' => $request->last_name,
-        'username'  => $request->username,
-        'email'     => $request->email,
-        'password'  => bcrypt($request->password),
-    ]);
-
-    // Asignar rol según el código recibido
-    if ($request->rol == '1') {
-        $rolNombre = 'usuario';
-    } elseif ($request->rol == '2') {
-        $rolNombre = 'admin_familia';
-    }
-
-    $this->assignRoleToUser($user, $rolNombre);
-
-    // Crear token con JWT
-    $token = JWTAuth::fromUser($user);
-
-    return $this->successResponse([
-        'token' => $token,
-        'user'  => $user->only(['id', 'username', 'email']),
-        'roles' => $user->getRoleNames(),
-    ], 'Usuario registrado correctamente', 201);
-}
 
 
     /**
@@ -208,11 +208,6 @@ class AuthController extends Controller
     }
 
 
-
-
-
-
-
     /**
      * @OA\Get(
      *     path="/perfil",
@@ -245,7 +240,7 @@ class AuthController extends Controller
      *     operationId="logout",
      *     summary="Cerrar sesión",
      *     tags={"Auth"},
-     *     security={{"passport":{}}},  // Similar, podrías cambiar a JWT si prefieres usar seguridad JWT
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
      *         description="Sesión cerrada"
@@ -258,8 +253,119 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        // Revocar el token del usuario
-        JWTAuth::invalidate(JWTAuth::getToken());  // Esto invalidará el token que está en uso.
-        return $this->successResponse(null, 'Sesión cerrada');
+        try {
+            // Revocar el token del usuario
+            JWTAuth::invalidate(JWTAuth::getToken());
+            return $this->successResponse([], 'Sesión cerrada correctamente', 200);
+        } catch (\Exception $e) {
+            Log::error('Error al cerrar sesión: ' . $e->getMessage());
+            return $this->error('No se pudo cerrar sesión. Intenta de nuevo más tarde.', 500);
+        }
+    }
+
+    public function updateProfile(Request $request)
+    {
+        try {
+            // Obtener el usuario autenticado
+            $user = JWTAuth::parseToken()->authenticate();
+
+            if (!$user) {
+                return $this->error('Usuario no encontrado', 404);
+            }
+
+            // Reglas de validación base
+            $validationRules = [
+                'name' => 'sometimes|string|max:255',
+                'last_name' => 'sometimes|string|max:255',
+                'code' => 'sometimes|nullable|string|max:255',
+                'username' => 'sometimes|string|max:255|unique:users,username,' . $user->id,
+                'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
+                'imagen_url' => 'sometimes|nullable|string|max:500|url',
+            ];
+
+            // Si se está cambiando la contraseña, agregar validaciones adicionales
+            if ($request->filled('new_password')) {
+                $validationRules['current_password'] = 'required|string';
+                $validationRules['new_password'] = 'required|string|min:6|max:255';
+                $validationRules['confirm_password'] = 'required|string|same:new_password';
+            }
+
+            // Validar los datos
+            $validation = $this->validateRequest($request, $validationRules);
+
+            if ($validation->fails()) {
+                return $this->validationErrorResponse($validation->errors());
+            }
+
+            // Verificar contraseña actual si se está cambiando la contraseña
+            if ($request->filled('new_password')) {
+                if (!Hash::check($request->current_password, $user->password)) {
+                    return $this->error('La contraseña actual es incorrecta', 422);
+                }
+            }
+
+            // Preparar datos para actualizar
+            $updateData = [];
+
+            if ($request->filled('name')) {
+                $updateData['name'] = $request->name;
+            }
+
+            if ($request->filled('last_name')) {
+                $updateData['last_name'] = $request->last_name;
+            }
+
+            if ($request->has('code')) {
+                $updateData['code'] = $request->code;
+            }
+
+            if ($request->filled('username')) {
+                $updateData['username'] = $request->username;
+            }
+
+            if ($request->filled('email')) {
+                $updateData['email'] = $request->email;
+            }
+
+            if ($request->has('imagen_url')) {
+                $updateData['imagen_url'] = $request->imagen_url;
+            }
+
+            if ($request->filled('new_password')) {
+                $updateData['password'] = bcrypt($request->new_password);
+            }
+
+            // Actualizar el usuario
+            $user->update($updateData);
+
+            // Generar nuevo token si se cambió la contraseña
+            $newToken = null;
+            if ($request->filled('new_password')) {
+                try {
+                    $newToken = JWTAuth::fromUser($user);
+                } catch (JWTException $e) {
+                    Log::error('Error al generar nuevo token después de cambio de contraseña: ' . $e->getMessage());
+                }
+            }
+
+            // Preparar respuesta
+            $responseData = [
+                'user' => $user->only(['id', 'name', 'last_name', 'code', 'username', 'email', 'imagen_url']),
+            ];
+
+            if ($newToken) {
+                $responseData['token'] = $newToken;
+                $responseData['expires_at'] = now()->addMinutes(config('jwt.ttl'))->toDateTimeString();
+            }
+
+            return $this->successResponse($responseData, 'Perfil actualizado correctamente', 200);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+            return $this->error('Token expirado, inicia sesión de nuevo', 401);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+            return $this->error('Token inválido', 401);
+        } catch (\Exception $e) {
+            Log::error('Error al actualizar perfil: ' . $e->getMessage());
+            return $this->error('Error al actualizar el perfil. Intenta de nuevo más tarde.', 500);
+        }
     }
 }
