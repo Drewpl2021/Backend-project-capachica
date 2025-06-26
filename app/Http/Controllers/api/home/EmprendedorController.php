@@ -22,7 +22,7 @@ class EmprendedorController extends Controller
         $size = $request->input('size', 10);
         $name = $request->input('name');
         $category = $request->input('category');
-
+        $page = max((int) $request->input('page', 0), 0);
         $query = Emprendedor::with(['asociacion', 'imgEmprendedores', 'services']);
 
         // Filtro por nombre, razón social, RUC, etc.
@@ -42,7 +42,7 @@ class EmprendedorController extends Controller
             });
         }
 
-        $emprendedores = $query->paginate($size);
+        $emprendedores = $query->paginate($size, ['*'], 'page', $page + 1); // <-- aquí ajustas
 
         $response = collect($emprendedores->items())->map(function ($emprendedor) {
             return [
@@ -98,7 +98,7 @@ class EmprendedorController extends Controller
         return response()->json([
             'content' => $response,
             'totalElements' => $emprendedores->total(),
-            'currentPage' => $emprendedores->currentPage(),
+            'currentPage' => $page, // ya corregido a base 0
             'totalPages' => $emprendedores->lastPage(),
         ]);
     }

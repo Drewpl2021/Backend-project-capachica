@@ -70,21 +70,20 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        // Validación de los datos, incluyendo el campo 'rol'
+        // Validación de datos
         $validation = $this->validateRequest($request, [
             'name'      => 'required|string|max:255|unique:users',
             'last_name' => 'required|string|max:255|unique:users',
             'username'  => 'required|string|max:255|unique:users',
             'email'     => 'nullable|string|email|max:255|unique:users',
             'password'  => 'required|string',
-            'rol'       => 'required|in:1,2', // Validamos que sea 1 o 2
         ]);
 
         if ($validation->fails()) {
             return $this->validationErrorResponse($validation->errors());
         }
 
-        // Crear el usuario y guardarlo en la base de datos
+        // Crear usuario
         $user = User::create([
             'name'      => $request->name,
             'last_name' => $request->last_name,
@@ -93,16 +92,10 @@ class AuthController extends Controller
             'password'  => bcrypt($request->password),
         ]);
 
-        // Asignar rol según el código recibido
-        if ($request->rol == '1') {
-            $rolNombre = 'usuario';
-        } elseif ($request->rol == '2') {
-            $rolNombre = 'admin_familia';
-        }
+        // Asignar rol por defecto
+        $this->assignRoleToUser($user, 'usuario');
 
-        $this->assignRoleToUser($user, $rolNombre);
-
-        // Crear token con JWT
+        // Crear token JWT
         $token = JWTAuth::fromUser($user);
 
         return $this->successResponse([
@@ -280,7 +273,7 @@ class AuthController extends Controller
                 'code' => 'sometimes|nullable|string|max:255',
                 'username' => 'sometimes|string|max:255|unique:users,username,' . $user->id,
                 'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
-                'imagen_url' => 'sometimes|nullable|string|max:500|url',
+                'imagen_url' => 'sometimes|nullable|string|max:500|url', // Validar la URL de la imagen
             ];
 
             // Si se está cambiando la contraseña, agregar validaciones adicionales

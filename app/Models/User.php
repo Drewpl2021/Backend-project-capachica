@@ -35,6 +35,7 @@ class User extends Authenticatable implements JWTSubject
         'username',
         'email',
         'password',
+        'imagen_url'
     ];
 
     /**
@@ -75,14 +76,23 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [
-            'id' => $this->id, // Agregar 'username' al token
-            'name' => $this->name, // Agregar 'username' al token
-            'last_name' => $this->last_name, // Agregar 'username' al token
-            'username' => $this->username, // Agregar 'username' al token
+            'id' => $this->id,
+            'name' => $this->name,
+            'last_name' => $this->last_name,
+            'username' => $this->username,
             'email' => $this->email,
-            // Agregar 'email' al token
+            'code' => $this->code,
+            'imagen_url' => $this->imagen_url,
+            'created_at' => $this->created_at,
+
+            // Traer todos los roles del usuario
+            'roles' => $this->roles->pluck('name'),  // Devuelve una colección con todos los nombres de los roles
+
+            // Traer todos los permisos del usuario
+            'permissions' => $this->getPermissionsViaRoles()->pluck('name'),  // Devuelve todos los permisos relacionados con los roles
         ];
     }
+
     // Relación muchos a muchos con Emprendedor
     public function emprendedores()
     {

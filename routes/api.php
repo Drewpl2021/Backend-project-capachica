@@ -68,7 +68,7 @@ Route::get('/emprendedor_list', [EmprendedorController::class, 'index']);
 Route::middleware('auth:api')->group(function () {
     Route::get('/perfil', [AuthController::class, 'perfil']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::put('/update-profile', [AuthController::class, 'updateProfile']);
+    Route::put('/update-profile', [AuthController::class, 'updateProfile']); // Esta es la ruta que falta
 
     Route::middleware('permission:editar_perfil')->put('/editar-datos', [UserController::class, 'editar']);
 
