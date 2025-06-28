@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('lugar')->nullable();
             $table->string('img_logo')->nullable();
             $table->string('name_family')->nullable();
+            $table->string('phone')->nullable();
             $table->boolean('status')->default(true);
             $table->uuid('asociacion_id');
             $table->timestamps();

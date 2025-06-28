@@ -61,7 +61,8 @@ class RoleController extends Controller
         $query = Role::query();
 
         if (!empty($name)) {
-            $query->where('name', 'like', '%' . $name . '%');
+            $query->where('name', 'like', '%' . $name . '%')
+                ->orWhere('description', 'like', '%' . $name . '%'); // Permitir búsqueda por ID
         }
 
         // Paginar

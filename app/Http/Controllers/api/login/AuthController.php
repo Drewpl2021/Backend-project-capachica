@@ -273,7 +273,7 @@ class AuthController extends Controller
                 'code' => 'sometimes|nullable|string|max:255',
                 'username' => 'sometimes|string|max:255|unique:users,username,' . $user->id,
                 'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
-                'imagen_url' => 'sometimes|nullable|string|max:500|url', // Validar la URL de la imagen
+                'imagen_url' => 'sometimes|nullable|string|max:500', // Validar la URL de la imagen
             ];
 
             // Si se está cambiando la contraseña, agregar validaciones adicionales
@@ -360,5 +360,15 @@ class AuthController extends Controller
             Log::error('Error al actualizar perfil: ' . $e->getMessage());
             return $this->error('Error al actualizar el perfil. Intenta de nuevo más tarde.', 500);
         }
+    }
+
+    public function uploadPhoto(Request $request)
+    {
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('users', 'public');
+            $url = asset('storage/' . ltrim($path, '/'));
+            return response()->json(['url' => $url]);
+        }
+        return response()->json(['error' => 'No file uploaded'], 400);
     }
 }

@@ -11,56 +11,57 @@ use Illuminate\Support\Facades\DB;
 class AsociacionController extends Controller
 {
     use SoftDeletes;
-
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        // Número de elementos por página (por defecto 10)
         $size = $request->input('size', 10);
         $name = $request->input('name');
+        $page = max((int) $request->input('page', 0), 0); // Página base 0
 
-        // Crear la consulta base
+
         $query = Asociacion::query();
 
-        // Si se pasa un nombre, aplicar filtro
         if ($name) {
-            $query->where('nombre', 'like', "%$name%");
+            $query->where(function ($q) use ($name) {
+                $q->where('nombre', 'like', "%$name%")
+                    ->orWhere('descripcion', 'like', "%$name%")
+                    ->orWhere('lugar', 'like', "%$name%")
+                    ->orWhere('phone', 'like', "%$name%")
+                    ->orWhere('office_hours', 'like', "%$name%")
+                ;
+            });
         }
+        $asociaciones = $query->paginate($size, ['*'], 'page', $page + 1);
 
-        // Obtener las asociaciones con sus imágenes relacionadas y paginación
-        $asociaciones = $query->with('imgAsociacions') // Aquí estamos cargando las imágenes
-            ->paginate($size);
-
-        // Depuración: Verificar si se encontraron asociaciones
         if ($asociaciones->isEmpty()) {
             return response()->json([
                 'message' => 'No se encontraron asociaciones.',
                 'content' => [],
                 'totalElements' => 0,
-                'currentPage' => 0,
                 'totalPages' => 0,
-                'perPage' => $size
             ], 404);
         }
 
-        // Formatear los datos antes de enviarlos
+
         $response = collect($asociaciones->items())->map(function ($asociacion) {
             return [
                 'id' => $asociacion->id,
                 'nombre' => $asociacion->nombre,
                 'descripcion' => $asociacion->descripcion,
                 'lugar' => $asociacion->lugar,
+                'phone' => $asociacion->phone,
+                'office_hours' => $asociacion->office_hours,
                 'url' => $asociacion->url,
-                'estado' => (bool) $asociacion->estado,  // Convertir a booleano
+                'estado' => (bool) $asociacion->estado,
                 'municipalidadId' => $asociacion->municipalidad_id,
                 'imagenes' => $asociacion->imgAsociacions->map(function ($img) {
                     return [
                         'id' => $img->id,
-                        'url_image' => $img->url_image, // Incluyendo la URL de la imagen
-                        'estado' => (bool) $img->estado, // Convertir a booleano
-                        'codigo' => $img->codigo, // Código asociado (si existe)
+                        'url_image' => $img->url_image,
+                        'estado' => (bool) $img->estado,
+                        'codigo' => $img->codigo,
                     ];
                 }),
                 'createdAt' => $asociacion->created_at,
@@ -72,11 +73,11 @@ class AsociacionController extends Controller
         return response()->json([
             'content' => $response,
             'totalElements' => $asociaciones->total(),
-            'currentPage' => $asociaciones->currentPage(),
+            'currentPage' => $page, // Mantenemos base 0 para el cliente
             'totalPages' => $asociaciones->lastPage(),
-            'perPage' => $asociaciones->perPage(),
         ]);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -90,12 +91,15 @@ class AsociacionController extends Controller
             'lugar' => 'required|string|max:255',
             'url' => 'required|string|max:255',
             'estado' => 'required|boolean',
-            'imagenes' => 'array', // Validar que sea arreglo (opcional)
+            'phone' => 'required|string|max:20',
+            'office_hours' => 'required|string|max:100',
+            'imagenes' => 'array',
             'imagenes.*.url_image' => 'required|string|max:255',
             'imagenes.*.estado' => 'required|boolean',
             'imagenes.*.codigo' => 'nullable|string',
             'imagenes.*.description' => 'nullable|string',
         ]);
+
 
         DB::beginTransaction();
         try {
@@ -172,8 +176,9 @@ class AsociacionController extends Controller
     {
         // Validación básica sin restricciones de código único
         $validated = $request->validate([
-            'municipalidad_id' => 'required|uuid|exists:municipalidads,id',
             'nombre' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'office_hours' => 'required|string|max:100',
             'descripcion' => 'required|string',
             'lugar' => 'required|string|max:255',
             'url' => 'required|string|max:255',

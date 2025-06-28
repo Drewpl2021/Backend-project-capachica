@@ -35,7 +35,15 @@ class ParentModuleAndModuleSeeder extends Seeder
 
 
         // Modules configuración
-        $this->seedModule('heroicons_outline:user-group', '/homeScreen/setup/user', 1, 'Usuarios', 'basic', '01', '01');
+        $this->seedModule(
+            'heroicons_outline:user-group',
+            '/homeScreen/setup/user',
+            1,
+            'Usuarios',
+            'basic',
+            '01',
+            '01'
+        );
         $this->seedModule('heroicons_outline:folder-open', '/homeScreen/setup/module', 2, 'Modulos', 'basic', '02', '01');
         $this->seedModule('heroicons_outline:clipboard-document', '/homeScreen/setup/parent-module', 3, 'Modulos Padres', 'basic', '03', '01');
         $this->seedModule('heroicons_outline:home-modern', '/homeScreen/setup/municipalidad', 4, 'Municipalidad', 'basic', '04', '01');

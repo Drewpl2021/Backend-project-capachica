@@ -122,16 +122,29 @@ class EmprendedorController extends Controller
             'img_logo' => 'nullable|string|max:255',
             'name_family' => 'nullable|string|max:255',
             'status' => 'nullable|boolean',
+            'imagenes' => 'array',
+            'imagenes.*.url_image' => 'required|string|max:255',
+            'imagenes.*.estado' => 'required|boolean',
+            'imagenes.*.code' => 'nullable|string',
+            'imagenes.*.description' => 'nullable|string',
         ]);
+
+        $imagenes = $validated['imagenes'] ?? [];
+        unset($validated['imagenes']);
 
         $emprendedor = Emprendedor::create($validated);
 
+        foreach ($imagenes as $img) {
+            $emprendedor->imgEmprendedores()->create($img);
+        }
+
         return response()->json([
             'success' => true,
-            'message' => 'Emprendedor creado exitosamente',
-            'data' => $emprendedor
+            'message' => 'Emprendedor creado exitosamente con imágenes',
+            'data' => $emprendedor->load('imgEmprendedores')
         ], 201);
     }
+
 
     /**
      * Display the specified resource.
@@ -205,9 +218,6 @@ class EmprendedorController extends Controller
     }
 
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id): JsonResponse
     {
         $emprendedor = Emprendedor::find($id);
@@ -230,14 +240,36 @@ class EmprendedorController extends Controller
             'img_logo' => 'nullable|string|max:255',
             'name_family' => 'nullable|string|max:255',
             'status' => 'nullable|boolean',
+            'imagenes' => 'array',
+            'imagenes.*.id' => 'nullable|uuid|exists:img_emprendedores,id',
+            'imagenes.*.url_image' => 'required|string|max:255',
+            'imagenes.*.estado' => 'required|boolean',
+            'imagenes.*.code' => 'nullable|string',
+            'imagenes.*.description' => 'nullable|string',
         ]);
+
+        $imagenes = $validated['imagenes'] ?? [];
+        unset($validated['imagenes']);
 
         $emprendedor->update($validated);
 
+        // Reemplazar imágenes
+        $idsExistentes = collect($imagenes)->pluck('id')->filter()->all();
+        $emprendedor->imgEmprendedores()->whereNotIn('id', $idsExistentes)->delete();
+
+        foreach ($imagenes as $imgData) {
+            if (isset($imgData['id'])) {
+                $img = $emprendedor->imgEmprendedores()->find($imgData['id']);
+                $img?->update($imgData);
+            } else {
+                $emprendedor->imgEmprendedores()->create($imgData);
+            }
+        }
+
         return response()->json([
             'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor
+            'message' => 'Emprendedor actualizado exitosamente con imágenes',
+            'data' => $emprendedor->load('imgEmprendedores')
         ]);
     }
 

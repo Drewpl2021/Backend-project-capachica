@@ -17,19 +17,24 @@ class ParentModuleController extends Controller
     {
         $size = $request->input('size', 10);
         $name = $request->input('name');
+        $page = max((int) $request->input('page', 0), 0); // Página base 0
 
         $query = ParentModule::query();
 
         if ($name) {
-            $query->where('title', 'like', "%$name%");
+            $query->where('title', 'like', "%$name%")
+                ->orWhere('subtitle', 'like', "%$name%")
+                ->orWhere('code', 'like', "%$name%")
+                ->orWhere('type', 'like', "%$name%")
+                ->orWhere('link', 'like', "%$name%");
         }
 
-        $data = $query->paginate($size);
+        $data = $query->paginate($size, ['*'], 'page', $page + 1);
 
         // Construir la respuesta con el formato solicitado
         $response = [
             'totalPages' => $data->lastPage(),
-            'currentPage' => $data->currentPage() - 1, // Restamos 1 para ajustarlo al formato que pides
+            'currentPage' => $page, // Mantenemos base 0 para el cliente
             'content' => $data->map(function ($module) {
                 return [
                     'id' => $module->id,

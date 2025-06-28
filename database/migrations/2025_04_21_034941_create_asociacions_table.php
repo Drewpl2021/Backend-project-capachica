@@ -16,6 +16,8 @@ return new class extends Migration
             $table->uuid('municipalidad_id');
             $table->string('nombre');
             $table->string('descripcion', 1000); // antes podía ser 255
+            $table->string('phone')->nullable();
+            $table->string('office_hours', 1000)->nullable(); // antes podía ser 255
             $table->string('url');
             $table->string('lugar');
             $table->boolean('estado');

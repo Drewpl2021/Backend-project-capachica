@@ -14,7 +14,7 @@ return new class extends Migration
         // Tabla principal de paquetes
         Schema::create('paquetes', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('emprendedor_id');
+            $table->uuid('emprendedor_id')->index();
             $table->string('name');
             $table->text('description')->nullable();
             $table->decimal('precio', 10, 2);
@@ -27,8 +27,8 @@ return new class extends Migration
         // Tabla pivote para productos en paquetes
         Schema::create('paquete_emprendedor_service', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('paquete_id');
-            $table->uuid('emprendedor_service_id');
+            $table->uuid('paquete_id')->index();
+            $table->uuid('emprendedor_service_id')->index();
             $table->integer('cantidad')->default(1);
             $table->timestamps();
             $table->foreign('paquete_id')->references('id')->on('paquetes')->onDelete('cascade');

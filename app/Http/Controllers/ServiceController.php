@@ -11,28 +11,32 @@ class ServiceController extends Controller
 {
     public function index(Request $request)
     {
-        $size = $request->get('size', 10); // Tamaño de la paginación
-        $category = $request->get('category'); // Filtro por categoría
-        $search = $request->get('search'); // Filtro por búsqueda
+        // Obtener parámetros de paginación y filtros
+        $size = $request->input('size', 10); // Tamaño por defecto: 10
+        $page = max((int) $request->input('page', 0), 0); // Página base 0
+        $category = $request->input('category');
+        $search = $request->input('search');
 
-        $query = Service::with(['emprendedorServices.emprendedor', 'imgservices']);
+        // Construir la consulta base con relaciones
+        $query = Service::with(['emprendedorServices.emprendedor', 'imgservices'])
+            ->orderBy('created_at', 'desc');
 
-        // Si se pasa el parámetro category, agregar condición
-        if ($category) {
+        // Aplicar filtro por categoría si existe
+        if (!empty($category)) {
             $query->where('category', $category);
         }
 
-        // Si se pasa el parámetro search, agregar condición de búsqueda
-        if ($search) {
+        // Aplicar filtro de búsqueda si existe
+        if (!empty($search)) {
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('description', 'like', '%' . $search . '%')
-                    ->orWhere('code', 'like', '%' . $search . '%');
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('code', 'like', "%{$search}%");
             });
         }
 
-        // Obtener los servicios paginados
-        $services = $query->paginate($size);
+        // Ejecutar la paginación (ajustando page+1 porque Laravel usa base 1)
+        $services = $query->paginate($size, ['*'], 'page', $page + 1);
 
         // Transformar la respuesta
         $response = collect($services->items())->map(function ($service) {
@@ -65,7 +69,7 @@ class ServiceController extends Controller
 
         return response()->json([
             'content' => $response,
-            'currentPage' => $services->currentPage(),
+            'currentPage' => $page, // Mantenemos base 0 para el cliente
             'totalElements' => $services->total(),
             'totalPages' => $services->lastPage(),
         ]);

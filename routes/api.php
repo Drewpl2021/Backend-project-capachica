@@ -69,6 +69,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/perfil', [AuthController::class, 'perfil']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::put('/update-profile', [AuthController::class, 'updateProfile']); // Esta es la ruta que falta
+    Route::post('/upload-photo', [AuthController::class, 'uploadPhoto']); // Esta es la ruta que falta
 
     Route::middleware('permission:editar_perfil')->put('/editar-datos', [UserController::class, 'editar']);
 

@@ -20,14 +20,19 @@ class ModuleController extends Controller
     {
         $size = $request->input('size', 10);
         $name = $request->input('name');
+        $page = max((int) $request->input('page', 0), 0);
 
         $query = Module::with('parentModule');
 
         if ($name) {
-            $query->where('title', 'like', "%$name%");
+            $query->where('title', 'like', "%$name%")
+                ->orWhere('subtitle', 'like', "%$name%")
+                ->orWhere('code', 'like', "%$name%")
+                ->orWhere('type', 'like', "%$name%")
+                ->orWhere('link', 'like', "%$name%");
         }
+        $data = $query->paginate($size, ['*'], 'page', $page + 1); // <-- aquí ajustas
 
-        $data = $query->paginate($size);
 
         $response = $data->items(); // Accedemos solo a los items de la paginación
 
@@ -58,7 +63,7 @@ class ModuleController extends Controller
         return response()->json([
             'content' => $response,
             'totalElements' => $data->total(),
-            'currentPage' => $data->currentPage() - 1,
+            'currentPage' => $page, // ya corregido a base 0
             'totalPages' => $data->lastPage(),
         ]);
     }

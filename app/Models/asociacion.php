@@ -15,7 +15,16 @@ class Asociacion extends Model
 
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $fillable = ['nombre', 'descripcion', 'lugar', 'estado', 'municipalidad_id', 'url'];
+    protected $fillable = [
+        'nombre',
+        'descripcion',
+        'lugar',
+        'estado',
+        'municipalidad_id',
+        'url',
+        'phone',
+        'office_hours'
+    ];
 
     // Relación: Una asociación pertenece a una municipalidad
     public function municipalidad()
