@@ -15,7 +15,6 @@ use App\Http\Controllers\API\login\UserController;
 use App\Http\Controllers\API\Modules\ModuleController;
 use App\Http\Controllers\API\Modules\ParentModuleController;
 use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\EmprendedorServiceController;
 use App\Http\Controllers\ImgServiceController;
 use App\Http\Controllers\ImgEmprendedorController;
@@ -271,7 +270,7 @@ Route::middleware('auth:api')->group(function () {
 
 // ***************************************************************RUTAS DE PRODUCTOS O EMPRENDEDOR SERVICE ********************************************************************
 
-
+Route::get('emprendedor-services/libre', [EmprendedorServiceController::class, 'indexLibre']);
 Route::middleware(['auth:api'])->group(function () {
     Route::prefix('emprendedor-service')->group(function () {
         Route::get('/', [EmprendedorServiceController::class, 'index']);

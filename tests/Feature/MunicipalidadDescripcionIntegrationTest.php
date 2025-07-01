@@ -10,8 +10,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class MunicipalidadDescripcionIntegrationTest extends TestCase
 {
-    protected $municipalidad;
+    use RefreshDatabase;
 
+    protected $municipalidad;
     protected $token;
     protected $adminUser;
 
@@ -61,6 +62,7 @@ class MunicipalidadDescripcionIntegrationTest extends TestCase
         $this->assertCount(10, $response->json('content'));
     }
 
+
     /** @test */
     public function test_store_crea_descripcion_con_municipalidad_id()
     {
@@ -84,6 +86,23 @@ class MunicipalidadDescripcionIntegrationTest extends TestCase
             ->assertJsonFragment([
                 'status' => true,
                 'message' => 'Descripción de municipalidad creada exitosamente',
+            ])
+            ->assertJsonStructure([
+                'status',
+                'message',
+                'data' => [
+                    'id',
+                    'logo',
+                    'direccion',
+                    'descripcion',
+                    'ruc',
+                    'correo',
+                    'nombre_alcalde',
+                    'anio_gestion',
+                    'municipalidad_id',
+                    'created_at',
+                    'updated_at',
+                ]
             ]);
 
         $this->assertDatabaseHas('municipalidad__descripcions', [
@@ -91,6 +110,7 @@ class MunicipalidadDescripcionIntegrationTest extends TestCase
             'ruc' => '12345678901',
         ]);
     }
+
 
     /** @test */
     public function test_show_retorna_descripcion_por_id()
@@ -140,9 +160,20 @@ class MunicipalidadDescripcionIntegrationTest extends TestCase
         );
 
         $response->assertStatus(200)
-            ->assertJsonFragment([
-                'status' => true,
-                'message' => 'Descripción de municipio actualizada exitosamente',
+            ->assertJsonStructure([
+                'content' => [
+                    'id',
+                    'municipalidad_id',
+                    'logo',
+                    'direccion',
+                    'descripcion',
+                    'ruc',
+                    'correo',
+                    'nombre_alcalde',
+                    'anio_gestion',
+                    'created_at',
+                    'updated_at',
+                ]
             ]);
 
         $this->assertDatabaseHas('municipalidad__descripcions', [

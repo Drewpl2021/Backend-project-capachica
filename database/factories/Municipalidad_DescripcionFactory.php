@@ -20,6 +20,10 @@ class Municipalidad_DescripcionFactory extends Factory
             'correo' => $this->faker->unique()->safeEmail(),
             'nombre_alcalde' => $this->faker->name(),
             'anio_gestion' => $this->faker->year(),
+            'hora_de_atencion' => $this->faker->time('H:i'),
+            'telefono' => $this->faker->phoneNumber(),
+
+
         ];
     }
 }

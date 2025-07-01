@@ -1,0 +1,12 @@
+config:
+  target: "http://127.0.0.1:8000" # Cambia la URL de destino por la de tu API
+  phases:
+    - duration: 60 # Duración de la prueba en segundos
+      arrivalRate: 5 # Número de usuarios por segundo
+scenarios:
+  - flow:
+      - post:
+          url: "/login"
+          json:
+            username: "andres.montes"
+            password: "12345"

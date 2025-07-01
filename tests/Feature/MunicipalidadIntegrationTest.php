@@ -5,9 +5,12 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\Municipalidad;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class MunicipalidadIntegrationTest extends TestCase
 {
+    use RefreshDatabase;
+
     protected $token;
     protected $adminUser;
 

@@ -7,9 +7,11 @@ use App\Models\Asociacion;
 use App\Models\img_asociacion;
 use App\Models\User;
 use App\Models\Municipalidad;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AsociacionIntegrationTest extends TestCase
 {
+    use RefreshDatabase;
 
     protected $token;
     protected $adminUser;
@@ -49,12 +51,12 @@ class AsociacionIntegrationTest extends TestCase
                 'totalElements',
                 'currentPage',
                 'totalPages',
-                'perPage',
             ]);
 
         $this->assertCount(10, $response->json('content'));
     }
 
+    /** @test */
     /** @test */
     public function test_store_crea_asociacion_con_imagenes()
     {
@@ -65,6 +67,8 @@ class AsociacionIntegrationTest extends TestCase
             'lugar' => 'Lugar Test',
             'url' => 'http://testurl.com',
             'estado' => true,
+            'phone' => '987654321',
+            'office_hours' => 'Lun-Vie 8:00-17:00',
             'imagenes' => [
                 [
                     'url_image' => 'http://testimage.com/img1.jpg',
@@ -104,6 +108,7 @@ class AsociacionIntegrationTest extends TestCase
             ->assertJsonFragment(['id' => $img->id]);
     }
 
+
     /** @test */
     public function test_update_modifica_asociacion_e_imagenes()
     {
@@ -117,6 +122,8 @@ class AsociacionIntegrationTest extends TestCase
             'lugar' => 'Lugar actualizado',
             'url' => 'http://updatedurl.com',
             'estado' => false,
+            'phone' => '912345678',
+            'office_hours' => 'Lun-Vie 9:00-15:00',
             'imagenes' => [
                 [
                     'id' => $img->id,
@@ -143,6 +150,7 @@ class AsociacionIntegrationTest extends TestCase
         $this->assertDatabaseHas('img_asociacions', ['codigo' => 'IMG001-UPD']);
         $this->assertDatabaseHas('img_asociacions', ['codigo' => 'IMG003']);
     }
+
 
     /** @test */
     public function test_destroy_elimina_asociacion()

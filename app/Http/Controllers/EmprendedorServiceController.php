@@ -41,7 +41,9 @@ class EmprendedorServiceController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('code', 'like', "%$search%")
-                    ->orWhere('name', 'like', "%$search%");
+                    ->orWhere('name', 'like', "%$search%")
+                    ->orWhere('description', 'like', "%$search%")
+                    ->orWhere('costo', 'like', "%$search%");
             });
         }
 
@@ -86,9 +88,7 @@ class EmprendedorServiceController extends Controller
             'imagenes.*.code' => 'nullable|string',
         ]);
 
-        // Verificar que el emprendedor_id pertenezca al usuario autenticado
         $user = Auth::user();
-
         $esPropietario = DB::table('emprendedor_user')
             ->where('user_id', $user->id)
             ->where('emprendedor_id', $validated['emprendedor_id'])
@@ -102,16 +102,20 @@ class EmprendedorServiceController extends Controller
 
         DB::beginTransaction();
         try {
+            $imagenes = $validated['imagenes'] ?? [];
+            unset($validated['imagenes']);
+
             $emprendedorService = EmprendedorService::create($validated);
 
-            if (!empty($validated['imagenes'])) {
-                foreach ($validated['imagenes'] as $img) {
-                    $emprendedorService->imgEmprendedorServices()->create($img);
-                }
+            foreach ($imagenes as $img) {
+                $emprendedorService->imgEmprendedorServices()->create($img);
             }
 
             DB::commit();
-            return response()->json($emprendedorService, 201);
+            return response()->json(
+                $emprendedorService->load('service', 'imgEmprendedorServices'),
+                201
+            );
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -120,7 +124,6 @@ class EmprendedorServiceController extends Controller
             ], 500);
         }
     }
-
     /**
      * Mostrar un registro específico por ID.
      */
@@ -203,7 +206,40 @@ class EmprendedorServiceController extends Controller
             ], 500);
         }
     }
+    public function indexLibre(Request $request)
+    {
+        $size = $request->input('size', 10);
+        $search = $request->input('search');
+        $emprendedorId = $request->input('emprendedor_id');
 
+        $query = EmprendedorService::query();
+
+        // Si se especifica un emprendimiento, filtra solo ese
+        if ($emprendedorId) {
+            $query->where('emprendedor_id', $emprendedorId);
+        }
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('code', 'like', "%$search%")
+                    ->orWhere('name', 'like', "%$search%")
+                    ->orWhere('description', 'like', "%$search%")
+                    ->orWhere('costo', 'like', "%$search%");
+            });
+        }
+
+        // Cargar relaciones
+        $query->with(['emprendedor', 'service', 'imgEmprendedorServices']);
+
+        $results = $query->paginate($size);
+
+        return response()->json([
+            'content' => $results->items(),
+            'totalElements' => $results->total(),
+            'currentPage' => $results->currentPage(),
+            'totalPages' => $results->lastPage(),
+        ]);
+    }
     /**
      * Obtener todos los registros de emprendedor_service filtrados por service_id.
      */

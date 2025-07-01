@@ -16,10 +16,10 @@ class EmprendedorFactory extends Factory
         return [
             'id' => (string) Str::uuid(), // Si usas UUID como llave primaria
             'asociacion_id' => Asociacion::factory(), // Crear una asociación automáticamente
-            'razon_social' => $this->faker->company(),
-            'name_family' => $this->faker->lastName(),
+            'razon_social' => $this->faker->unique()->company(),
+            'name_family' => $this->faker->unique()->lastName(),
             'address' => $this->faker->address(),
-            'code' => strtoupper(Str::random(8)),
+            'code' => strtoupper($this->faker->unique()->bothify('########')),
             'description' => $this->faker->sentence(10),
             'ruc' => $this->faker->unique()->numerify('20#########'),
             'lugar' => $this->faker->city(),

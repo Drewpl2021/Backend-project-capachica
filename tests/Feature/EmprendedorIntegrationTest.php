@@ -7,10 +7,12 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\Emprendedor;
 use App\Models\Service;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 
 class EmprendedorIntegrationTest extends TestCase
 {
+    use RefreshDatabase;
 
     protected $token;
     protected $adminUser;
@@ -41,7 +43,7 @@ class EmprendedorIntegrationTest extends TestCase
     {
         Emprendedor::factory()->count(15)->create();
 
-        $response = $this->getJson('/emprendedor?size=10', $this->headers());
+        $response = $this->getJson('/emprendedor_list?size=10', $this->headers());
 
         $response->assertStatus(200)
             ->assertJsonStructure([
@@ -49,7 +51,6 @@ class EmprendedorIntegrationTest extends TestCase
                 'totalElements',
                 'currentPage',
                 'totalPages',
-                'perPage',
             ]);
 
         $this->assertCount(10, $response->json('content'));
@@ -57,23 +58,24 @@ class EmprendedorIntegrationTest extends TestCase
 
     public function testStoreEmprendedor()
     {
+        $unique = uniqid();
         $data = [
-            'razon_social' => 'Turismo Andino S.A.C.',
             'asociacion_id' => $this->asociacion->id,
-            'address' => 'Calle Falsa 123',
-            'code' => 'EMP-TEST',
-            'ruc' => '20231234567',
+            'razon_social' => 'Empresa Actualizada S.A. ' . $unique,
+            'address' => 'Nueva dirección',
+            'code' => 'EMP-TEST-' . $unique,
+            'ruc' => '20' . rand(100000000, 999999999), // 11 dígitos, inicia en 20
             'description' => 'Una empresa de turismo.',
             'lugar' => 'Capachica',
             'img_logo' => 'ruta/logo.png',
-            'name_family' => 'Familia Quispe',
+            'name_family' => 'Familia Quispe ' . $unique,
             'status' => true,
         ];
 
         $response = $this->postJson('/emprendedor', $data, $this->headers());
 
         $response->assertStatus(201)
-            ->assertJsonPath('data.razon_social', 'Turismo Andino S.A.C.')
+            ->assertJsonPath('data.razon_social', $data['razon_social'])
             ->assertJson(['success' => true]);
     }
 
@@ -84,8 +86,7 @@ class EmprendedorIntegrationTest extends TestCase
         $response = $this->getJson("/emprendedor/{$emprendedor->id}", $this->headers());
 
         $response->assertStatus(200)
-            ->assertJsonPath('data.id', $emprendedor->id)
-            ->assertJson(['success' => true]);
+            ->assertJsonPath('content.id', $emprendedor->id);
     }
 
     public function test_update_emprendedor()

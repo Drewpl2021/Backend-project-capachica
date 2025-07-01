@@ -27,6 +27,9 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('asociacion_id')->references('id')->on('asociacions')->onDelete('cascade');
+            $table->unique('razon_social');
+            $table->unique('code');
+            $table->unique('name_family');
         });
     }
 
@@ -36,7 +39,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('emprendedors', function (Blueprint $table) {
-            $table->dropColumn('address');
+            $table->dropUnique(['razon_social']);
+            $table->dropUnique(['code']);
+            $table->dropUnique(['name_family']);
         });
+        Schema::dropIfExists('emprendedors');
     }
 };

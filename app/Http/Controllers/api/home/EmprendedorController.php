@@ -31,7 +31,8 @@ class EmprendedorController extends Controller
                 $q->where('name_family', 'like', "%$name%")
                     ->orWhere('razon_social', 'like', "%$name%")
                     ->orWhere('ruc', 'like', "%$name%")
-                    ->orWhere('code', 'like', "%$name%");
+                    ->orWhere('code', 'like', "%$name%")
+                    ->orWhere('phone', 'like', "%$name%");
             });
         }
 
@@ -51,6 +52,7 @@ class EmprendedorController extends Controller
                 'address' => $emprendedor->address,
                 'code' => $emprendedor->code,
                 'ruc' => $emprendedor->ruc,
+                'phone' => $emprendedor->phone,
                 'description' => $emprendedor->description,
                 'lugar' => $emprendedor->lugar,
                 'img_logo' => $emprendedor->img_logo,
@@ -80,7 +82,7 @@ class EmprendedorController extends Controller
                         'service_category' => $service->category,
                         'service_status' => $service->status,
 
-                        'id_service_emprendedor' => $service->pivot->id,
+                        'emprendedor_service_id' => $service->pivot->id,
                         'productCode' => $service->pivot->code,
                         'productStatus' => $service->pivot->status,
                         'cantidad' => $service->pivot->cantidad,
@@ -106,21 +108,19 @@ class EmprendedorController extends Controller
 
 
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'asociacion_id' => 'required|uuid|exists:asociacions,id',
-            'razon_social' => 'required|string|max:255',
+            'razon_social' => 'required|string|max:255|unique:emprendedors,razon_social',
             'address' => 'nullable|string|max:255',
-            'code' => 'nullable|string|max:255',
+            'code' => 'nullable|string|max:255|unique:emprendedors,code',
             'ruc' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'lugar' => 'nullable|string|max:255',
             'img_logo' => 'nullable|string|max:255',
-            'name_family' => 'nullable|string|max:255',
+            'name_family' => 'nullable|string|max:255|unique:emprendedors,name_family',
             'status' => 'nullable|boolean',
             'imagenes' => 'array',
             'imagenes.*.url_image' => 'required|string|max:255',
@@ -132,20 +132,33 @@ class EmprendedorController extends Controller
         $imagenes = $validated['imagenes'] ?? [];
         unset($validated['imagenes']);
 
+        // Crear el emprendedor
         $emprendedor = Emprendedor::create($validated);
 
+        // Crear las imágenes asociadas
         foreach ($imagenes as $img) {
             $emprendedor->imgEmprendedores()->create($img);
         }
 
+        // Asociar el usuario autenticado al emprendedor en la tabla pivote CON UUID personalizado
+        $user = auth()->user();
+        if ($user) {
+            // Usar manejar el campo 'id' uuid en la pivote
+            DB::table('emprendedor_user')->insert([
+                'id' => (string) Str::uuid(),
+                'user_id' => $user->id,
+                'emprendedor_id' => $emprendedor->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
         return response()->json([
             'success' => true,
-            'message' => 'Emprendedor creado exitosamente con imágenes',
+            'message' => 'Emprendedor creado exitosamente con imágenes y asociado al usuario',
             'data' => $emprendedor->load('imgEmprendedores')
         ], 201);
     }
-
-
     /**
      * Display the specified resource.
      */

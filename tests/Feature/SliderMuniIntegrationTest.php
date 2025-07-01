@@ -49,7 +49,7 @@ class SliderMuniIntegrationTest extends TestCase
             'descripcion' => 'Texto corto',
         ]);
 
-        $response = $this->getJson('/slider', $this->headers());
+        $response = $this->getJson('/slider_muni', $this->headers());
 
         $response->assertStatus(200)
             ->assertJsonCount(3, 'data');
@@ -65,7 +65,7 @@ class SliderMuniIntegrationTest extends TestCase
             'url_images' => 'https://via.placeholder.com/400'
         ];
 
-        $response = $this->postJson('/slider', $data, $this->headers());
+        $response = $this->postJson('/slider_muni', $data, $this->headers());
 
         $response->assertStatus(201)
             ->assertJsonFragment(['titulo' => 'Slider de prueba']);
@@ -81,7 +81,7 @@ class SliderMuniIntegrationTest extends TestCase
             'descripcion' => 'Texto corto',
         ]);
 
-        $response = $this->getJson("/slider/{$slider->id}", $this->headers());
+        $response = $this->getJson("/slider_muni/{$slider->id}", $this->headers());
 
         $response->assertStatus(200)
             ->assertJsonFragment(['id' => $slider->id]);
@@ -102,7 +102,7 @@ class SliderMuniIntegrationTest extends TestCase
             'url_images' => 'https://via.placeholder.com/400'
         ];
 
-        $response = $this->putJson("/slider/{$slider->id}", $data, $this->headers());
+        $response = $this->putJson("/slider_muni/{$slider->id}", $data, $this->headers());
 
         $response->assertStatus(200)
             ->assertJsonFragment(['message' => 'Slider actualizado exitosamente'])
@@ -116,7 +116,7 @@ class SliderMuniIntegrationTest extends TestCase
     {
         $slider = Slider_Muni::factory()->create();
 
-        $response = $this->deleteJson("/slider/{$slider->id}", [], $this->headers());
+        $response = $this->deleteJson("/slider_muni/{$slider->id}", [], $this->headers());
 
         $response->assertStatus(200)
             ->assertJsonFragment(['message' => 'Slider eliminado exitosamente'])

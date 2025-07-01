@@ -64,7 +64,7 @@ class ModuleControllerTest extends TestCase
 
         $moduleMockBuilder
             ->shouldReceive('paginate')
-            ->with(10)
+            ->with(10, ['*'], 'page', 1) // <- agrega los argumentos correctos
             ->andReturn($paginator);
 
         // 🚀 Ejecutar el controlador
